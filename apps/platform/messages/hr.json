@@ -1,6 +1,6 @@
 {
   "home": {
-    "notification": "Primamo prijedloge projekata do 1. rujna 2024. <guidelines>Pošalji prijedlog sada</guidelines>.",
+    "notification": "Primamo prijedloge projekata. <guidelines>Pošalji prijedlog sada</guidelines>.",
     "heroText": "Predložite projekt uređenja zelene površine. Ideje s najviše glasova dobit će financiranje.",
     "exampleProjectSubtitle": "Primjer projekta",
     "exampleNeighborhood": "Kvartovi",
@@ -98,7 +98,7 @@
   },
   "homeAbout": {
     "title": "O ovom projektu",
-    "firstParagraph": "Ovo je pilot projekt u sklopu Municipalne Inicijative za Kvadratno Financiranje (MUQA).",
+    "firstParagraph": "Ovo je pilot projekt u sklopu Municipalne inicijative za kvadratno fnanciranje (MUQA).",
     "secondParagraph": "Temelji se na Ethereum tehnologiji i provodi uz financijsku podršku Ethereum Foundation. Saznajte više o Muqi ovdje."
   },
   "languages" : {

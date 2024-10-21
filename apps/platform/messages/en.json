@@ -1,6 +1,6 @@
 {
   "home": {
-    "notification": "We are accepting project proposals until September 1, 2024. <guidelines>Submit proposal now</guidelines>.",
+    "notification": "We are accepting project proposals. <guidelines>Submit proposal now</guidelines>.",
     "heroText": "Propose a project for a green space. Ideas with the most votes will get funding.",
     "exampleProjectSubtitle": "Example project",
     "exampleNeighborhood": "Neighborhoods",
@@ -190,8 +190,8 @@
     "formFooterDesc1": "<guidelines>Notice:</guidelines> By submitting a proposal, you confirm that all information provided is true and correct to the best of your knowledge.",
     "formFooterDesc2": "Please make your proposal thorough and clear. If you have any questions or need help, please feel free to contact the program coordinators.",
     "formFooterDesc3": "Let's make Split greener together!",
-    "buttonName": "Suggest",
-    "buttonSubmitting": "I suggest...",
+    "buttonName": "Submit",
+    "buttonSubmitting": "Submitting...",
     "fotoTitle": "Photos",
     "fotoButton": "Add photos",
     "fotoDesc": "You can attach more photos. Make sure that the surfaces on which the intervention is proposed are clearly visible in the photographs.",
