@@ -19,6 +19,10 @@ const config: Config = {
 					DEFAULT: '#454545',
 					dark: '#FFFFFF',
 				},
+				softBlack: {
+					DEFAULT: '#333333',
+					dark: '#FFFFFF',
+				},
 				blue: {
 					DEFAULT: '#579BEA',
 					dark: '#1E40AF',
@@ -29,6 +33,9 @@ const config: Config = {
 				},
 				grayLight: {
 					DEFAULT: '#B0B0B0',
+				},
+				grayMiddle: {
+					DEFAULT: '#5E5E5E',
 				},
 				grayDark: {
 					DEFAULT: '#4A4A4A',
@@ -45,6 +52,12 @@ const config: Config = {
 				progressHigh: {
 					DEFAULT: '#09CE78',
 				},
+				softRedBG: {
+					DEFAULT: '#FFEEEE',
+				},
+				darkRed: {
+					DEFAULT: '#CA0000',
+				},
 			},
 		},
 		borderColor: {
@@ -57,6 +70,7 @@ const config: Config = {
 			lightGray: '#F6F6F6',
 			lightBlue: '#579BEA',
 			white: '#FFFFFF',
+			borderRed: '#CA0000',
 		},
 	},
 	plugins: [],

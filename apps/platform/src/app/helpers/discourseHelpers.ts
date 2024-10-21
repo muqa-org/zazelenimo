@@ -138,10 +138,7 @@ export const createDiscourseTopic = async ({
  * @param {string} params.publish - Indicates whether the proposer's name should be published ('on' for yes).
  * @param {string} params.email - The email address of the proposer.
  * @param {string} params.mobile - The mobile number of the proposer.
- * @param {string} params.futher - Indicates if the proposer wants to further participate in the discussion ('on' for yes).
- * @param {string} params.terms - Indicates if the proposer accepts the terms ('on' for yes).
- * @param {string} params.privacy - Indicates if the proposer accepts the privacy policy ('on' for yes).
- * @param {string} params.allow - Indicates if the proposer allows further contact ('on' for yes).
+  * @param {string} params.accept - Indicates if the proposer accept privacy policy.
  * @param {string[]} params.fileUrls - An array of URLs of the uploaded files.
  * @param {string} params.notice - The last notice on topic.
  *
@@ -152,13 +149,9 @@ export const generateProposalTopicDescription = ({
 	description,
 	name,
 	proposer,
-	publish,
 	email,
 	mobile,
-	futher,
-	terms,
-	privacy,
-	allow,
+	accept,
 	fileUrls,
 	notice,
 }: {
@@ -166,13 +159,9 @@ export const generateProposalTopicDescription = ({
 	description: string;
 	name: string;
 	proposer: string;
-	publish: string;
 	email: string;
 	mobile: string;
-	futher: string;
-	terms: string;
-	privacy: string;
-	allow: string;
+	accept: string;
 	fileUrls: string[];
 	notice: string;
 }) => {
@@ -196,13 +185,9 @@ ${fileSection}
 
 **Tvoje ime i prezime:** ${name}
 **Naziv predlagatelja:** ${proposer}
-**Želim li da objavite moje ime uz prijedlog:** ${publish && publish.trim() === 'on' ? `Da` : 'Ne'}
 **Tvoja email adresa:** ${email}
 **Tvoj broj mobitela:** ${mobile}
-**Želim sudjelovati u daljnjoj razradi prijedloga:** ${futher}
-**Prihvaćam uvjete korištenja Zazelenimo:** ${terms && terms.trim() === 'on' ? `Da` : 'Ne'}
-**Prihvaćam uvjete korištenja Zazelenimo:** ${privacy && privacy.trim() === 'on' ? `Da` : 'Ne'}
-**Dopuštam da me Zazelenimo kontaktira i obavještava vezano za moj prijedlog:** ${allow && allow.trim() === 'on' ? `Da` : 'Ne'}
+**Prihvaćam uvjete korištenja Zazelenimo i Pravila privatnosti:** ${accept && accept.trim() === 'on' ? `Da` : 'Ne'}
 **Napomena:** ${notice}
     `;
 

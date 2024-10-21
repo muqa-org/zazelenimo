@@ -6,6 +6,13 @@
   margin: 0 0 2em 0;
 }
 
+#proposal-form input::placeholder,
+#proposal-form textarea::placeholder {
+  color: #7A7A7A;
+  font-size: 16px;
+  font-weight: normal;
+}
+
 input[type='range'] {
 	-webkit-appearance: none;
 	appearance: none;

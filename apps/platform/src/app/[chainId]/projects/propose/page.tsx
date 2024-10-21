@@ -1,13 +1,15 @@
 'use client';
 
-import Container from '@/app/components/Container';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 import { createProjectAction } from './actions';
 
+import Container from '@/app/components/Container';
 import ProjectProposalFormButton from '@/app/components/project/ProjectProposalFormButton';
+import icons from '@/app/components/common/Icons';
 
 type FileWithPreview = {
 	file: File;
@@ -29,6 +31,12 @@ const getErrorMessage = (
 
 export default function CreateProjectPage() {
 	const t = useTranslations('proposalForm');
+
+	const [isChecked, setIsChecked] = useState(false);
+
+	const handleCheckboxChange = () => {
+		setIsChecked(prevState => !prevState);
+	};
 
 	const [state, formAction] = useFormState(createProjectAction, {
 		message: [],
@@ -102,373 +110,406 @@ export default function CreateProjectPage() {
 	}
 
 	return (
-		<section className='py-4'>
+		<section className='md:py-4'>
 			<Container className='mx-auto mb-6 flex flex-wrap justify-between gap-10 px-5 py-5'>
 				<div className='flex h-full w-full flex-col flex-wrap justify-between'>
-					<h1 className='w-full border-b border-borderGrayLight pb-10 pt-10 text-[28px] font-normal leading-normal text-primaryBlack md:text-4xl'>
+					<h1 className='w-full border-b border-borderGrayLight pb-10 pt-4 text-center text-[28px] font-normal leading-normal text-primaryBlack md:pb-14 md:text-left md:text-4xl'>
 						{t('title')}
 					</h1>
 				</div>
 				<div className='w-full'>
-					<div className='mx-auto max-w-2xl p-4 text-lg text-grayDark'>
-						{t('description')}
-					</div>
-					<form action={formAction} className='mx-auto max-w-2xl p-4'>
-						<div className='mb-6'>
-							<label
-								htmlFor='project'
-								className='block text-lg font-medium text-primaryBlack'
-							>
-								{t('projectTitle')}
-							</label>
-							<input
-								type='text'
-								id='project'
-								name='project'
-								className='focus:border-indigo-500 border-grayLight mb-2 mt-1 block w-full rounded-md border p-2 shadow-sm'
-							/>
-							{getErrorMessage(state.message, 'project') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'project')}
+					<form
+						id='proposal-form'
+						action={formAction}
+						className='mx-auto py-4 md:p-4'
+					>
+						<div className='flex flex-row flex-wrap'>
+							<div className='w-full md:w-1/2 md:pr-16'>
+								<h2 className='mb-2 text-[28px] text-primaryBlack'>
+									{t('details')}
+								</h2>
+								<div className='mb-6 text-base text-black'>
+									{t('description')}
 								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t('projectDesc')}
-							</div>
-						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='location'
-								className='block text-lg font-medium text-primaryBlack'
-							>
-								{t('locationTitle')}
-							</label>
-							<textarea
-								id='location'
-								name='location'
-								className='focus:border-indigo-500 border-grayLight mb-1 mt-1 block h-80 w-full rounded-md border p-2 shadow-sm'
-							/>
-							{getErrorMessage(state.message, 'location') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'location')}
-								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t('locationDesc')}
-							</div>
-						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='description'
-								className='block text-lg font-medium text-primaryBlack'
-							>
-								{t('descriptionTitle')}
-							</label>
-							<textarea
-								id='description'
-								name='description'
-								className='focus:border-indigo-500 border-grayLight mb-1 mt-1 block h-96 w-full rounded-md border p-2 shadow-sm'
-							/>
-							{getErrorMessage(state.message, 'description') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'description')}
-								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t('descriptionDesc')}
-							</div>
-						</div>
-
-						<div className='mb-10'>
-							<label
-								htmlFor='photo'
-								className='block text-lg font-medium text-primaryBlack'
-							>
-								{t('fotoTitle')}
-							</label>
-							<input
-								type='file'
-								id='photo'
-								name='photo'
-								multiple
-								ref={inputRef}
-								onChange={handleFileChange}
-								accept='image/png, image/gif, image/jpeg, image/webp'
-								className='focus:border-indigo-500 border-grayLight mb-1 mt-1 hidden w-full rounded-md border p-2 shadow-sm'
-							/>
-							<button
-								type='button'
-								onClick={handleButtonClick}
-								className='my-2 rounded-lg bg-green px-4 py-2 text-white hover:opacity-70'
-							>
-								{t('fotoButton')}
-							</button>
-
-							{selectedFiles.length > 0 && (
-								<div className='mb-5 mt-4 flex flex-wrap gap-4'>
-									{selectedFiles.map((fileData, index) => (
-										<div
-											key={index}
-											className='border-gray-300 group relative h-32 w-32 rounded border-borderGreen'
-										>
-											<img
-												src={fileData.url}
-												alt={`preview-${index}`}
-												className='h-full w-full rounded object-cover'
+								<div className='mb-6'>
+									<label
+										htmlFor='project'
+										className='text-softBlack mb-2 block text-sm font-bold'
+									>
+										{t('projectTitle')}&nbsp;
+										<span className='font-normal'>
+											({t('projectTitleSuffix')})
+										</span>
+									</label>
+									<div className='text-grayMiddle mb-2 text-xs'>
+										{t('projectDesc')}
+									</div>
+									<input
+										type='text'
+										id='project'
+										name='project'
+										className={`mb-2 mt-1 block w-full rounded-md text-base ${
+											getErrorMessage(state.message, 'project') !== null
+												? 'border-borderRed bg-softRedBG'
+												: 'border-borderGray bg-white'
+										} border p-2 shadow-sm`}
+									/>
+									{getErrorMessage(state.message, 'project') && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
 											/>
-											{/* "X" button */}
-											<button
-												onClick={() => removeFile(index)}
-												className='absolute right-[-10px] top-[-10px] h-6 w-6 rounded-full bg-red-500 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100'
-											>
-												X
-											</button>
+											{getErrorMessage(state.message, 'project')}
 										</div>
-									))}
+									)}
 								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t('fotoDesc')}
-							</div>
-						</div>
+								<div className='mb-6'>
+									<label
+										htmlFor='proposer'
+										className='text-softBlack mb-2 block text-sm font-bold'
+									>
+										{t('proposerTitle')}
+									</label>
+									<div className='text-grayMiddle mb-2 text-xs'>
+										{t('proposerDesc')}
+									</div>
+									<input
+										type='text'
+										id='proposer'
+										name='proposer'
+										className={`mb-2 mt-1 block w-full rounded-md text-base ${
+											getErrorMessage(state.message, 'proposer') !== null
+												? 'border-borderRed bg-softRedBG'
+												: 'border-borderGray bg-white'
+										} border p-2 shadow-sm`}
+									/>
+									{getErrorMessage(state.message, 'proposer') && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
+											/>
+											{getErrorMessage(state.message, 'proposer')}
+										</div>
+									)}
+								</div>
 
-						<div className='mb-8 h-1 w-full border-t border-borderGray'></div>
+								<div className='mb-6'>
+									<label
+										htmlFor='location'
+										className='text-softBlack mb-2 block text-sm font-bold'
+									>
+										{t('locationTitle')}
+									</label>
+									<div className='text-grayMiddle mb-2 text-xs'>
+										{t('locationDesc')}
+									</div>
+									<textarea
+										id='location'
+										name='location'
+										className={`mb-2 mt-1 block h-60 w-full rounded-md text-base ${
+											getErrorMessage(state.message, 'location') !== null
+												? 'border-borderRed bg-softRedBG'
+												: 'border-borderGray bg-white'
+										} border p-2 shadow-sm`}
+										placeholder={t('locationPlaceholder')}
+									/>
+									{getErrorMessage(state.message, 'location') && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
+											/>
+											{getErrorMessage(state.message, 'location')}
+										</div>
+									)}
+								</div>
 
-						<div className='mb-6'>
-							<label
-								htmlFor='name'
-								className='block text-lg font-medium text-primaryBlack'
-							>
-								{t('nameTitle')}
-							</label>
-							<input
-								type='text'
-								id='name'
-								name='name'
-								className='focus:border-indigo-500 border-grayLight mb-1 mt-1 block w-full rounded-md border p-2 shadow-sm'
-							/>
-							{getErrorMessage(state.message, 'name') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'name')}
+								<div className='mb-6'>
+									<label
+										htmlFor='description'
+										className='text-softBlack mb-2 block text-sm font-bold'
+									>
+										{t('descriptionTitle')}
+									</label>
+									<div className='text-grayMiddle mb-2 text-xs'>
+										{t('descriptionDesc')}
+									</div>
+									<textarea
+										id='description'
+										name='description'
+										className={`mb-2 mt-1 block h-60 w-full rounded-md text-base ${
+											getErrorMessage(state.message, 'description') !== null
+												? 'border-borderRed bg-softRedBG'
+												: 'border-borderGray bg-white'
+										} border p-2 shadow-sm`}
+										placeholder={t('descriptionPlaceholder')}
+									/>
+									{getErrorMessage(state.message, 'description') && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
+											/>
+											{getErrorMessage(state.message, 'description')}
+										</div>
+									)}
 								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t('nameDesc')}
-							</div>
-						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='proposer'
-								className='block text-lg font-medium text-primaryBlack'
-							>
-								{t('proposerTitle')}
-							</label>
-							<input
-								type='text'
-								id='proposer'
-								name='proposer'
-								className='focus:border-indigo-500 border-grayLight mb-1 mt-1 block w-full rounded-md border p-2 shadow-sm'
-							/>
-							<div className='text-base italic text-grayDark'>
-								{t('proposerDesc')}
-							</div>
-						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='publish'
-								className='block cursor-pointer text-lg font-medium text-primaryBlack'
-							>
-								<input
-									type='checkbox'
-									id='publish'
-									name='publish'
-									className='mr-3'
-								/>
-								{t('publishTitle')}
-							</label>
-							<div className='text-base italic text-grayDark'>
-								{t('publishDesc')}
-							</div>
-						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='email'
-								className='block text-lg font-medium text-primaryBlack'
-							>
-								{t('emailTitle')}
-							</label>
-							<input
-								type='email'
-								id='email'
-								name='email'
-								className='focus:border-indigo-500 border-grayLight mb-1 mt-1 block w-full rounded-md border p-2 shadow-sm'
-							/>
-							{getErrorMessage(state.message, 'email') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'email')}
+
+								<div className='mb-10'>
+									<label
+										htmlFor='photo'
+										className='text-softBlack mb-2 block text-sm font-bold'
+									>
+										{t('fotoTitle')}
+									</label>
+									<div className='text-grayMiddle mb-2 text-xs'>
+										{t('fotoDesc')}
+									</div>
+									<input
+										type='file'
+										id='photo'
+										name='photo'
+										multiple
+										ref={inputRef}
+										onChange={handleFileChange}
+										accept='image/png, image/gif, image/jpeg, image/webp'
+										className='focus:border-indigo-500 border-grayLight mb-1 mt-1 hidden w-full rounded-md border p-2 shadow-sm'
+									/>
+
+									{selectedFiles.length > 0 && (
+										<div className='mb-5 mt-4 flex flex-wrap gap-4'>
+											{selectedFiles.map((fileData, index) => (
+												<div
+													key={index}
+													className='border-gray-300 group relative h-24 w-[47%] rounded border-borderGreen md:w-36'
+												>
+													<img
+														src={fileData.url}
+														alt={`preview-${index}`}
+														className='h-full w-full rounded object-cover'
+													/>
+													{/* "X" button */}
+													<button
+														onClick={() => removeFile(index)}
+														className='absolute right-[10px] top-[10px] flex h-5 w-5 items-center justify-center rounded-md bg-white text-xs text-gray-600 hover:opacity-85'
+													>
+														<Image
+															src={icons.deleteIcon}
+															alt='Delete icon'
+															width={10}
+															height={11}
+														/>
+													</button>
+												</div>
+											))}
+										</div>
+									)}
+
+									<button
+										type='button'
+										onClick={handleButtonClick}
+										className='my-2 rounded-lg bg-green px-4 py-2 text-white hover:opacity-70'
+									>
+										{t('fotoButton')}
+									</button>
 								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t('emailDesc')}
 							</div>
-						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='mobile'
-								className='block text-lg font-medium text-primaryBlack'
-							>
-								{t('mobileTitle')}
-							</label>
-							<input
-								type='text'
-								id='mobile'
-								name='mobile'
-								className='focus:border-indigo-500 border-grayLight mb-1 mt-1 block w-full rounded-md border p-2 shadow-sm'
-							/>
-							{getErrorMessage(state.message, 'mobile') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'mobile')}
+							<div className='w-full md:w-1/2 md:pl-16'>
+								<h2 className='mb-2 text-[28px] text-primaryBlack'>
+									{t('contact')}
+								</h2>
+								<div className='mb-6 text-base text-black'>
+									{t('contactDescription')}
 								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t('mobileDesc')}
-							</div>
-						</div>
-						<div className='mb-6'>
-							<label className='mb-2 block text-lg font-medium text-primaryBlack'>
-								{t('futherTitle')}
-							</label>
-							<div className='mb-4 flex items-center'>
-								<input
-									id='option-yes'
-									name='futher'
-									type='radio'
-									value={t('futherYes')}
-									className='border-grayLight h-4 w-4 text-green-600 focus:ring-green-500'
-								/>
-								<label htmlFor='option-yes' className='ml-3 block text-base'>
-									{t('futherYes')}
-								</label>
-							</div>
-							<div className='flex items-center'>
-								<input
-									id='option-no'
-									name='futher'
-									type='radio'
-									value={t('futherNo')}
-									className='border-grayLight h-4 w-4 text-green-600 focus:ring-green-500'
-								/>
-								<label htmlFor='option-no' className='ml-3 block text-base'>
-									{t('futherNo')}
-								</label>
-							</div>
-							{getErrorMessage(state.message, 'futher') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'futher')}
+
+								<div className='mb-6'>
+									<label
+										htmlFor='name'
+										className='text-softBlack mb-2 block text-sm font-bold'
+									>
+										{t('nameTitle')}
+									</label>
+									<input
+										type='text'
+										id='name'
+										name='name'
+										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
+											getErrorMessage(state.message, 'name') !== null
+												? 'border-borderRed bg-softRedBG'
+												: 'border-borderGray bg-white'
+										} border p-2 shadow-sm`}
+									/>
+									{getErrorMessage(state.message, 'name') && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
+											/>
+											{getErrorMessage(state.message, 'name')}
+										</div>
+									)}
 								</div>
-							)}
-							<div className='mt-3 text-base italic text-grayDark'>
-								{t('futherDesc')}
-							</div>
-						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='terms'
-								className='block cursor-pointer text-lg font-medium text-primaryBlack'
-							>
-								<input
-									type='checkbox'
-									id='terms'
-									name='terms'
-									className='mr-3'
-								/>
-								{t('termsTitle')}
-							</label>
-							{getErrorMessage(state.message, 'terms') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'terms')}
+
+								<div className='mb-6'>
+									<label
+										htmlFor='email'
+										className='text-softBlack mb-2 block text-sm font-bold'
+									>
+										{t('emailTitle')}
+									</label>
+									<input
+										type='email'
+										id='email'
+										name='email'
+										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
+											getErrorMessage(state.message, 'email') !== null
+												? 'border-borderRed bg-softRedBG'
+												: 'border-borderGray bg-white'
+										} border p-2 shadow-sm`}
+									/>
+									{getErrorMessage(state.message, 'email') && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
+											/>
+											{getErrorMessage(state.message, 'email')}
+										</div>
+									)}
 								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t.rich('termsDesc', {
-									guidelines: chunks => (
-										<a
-											href='/terms'
-											target='_blank'
-											className='text-green hover:opacity-70'
-										>
-											{chunks}
-										</a>
-									),
-								})}
-							</div>
-						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='privacy'
-								className='block cursor-pointer text-lg font-medium text-primaryBlack'
-							>
-								<input
-									type='checkbox'
-									id='privacy'
-									name='privacy'
-									className='mr-3'
-								/>
-								{t('privacyTitle')}
-							</label>
-							{getErrorMessage(state.message, 'privacy') && (
-								<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-									{getErrorMessage(state.message, 'privacy')}
+
+								<div className='mb-6'>
+									<label
+										htmlFor='mobile'
+										className='text-softBlack mb-2 block text-sm font-bold'
+									>
+										{t('mobileTitle')}
+									</label>
+									<input
+										type='text'
+										id='mobile'
+										name='mobile'
+										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
+											getErrorMessage(state.message, 'mobile') !== null
+												? 'border-borderRed bg-softRedBG'
+												: 'border-borderGray bg-white'
+										} border p-2 shadow-sm`}
+									/>
+									{getErrorMessage(state.message, 'mobile') && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
+											/>
+											{getErrorMessage(state.message, 'mobile')}
+										</div>
+									)}
 								</div>
-							)}
-							<div className='text-base italic text-grayDark'>
-								{t.rich('privacyDesc', {
-									guidelines: chunks => (
-										<a
-											href='/privacy'
-											target='_blank'
-											className='text-green hover:opacity-70'
-										>
-											{chunks}
-										</a>
-									),
-								})}
+
+								<div className='mb-6'>
+									<label
+										key='accept'
+										htmlFor='accept'
+										className='flex cursor-pointer items-start text-base font-normal text-[#5A5A5A]'
+										onClick={handleCheckboxChange}
+									>
+										<input
+											name='accept'
+											type='checkbox'
+											className='peer hidden'
+											checked={isChecked}
+											onChange={handleCheckboxChange}
+										/>
+										<span className='mr-2 flex h-5 w-5 items-center justify-center rounded-md border border-borderGrayMedium bg-[#EFEFEF] peer-checked:border-borderGrayMedium peer-checked:bg-green peer-focus:ring-2 peer-focus:ring-green'>
+											{isChecked && (
+												<Image
+													src={icons.checkedIcon}
+													alt='Add to cart'
+													width={10}
+													height={8}
+													className='m-0 p-0'
+												/>
+											)}
+										</span>
+										<span className='m-0 p-0'>
+											{t.rich('accept', {
+												link1: chunks => (
+													<a
+														href='https://forum.zazelenimo.com/t/uvjeti-koristenja/9'
+														target='_blank'
+														className='text-green underline hover:opacity-70'
+													>
+														{chunks}
+													</a>
+												),
+												link2: chunks => (
+													<a
+														href='https://forum.zazelenimo.com/t/izjava-o-privatnosti/10'
+														target='_blank'
+														className='text-green underline hover:opacity-70'
+													>
+														{chunks}
+													</a>
+												),
+											})}
+										</span>
+									</label>
+									{getErrorMessage(state.message, 'accept') && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
+											/>
+											{getErrorMessage(state.message, 'accept')}
+										</div>
+									)}
+								</div>
+
+								<div className='flex flex-row items-start'>
+									<div className='w-auto'>
+										<ProjectProposalFormButton />
+									</div>
+									{!state.status && state.message.length > 0 && (
+										<div className='text-darkRed mx-auto mt-1 inline-flex w-auto items-start pl-6 text-xs font-bold md:pl-0 md:text-sm'>
+											<Image
+												src={icons.errorIcon}
+												alt='Warning'
+												width={15}
+												height={15}
+												className='mr-2 mt-0 inline-block md:mt-[2px]'
+											/>
+											{t('notification')}
+										</div>
+									)}
+								</div>
 							</div>
 						</div>
-						<div className='mb-6'>
-							<label
-								htmlFor='allow'
-								className='block cursor-pointer text-lg font-medium text-primaryBlack'
-							>
-								<input
-									type='checkbox'
-									id='allow'
-									name='allow'
-									className='mr-3'
-								/>
-								{t('allowTitle')}
-							</label>
-						</div>
-						{getErrorMessage(state.message, 'allow') && (
-							<div className='mx-auto mt-1 max-w-2xl text-red-500'>
-								{getErrorMessage(state.message, 'allow')}
-							</div>
-						)}
-						<div className='mb-6'>
-							<div className='text-base italic text-grayDark'>
-								{t.rich('formFooterDesc1', {
-									guidelines: chunks => <strong>{chunks}</strong>,
-								})}
-								<div className='mt-3 block'>{t('formFooterDesc2')}</div>
-								<div className='mt-3 block'>{t('formFooterDesc3')}</div>
-							</div>
-						</div>
-						<ProjectProposalFormButton />
-						{!state.status && state.message.length > 0 && (
-							<div className='mt-3 block rounded-lg bg-red-500 p-4 text-white'>
-								{t('notification')}
-							</div>
-						)}
 					</form>
 				</div>
 			</Container>
