@@ -95,11 +95,7 @@ export async function createProjectAction(
 		description: generateProposalTopicDescription({
 			location,
 			description,
-			name,
 			proposer,
-			email,
-			mobile,
-			accept,
 			fileUrls,
 			notice: t('proposalLastData'),
 		}),
@@ -144,6 +140,22 @@ export async function createProjectAction(
 				<p>${tMail('messagePart5')}</p>
 				<p>${tMail('messagePart6')}<br />${tMail('messagePart7')}</p>
 				`,
+			});
+		}
+
+		// Send mail to the admin
+		if (process.env.MAILGUN_RECEIVER_EMAIL) {
+			const sendMailData = sendMail({
+				from: 'Zazelenimo <postmaster@forum.zazelenimo.com>',
+				to: process.env.MAILGUN_RECEIVER_EMAIL,
+				subject: 'Novi prijedlog je predan',
+				html: `
+					<p>Link na prijedlog: ${topicLink}</p>
+					<p>Ime i prezime predlagatelja: ${name}</p>
+					<p>Email adresa predlagatelja: ${email}</p>
+					<p>Broj mobitela predlagatelja: ${mobile}</p>
+					<p>Prijavitelj je prihvatio uvjete korištenja Zazelenimo i Pravila privatnosti: ${accept && accept.trim() === 'on' ? `Da` : 'Ne'}</p>
+					`,
 			});
 		}
 
