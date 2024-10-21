@@ -27,14 +27,10 @@ export async function createProjectAction(
 	const location = formData.get('location')?.toString().trim() ?? '';
 	const description = formData.get('description')?.toString().trim() ?? '';
 	const name = formData.get('name')?.toString().trim() ?? '';
-	const publish = formData.get('publish')?.toString().trim() ?? '';
 	const proposer = formData.get('proposer')?.toString().trim() ?? '';
 	const email = formData.get('email')?.toString().trim() ?? '';
 	const mobile = formData.get('mobile')?.toString().trim() ?? '';
-	const futher = formData.get('futher')?.toString().trim() ?? '';
-	const terms = formData.get('terms')?.toString().trim() ?? '';
-	const privacy = formData.get('privacy')?.toString().trim() ?? '';
-	const allow = formData.get('allow')?.toString().trim() ?? '';
+	const accept = formData.get('accept')?.toString().trim() ?? '';
 
 	// Validate each field and accumulate errors
 	const errors: MessageType[] = [];
@@ -63,20 +59,12 @@ export async function createProjectAction(
 		errors.push({ key: 'mobile', notice: t('mobileError') });
 	}
 
-	if (!futher) {
-		errors.push({ key: 'futher', notice: t('futherError') });
+	if (!proposer) {
+		errors.push({ key: 'proposer', notice: t('proposerError') });
 	}
 
-	if (!terms) {
-		errors.push({ key: 'terms', notice: t('termsError') });
-	}
-
-	if (!privacy) {
-		errors.push({ key: 'privacy', notice: t('privacyError') });
-	}
-
-	if (!allow) {
-		errors.push({ key: 'allow', notice: t('allowError') });
+	if (!accept) {
+		errors.push({ key: 'accept', notice: t('acceptError') });
 	}
 
 	// If there are any errors, return them
@@ -109,13 +97,9 @@ export async function createProjectAction(
 			description,
 			name,
 			proposer,
-			publish,
 			email,
 			mobile,
-			futher,
-			terms,
-			privacy,
-			allow,
+			accept,
 			fileUrls,
 			notice: t('proposalLastData'),
 		}),

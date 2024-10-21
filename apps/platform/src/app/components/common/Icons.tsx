@@ -31,6 +31,8 @@ const icons = {
 	trashIcon: '/images/icons/icon-trash.svg',
 	alertIcon: '/images/icons/icon-alert.svg',
 	partyIcon: '/images/icons/icon-party.svg',
+	errorIcon: '/images/icons/icon-error.svg',
+	deleteIcon: '/images/icons/icon-delete.svg',
 	
 	ethIconBlue: '/images/icons/icon-eth-blue.svg',
 	ethIconBlue12: '/images/icons/icon-eth-blue-12.svg',
