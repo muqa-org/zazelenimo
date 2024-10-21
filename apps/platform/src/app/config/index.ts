@@ -44,3 +44,6 @@ export const neighborhoods = [
 	'Žnjan',
 	'Žrnovnica',
 ];
+
+// link to MUQA
+export const MUQALink = 'https://muqa.org';

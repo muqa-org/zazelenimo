@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 
 import Container from '@/app/components/Container';
+import { MUQALink } from '@/app/config';
 
 export default function HomepageBanner() {
 	const t = useTranslations('homeAbout');
@@ -16,6 +17,15 @@ export default function HomepageBanner() {
 				<div className='mx-auto text-xl text-grayDark lg:w-4/6 lg:px-20'>
 					<p className='mb-6'>{t('firstParagraph')}</p>
 					<p>{t('secondParagraph')}</p>
+					<p>
+						{t.rich('secondParagraph', {
+							link: chunks => (
+								<a href={MUQALink} target='_blank' className='text-green hover:opacity-85'>
+									{chunks}
+								</a>
+							),
+						})}
+					</p>
 				</div>
 			</Container>
 		</div>
