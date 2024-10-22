@@ -133,12 +133,8 @@ export const createDiscourseTopic = async ({
  * @param {Object} params - The parameters for generating the proposal description.
  * @param {string} params.location - A description of the proposal's location.
  * @param {string} params.description - A detailed description of the proposal.
- * @param {string} params.name - The name of the person submitting the proposal.
  * @param {string} params.proposer - The name of the proposer (may differ from the submitter).
  * @param {string} params.publish - Indicates whether the proposer's name should be published ('on' for yes).
- * @param {string} params.email - The email address of the proposer.
- * @param {string} params.mobile - The mobile number of the proposer.
-  * @param {string} params.accept - Indicates if the proposer accept privacy policy.
  * @param {string[]} params.fileUrls - An array of URLs of the uploaded files.
  * @param {string} params.notice - The last notice on topic.
  *
@@ -147,21 +143,13 @@ export const createDiscourseTopic = async ({
 export const generateProposalTopicDescription = ({
 	location,
 	description,
-	name,
 	proposer,
-	email,
-	mobile,
-	accept,
 	fileUrls,
 	notice,
 }: {
 	location: string;
 	description: string;
-	name: string;
 	proposer: string;
-	email: string;
-	mobile: string;
-	accept: string;
 	fileUrls: string[];
 	notice: string;
 }) => {
@@ -183,11 +171,7 @@ ${description}
 **Fotografije lokacije:**
 ${fileSection}
 
-**Tvoje ime i prezime:** ${name}
 **Naziv predlagatelja:** ${proposer}
-**Tvoja email adresa:** ${email}
-**Tvoj broj mobitela:** ${mobile}
-**Prihvaćam uvjete korištenja Zazelenimo i Pravila privatnosti:** ${accept && accept.trim() === 'on' ? `Da` : 'Ne'}
 **Napomena:** ${notice}
     `;
 
