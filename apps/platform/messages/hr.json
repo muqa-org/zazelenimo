@@ -99,7 +99,7 @@
   "homeAbout": {
     "title": "O ovom projektu",
     "firstParagraph": "Ovo je pilot projekt u sklopu Municipalne inicijative za kvadratno fnanciranje (MUQA).",
-    "secondParagraph": "Temelji se na Ethereum tehnologiji i provodi uz financijsku podršku Ethereum Foundation. Saznajte više o Muqi ovdje."
+    "secondParagraph": "Temelji se na Ethereum tehnologiji i provodi uz financijsku podršku Ethereum Foundation. Saznajte više o Muqi <link>ovdje.</link>"
   },
   "languages" : {
     "en": "English",
