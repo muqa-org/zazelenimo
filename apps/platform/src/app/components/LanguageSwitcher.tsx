@@ -28,6 +28,9 @@ export default function LanguageSwitcher({ screen }: { screen: string }) {
 	const togglerIcon =
 		screen === 'mobile' ? icons.arrowDownIconGray : icons.arrowDownIconGreen;
 
+	const globeIcon =
+		screen === 'mobile' ? icons.globeIconGray : icons.globeIconGreen;
+
 	const classNameContainer =
 		screen === 'mobile'
 			? 'border-borderGreenDark w-full relative inline-block text-left'
@@ -41,11 +44,18 @@ export default function LanguageSwitcher({ screen }: { screen: string }) {
 	const switchHolder =
 		screen === 'mobile'
 			? 'w-full border-borderGreen absolute right-0 mt-0 top-8 rounded-md border bg-white shadow-lg'
-			: 'w-30 border-borderGreen absolute right-0 mt-2 origin-top-right rounded-md border bg-white shadow-lg';
+			: 'w-full border-borderGreen absolute right-0 mt-2 origin-top-right rounded-md border bg-white shadow-lg';
 
 	return (
 		<div className={classNameContainer}>
 			<button onClick={toggleDropdown} className={classNameToggler}>
+				<Image
+					width='20'
+					height='20'
+					alt='Globe Icon'
+					src={globeIcon}
+					className='mr-2'
+				/>
 				{t(locale)}
 				<Image
 					width='13'

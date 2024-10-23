@@ -33,6 +33,8 @@ const icons = {
 	partyIcon: '/images/icons/icon-party.svg',
 	errorIcon: '/images/icons/icon-error.svg',
 	deleteIcon: '/images/icons/icon-delete.svg',
+	globeIconGreen: '/images/icons/icon-lang.svg',
+	globeIconGray: '/images/icons/icon-lang-gray.svg',
 	
 	ethIconBlue: '/images/icons/icon-eth-blue.svg',
 	ethIconBlue12: '/images/icons/icon-eth-blue-12.svg',
