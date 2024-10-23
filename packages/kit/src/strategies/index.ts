@@ -1,5 +1,5 @@
 'use client';
-import { TContracts } from '@gitcoin/gitcoin-chain-data';
+import { TContracts } from '@b0rza/gitcoin-chain-data';
 import { useMutation } from '@tanstack/react-query';
 import { FunctionComponent, useMemo } from 'react';
 import { Address } from 'viem';
