@@ -21,7 +21,7 @@ type ComethConfig = {
   transportUrl: string | undefined,
 };
 
-type chainType = 'POLYGON' | 'ARBITRUM_SEPOLIA' | 'AVALANCHE_FUJI';
+type chainType = 'POLYGON' | 'ARBITRUM_SEPOLIA' | 'AVALANCHE_FUJI' | 'OPTIMISM_SEPOLIA';
 
 const assertEnv = (val: string | undefined) => {
   if (!val) throw new Error(`ENV not set: ${val}`);
@@ -44,6 +44,12 @@ const configs: BaseConfig = {
   'AVALANCHE_FUJI': {
     apiKey: process.env.NEXT_PUBLIC_AVALANCHE_FUJI_COMETH_API_KEY,
     tenderlyRpc: process.env.NEXT_PUBLIC_AVALANCHE_FUJI_TENDERLY_RPC,
+    chain: avalancheFuji,
+    comethChain: FUJI,
+  },
+  'OPTIMISM_SEPOLIA': {
+    apiKey: process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_COMETH_API_KEY,
+    tenderlyRpc: process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_TENDERLY_RPC,
     chain: avalancheFuji,
     comethChain: FUJI,
   }
