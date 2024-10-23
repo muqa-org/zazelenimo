@@ -13,7 +13,8 @@ import { GSRound, GSApplication, GSProject } from './types';
 import { ipfsGateway, queryToFilter } from './utils';
 import { API, Application, Project, Round, Transformers } from '../../types';
 
-const apiURL = 'https://grants-stack-indexer-v2.gitcoin.co/graphql';
+const INDEXER_URL = process.env.GRANTS_STACK_INDEXER_URL;
+const apiURL = `${INDEXER_URL}/graphql`;
 
 export const grantsStackAPI: Partial<API> = {
   rounds: async (query) => {
