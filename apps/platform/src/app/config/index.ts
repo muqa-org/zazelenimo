@@ -9,7 +9,7 @@ export const DocumentationLink = 'https://docs.zazelenimo.com/';
 export const ForumLink = 'https://forum.zazelenimo.com/';
 
 // link to GitHub
-export const GitHubLink = 'https://github.com/muqa-org/demo';
+export const GitHubLink = 'https://github.com/muqa-org/zazelenimo';
 
 // link to Facebook
 export const FacebookLink = 'https://www.facebook.com/parkovisplit';
