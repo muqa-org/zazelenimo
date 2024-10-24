@@ -23,7 +23,7 @@ export async function createProjectAction(
 
 	const apiUsername = process.env.NEXT_DISCOURSE_USERNAME || '';
 
-	const project = formData.get('project')?.toString().trim();
+	const project = formData.get('project')?.toString().trim() ?? '';
 	const location = formData.get('location')?.toString().trim() ?? '';
 	const description = formData.get('description')?.toString().trim() ?? '';
 	const name = formData.get('name')?.toString().trim() ?? '';
@@ -93,6 +93,7 @@ export async function createProjectAction(
 		username: apiUsername,
 		title: 'Prijedlog: ' + project,
 		description: generateProposalTopicDescription({
+			project,
 			location,
 			description,
 			proposer,

@@ -100,6 +100,7 @@ export default function CreateProjectPage() {
 		}
 	}, [state.status, state.message]);
 
+	// Redirect use to forum page if propsal form data are submitted successfully
 	if (state.status && getErrorMessage(state.message, 'success')) {
 		return (
 			<div className='mx-auto mb-10 mt-10 flex h-[calc(100vh-395px)] w-11/12 flex-col items-center justify-center md:w-6/12'>
