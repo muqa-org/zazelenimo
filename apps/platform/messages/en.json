@@ -213,11 +213,22 @@
   "proposalMail" : {
     "subject": "Your proposal has been successfully received!",
     "messagePart1": "Dear {name},",
-    "messagePart2": "Thank you for submitting your proposal for Zazelenimo Split. Your proposal has been successfully received and is currently under review by our expert team.",
-    "messagePart3": "You can view your proposal and track its progress at the following link: <link>Link to proposal</link>",
-    "messagePart4": "Please note that you will not be able to comment on the proposal at this stage. Once the proposal has been reviewed and meets all the conditions, it will be made public and opened for discussion. We recommend that you register on our Forum and follow the topic to receive notifications on the next steps.",
-    "messagePart5": "If you have any questions, feel free to contact us.",
-    "messagePart6": "Best regards,",
-    "messagePart7": "The Zazelenimo Split Team"
+    "messagePart2": "This proposal is currently under review by our expert team. At this stage, only team members can comment. If approved, the proposal will be opened for public discussion.",
+    "messagePart3": "The content of your proposal:",
+    "messagePart4": "Title:",
+    "messagePart5": "Proposed by:",
+    "messagePart6": "Location description:",
+    "messagePart7": "Proposal description:",
+    "messagePart8": "Location photos:",
+    "messagePart9": "Link to the proposal:",
+    "messagePart10": "Register and follow this topic to stay informed about the next steps. Check out this guide on how to follow the topic. See all proposals currently in public discussion here: <link>Public discussion</link>.",
+    "messagePart11": "Best regards,",
+    "messagePart12": "Green Split team",
+    "messagePart13": "Proposer's full name:",
+    "messagePart14": "Proposer's email address:",
+    "messagePart15": "Proposer's mobile number:",
+    "messagePart16": "The proposer has accepted the terms of use of Green Split and the Privacy Policy:",
+    "messagePart17": "Yes",
+    "messagePart18": "No"
   }
 }

@@ -128,25 +128,32 @@ export const createDiscourseTopic = async ({
 };
 
 /**
- * Function to generate a Markdown-formatted description for a proposal topic.
+ * Function to generate a Markdown-formatted description for a project proposal.
+ * The description includes project details, location information, the proposer's name,
+ * and any associated images or notices. It also formats the proposal to include a 
+ * "spoiler" section for additional content visibility control in the forum.
  *
  * @param {Object} params - The parameters for generating the proposal description.
+ * @param {string} params.project - The name or title of the project proposal.
  * @param {string} params.location - A description of the proposal's location.
  * @param {string} params.description - A detailed description of the proposal.
  * @param {string} params.proposer - The name of the proposer (may differ from the submitter).
- * @param {string} params.publish - Indicates whether the proposer's name should be published ('on' for yes).
- * @param {string[]} params.fileUrls - An array of URLs of the uploaded files.
- * @param {string} params.notice - The last notice on topic.
+ * @param {string[]} params.fileUrls - An array of URLs of the uploaded files, representing images.
+ * @param {string} params.notice - The last notice related to the proposal topic.
  *
- * @returns {string} - Returns a Markdown-formatted string representing the proposal topic, including images and user details.
+ * @returns {string} - A Markdown-formatted string representing the project proposal, 
+ * including images (if available), project and location details, and an invitation 
+ * to join the discussion on the forum.
  */
 export const generateProposalTopicDescription = ({
+	project,
 	location,
 	description,
 	proposer,
 	fileUrls,
 	notice,
 }: {
+	project: string;
 	location: string;
 	description: string;
 	proposer: string;
@@ -164,16 +171,34 @@ export const generateProposalTopicDescription = ({
 		: 'nemamo fotografiju :(';
 
 	const rawDescription = `
-**Opiši lokaciju:**
+# Prijedlog
+## Status
+> Ovaj prijedlog je trenutno u fazi provjere od strane našeg stručnog tima. U ovoj fazi samo članovi tima mogu komentirati. Ako bude odobren, prijedlog će biti otvoren za javnu raspravu.
+
+## Sadržaj
+> Kliknite na zamućeni tekst da vidite prijedlog.
+
+[spoiler]
+**Naziv:**  ${project}
+**Predlaže:** ${proposer}
+
+---
+
+### Opis lokacije:
 ${location}
-**Opiši prijedlog:**
+
+### Opis prijedloga:
 ${description}
+
 **Fotografije lokacije:**
 ${fileSection}
 
-**Naziv predlagatelja:** ${proposer}
-**Napomena:** ${notice}
-    `;
+
+[/spoiler]
+
+## Rasprava
+> Registrirajte se na Forum i zapratite ovu temu (klikom na zvono) kako biste bili obaviješteni o daljnjim koracima. Pogledajte sve prijedloge koji su trenutno na javnoj raspravi ovdje: #rasprava .
+`;
 
 	return rawDescription.trim();
 };
