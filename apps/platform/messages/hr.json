@@ -145,7 +145,7 @@
   "proposalForm" : {
     "title": "Pošaljite svoj prijedlog",
     "details": "Detalji prijedloga",
-    "description": "Predložite investiciju u zelenilo grada Splita.",
+    "description": "Predložite investiciju u zelenilo grada Splita. <link>Provjerite upute.</link>",
     "contact": "Kontakt podaci",
     "contactDescription": "Vaši kontakt podaci neće biti objavljeni.",
     "projectTitle": "Naziv prijedloga",
