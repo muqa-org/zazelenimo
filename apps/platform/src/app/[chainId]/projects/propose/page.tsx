@@ -130,27 +130,28 @@ export default function CreateProjectPage() {
 								</h2>
 								<div className='mb-6 text-base text-black'>
 									{t.rich('description', {
-    									link: chunks =>
-     									<a 
-											href='https://docs.zazelenimo.com/sudjeluj/quickstart' 
-											target='_blank' 
-											class='underline hover:text-blue'
-										>
-											${chunks}
-										</a>,
-   									})}
+										link: chunks => (
+											<a
+												href='https://docs.zazelenimo.com/sudjeluj/quickstart'
+												target='_blank'
+												className='underline hover:text-blue'
+											>
+												${chunks}
+											</a>
+										),
+									})}
 								</div>
 								<div className='mb-6'>
 									<label
 										htmlFor='project'
-										className='text-softBlack mb-2 block text-sm font-bold'
+										className='mb-2 block text-sm font-bold text-softBlack'
 									>
 										{t('projectTitle')}&nbsp;
 										<span className='font-normal'>
 											({t('projectTitleSuffix')})
 										</span>
 									</label>
-									<div className='text-grayMiddle mb-2 text-xs'>
+									<div className='mb-2 text-xs text-grayMiddle'>
 										{t('projectDesc')}
 									</div>
 									<input
@@ -164,7 +165,7 @@ export default function CreateProjectPage() {
 										} border p-2 shadow-sm`}
 									/>
 									{getErrorMessage(state.message, 'project') && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
@@ -179,11 +180,11 @@ export default function CreateProjectPage() {
 								<div className='mb-6'>
 									<label
 										htmlFor='proposer'
-										className='text-softBlack mb-2 block text-sm font-bold'
+										className='mb-2 block text-sm font-bold text-softBlack'
 									>
 										{t('proposerTitle')}
 									</label>
-									<div className='text-grayMiddle mb-2 text-xs'>
+									<div className='mb-2 text-xs text-grayMiddle'>
 										{t('proposerDesc')}
 									</div>
 									<input
@@ -197,7 +198,7 @@ export default function CreateProjectPage() {
 										} border p-2 shadow-sm`}
 									/>
 									{getErrorMessage(state.message, 'proposer') && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
@@ -213,11 +214,11 @@ export default function CreateProjectPage() {
 								<div className='mb-6'>
 									<label
 										htmlFor='location'
-										className='text-softBlack mb-2 block text-sm font-bold'
+										className='mb-2 block text-sm font-bold text-softBlack'
 									>
 										{t('locationTitle')}
 									</label>
-									<div className='text-grayMiddle mb-2 text-xs'>
+									<div className='mb-2 text-xs text-grayMiddle'>
 										{t('locationDesc')}
 									</div>
 									<textarea
@@ -231,7 +232,7 @@ export default function CreateProjectPage() {
 										placeholder={t('locationPlaceholder')}
 									/>
 									{getErrorMessage(state.message, 'location') && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
@@ -247,11 +248,11 @@ export default function CreateProjectPage() {
 								<div className='mb-6'>
 									<label
 										htmlFor='description'
-										className='text-softBlack mb-2 block text-sm font-bold'
+										className='mb-2 block text-sm font-bold text-softBlack'
 									>
 										{t('descriptionTitle')}
 									</label>
-									<div className='text-grayMiddle mb-2 text-xs'>
+									<div className='mb-2 text-xs text-grayMiddle'>
 										{t('descriptionDesc')}
 									</div>
 									<textarea
@@ -265,7 +266,7 @@ export default function CreateProjectPage() {
 										placeholder={t('descriptionPlaceholder')}
 									/>
 									{getErrorMessage(state.message, 'description') && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
@@ -281,11 +282,11 @@ export default function CreateProjectPage() {
 								<div className='mb-10'>
 									<label
 										htmlFor='photo'
-										className='text-softBlack mb-2 block text-sm font-bold'
+										className='mb-2 block text-sm font-bold text-softBlack'
 									>
 										{t('fotoTitle')}
 									</label>
-									<div className='text-grayMiddle mb-2 text-xs'>
+									<div className='mb-2 text-xs text-grayMiddle'>
 										{t('fotoDesc')}
 									</div>
 									<input
@@ -348,7 +349,7 @@ export default function CreateProjectPage() {
 								<div className='mb-6'>
 									<label
 										htmlFor='name'
-										className='text-softBlack mb-2 block text-sm font-bold'
+										className='mb-2 block text-sm font-bold text-softBlack'
 									>
 										{t('nameTitle')}
 									</label>
@@ -363,7 +364,7 @@ export default function CreateProjectPage() {
 										} border p-2 shadow-sm`}
 									/>
 									{getErrorMessage(state.message, 'name') && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
@@ -379,7 +380,7 @@ export default function CreateProjectPage() {
 								<div className='mb-6'>
 									<label
 										htmlFor='email'
-										className='text-softBlack mb-2 block text-sm font-bold'
+										className='mb-2 block text-sm font-bold text-softBlack'
 									>
 										{t('emailTitle')}
 									</label>
@@ -394,7 +395,7 @@ export default function CreateProjectPage() {
 										} border p-2 shadow-sm`}
 									/>
 									{getErrorMessage(state.message, 'email') && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
@@ -410,7 +411,7 @@ export default function CreateProjectPage() {
 								<div className='mb-6'>
 									<label
 										htmlFor='mobile'
-										className='text-softBlack mb-2 block text-sm font-bold'
+										className='mb-2 block text-sm font-bold text-softBlack'
 									>
 										{t('mobileTitle')}
 									</label>
@@ -425,7 +426,7 @@ export default function CreateProjectPage() {
 										} border p-2 shadow-sm`}
 									/>
 									{getErrorMessage(state.message, 'mobile') && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
@@ -487,7 +488,7 @@ export default function CreateProjectPage() {
 										</span>
 									</label>
 									{getErrorMessage(state.message, 'accept') && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
@@ -505,7 +506,7 @@ export default function CreateProjectPage() {
 										<ProjectProposalFormButton />
 									</div>
 									{!state.status && state.message.length > 0 && (
-										<div className='text-darkRed mx-auto mt-1 inline-flex w-auto items-start pl-6 text-xs font-bold md:pl-0 md:text-sm'>
+										<div className='mx-auto mt-1 inline-flex w-auto items-start pl-6 text-xs font-bold text-darkRed md:pl-0 md:text-sm'>
 											<Image
 												src={icons.errorIcon}
 												alt='Warning'
