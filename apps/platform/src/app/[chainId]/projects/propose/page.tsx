@@ -129,7 +129,16 @@ export default function CreateProjectPage() {
 									{t('details')}
 								</h2>
 								<div className='mb-6 text-base text-black'>
-									{t('description')}
+									{t.rich('description', {
+    									link: chunks =>
+     									<a 
+											href='https://docs.zazelenimo.com/sudjeluj/quickstart' 
+											target='_blank' 
+											class='underline hover:text-blue'
+										>
+											${chunks}
+										</a>,
+   									})}
 								</div>
 								<div className='mb-6'>
 									<label
