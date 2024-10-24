@@ -1,6 +1,6 @@
 'use server';
 
-import { ForumLink } from '@/app/config';
+import { ForumLink, ForumLinkDiscussion } from '@/app/config';
 import {
 	createDiscourseTopic,
 	generateProposalTopicDescription,
@@ -120,14 +120,18 @@ export async function createProjectAction(
 	} else {
 		const data = await responseTopic.json();
 
-		const topicLink = `${ForumLink}/t/${data.slug}/${data.topic_id}`;
+		const topicLink = `${ForumLink}/t/${data.topic_slug}/${data.topic_id}`;
 
 		// Send email to the proposer
 		if (data) {
-			const messagePart3 = tMail.rich('messagePart3', {
+			const messagePart10 = tMail.rich('messagePart10', {
 				link: chunks =>
-					`<a href='${topicLink}' target='_blank' class='underline hover:text-blue'>${project}</a>`,
+					`<a href='${ForumLinkDiscussion}' target='_blank' class='underline hover:text-blue'>${chunks}</a>`,
 			});
+
+			const images = fileUrls
+				.map(url => `<img src="${url}" alt="Image" />`)
+				.join('');
 
 			const sendMailData = sendMail({
 				from: 'Zazelenimo <postmaster@forum.zazelenimo.com>',
@@ -136,26 +140,57 @@ export async function createProjectAction(
 				html: `
 				<p>${tMail('messagePart1', { name: name })}</p>
 				<p>${tMail('messagePart2')}</p>
-				<p>${messagePart3}</p>
-				<p>${tMail('messagePart4')}</p>
-				<p>${tMail('messagePart5')}</p>
-				<p>${tMail('messagePart6')}<br />${tMail('messagePart7')}</p>
+				<p><strong>${tMail('messagePart3')}</strong></p>
+				<hr />
+				<p><strong>${tMail('messagePart4')}</strong> ${project}</p>
+				<p><strong>${tMail('messagePart5')}</strong> ${proposer}</p>
+				<p><strong>${tMail('messagePart6')}</strong></p>
+				<p>${location}</p>
+				<p><strong>${tMail('messagePart7')}</strong></p>
+				<p>${description}</p>
+				<p><strong>${tMail('messagePart8')}</strong></p>
+				<p>${images}</p>
+				<p><strong>${tMail('messagePart9')}</strong> <a href="${topicLink}" target="_blank">${topicLink}</a></p>
+				<p>${messagePart10}</p>
+				<p>${tMail('messagePart11')}<br />${tMail('messagePart12')}</p>
 				`,
 			});
 		}
 
 		// Send mail to the admin
 		if (process.env.MAILGUN_RECEIVER_EMAIL) {
+			const messagePart10 = tMail.rich('messagePart10', {
+				link: chunks =>
+					`<a href='${ForumLinkDiscussion}' target='_blank' class='underline hover:text-blue'>${chunks}</a>`,
+			});
+
+			const images = fileUrls
+				.map(url => `<img src="${url}" alt="Image" />`)
+				.join('');
+
 			const sendMailData = sendMail({
 				from: 'Zazelenimo <postmaster@forum.zazelenimo.com>',
 				to: process.env.MAILGUN_RECEIVER_EMAIL,
 				subject: 'Novi prijedlog je predan',
 				html: `
-					<p>Link na prijedlog: ${topicLink}</p>
-					<p>Ime i prezime predlagatelja: ${name}</p>
-					<p>Email adresa predlagatelja: ${email}</p>
-					<p>Broj mobitela predlagatelja: ${mobile}</p>
-					<p>Prijavitelj je prihvatio uvjete korištenja Zazelenimo i Pravila privatnosti: ${accept && accept.trim() === 'on' ? `Da` : 'Ne'}</p>
+					<p>${tMail('messagePart2')}</p>
+					<p><strong>${tMail('messagePart3')}</strong></p>
+					<hr />
+					<p><strong>${tMail('messagePart4')}</strong> ${project}</p>
+					<p><strong>${tMail('messagePart5')}</strong> ${proposer}</p>
+					<p><strong>${tMail('messagePart13')}</strong> ${name}</p>
+					<p><strong>${tMail('messagePart14')}</strong> ${email}</p>
+					<p><strong>${tMail('messagePart15')}</strong> ${mobile}</p>
+					<p><strong>${tMail('messagePart16')}</strong> ${accept && accept.trim() === 'on' ? tMail('messagePart17') : tMail('messagePart17')}</p>
+					<p><strong>${tMail('messagePart6')}</strong></p>
+					<p>${location}</p>
+					<p><strong>${tMail('messagePart7')}</strong></p>
+					<p>${description}</p>
+					<p><strong>${tMail('messagePart8')}</strong></p>
+					<p>${images}</p>
+					<p><strong>${tMail('messagePart9')}</strong> <a href="${topicLink}" target="_blank">${topicLink}</a></p>
+					<p>${messagePart10}</p>
+					<p>${tMail('messagePart11')}<br />${tMail('messagePart12')}</p>
 					`,
 			});
 		}
