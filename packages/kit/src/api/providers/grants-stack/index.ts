@@ -13,7 +13,8 @@ import { GSRound, GSApplication, GSProject } from './types';
 import { ipfsGateway, queryToFilter } from './utils';
 import { API, Application, Project, Round, Transformers } from '../../types';
 
-const INDEXER_URL = process.env.GRANTS_STACK_INDEXER_URL;
+const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_URL;
+
 const apiURL = `${INDEXER_URL}/graphql`;
 
 export const grantsStackAPI: Partial<API> = {
@@ -39,7 +40,7 @@ export const grantsStackAPI: Partial<API> = {
       url: apiURL,
       document: applicationsQuery,
       variables: queryToFilter(query),
-    }).then((res) => (res?.applications ?? []).map(transformers.application));
+    }).then((res) => (res?.applications ?? []).map(transformers.application))
   },
   applicationById: (id, opts) => {
     return request<{ application: GSApplication }>({
