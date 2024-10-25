@@ -213,11 +213,22 @@
   "proposalMail" : {
     "subject": "Vaš prijedlog je uspješno zaprimljen!",
     "messagePart1": "Poštovani/a {name},",
-    "messagePart2": "Zahvaljujemo što ste podnijeli prijedlog za Zazelenimo Split. Vaš prijedlog je uspješno zaprimljen i trenutno se nalazi u fazi provjere od strane našeg stručnog tima.",
-    "messagePart3": "Možete vidjeti svoj prijedlog i pratiti njegov napredak na sljedećoj poveznici: <link>Link na prijedlog</link>",
-    "messagePart4": "Imajte na umu da u ovoj fazi nećete moći komentirati prijedlog. Nakon što prijedlog bude provjeren i zadovolji sve uvjete, bit će objavljen javno i otvoren za javnu raspravu. Preporučujemo da se registrirate na naš Forum i zapratite temu kako biste dobivali obavijesti o daljnjim koracima.",
-    "messagePart5": "Ako imate bilo kakvih pitanja, slobodno nas kontaktirajte.",
-    "messagePart6": "Srdačan pozdrav,",
-    "messagePart7": "Zazelenimo Split tim"
+    "messagePart2": "Ovaj prijedlog je trenutno u fazi provjere od strane našeg stručnog tima. U ovoj fazi samo članovi tima mogu komentirati. Ako bude odobren, prijedlog će biti otvoren za javnu raspravu.",
+    "messagePart3": "Sadržaj vašeg prijedloga:",
+    "messagePart4": "Naziv:",
+    "messagePart5": "Predlaže:",
+    "messagePart6": "Opis lokacije:",
+    "messagePart7": "Opis prijedloga:",
+    "messagePart8": "Fotografije lokacije:",
+    "messagePart9": "Link na prijedlog:",
+    "messagePart10": "Registrirajte se i pratite ovu temu kako biste bili obaviješteni o daljnjim koracima. Pogledajte ovu uputu kako zapratiti temu. Pogledajte sve prijedloge koji su trenutno na javnoj raspravi ovdje: <link>Javna rasprava</link>.",
+    "messagePart11": "Srdačan pozdrav,",
+    "messagePart12": "Zazelenimo Split tim",
+    "messagePart13": "Ime i prezime predlagatelja:",
+    "messagePart14": "Email adresa predlagatelja:",
+    "messagePart15": "Broj mobitela predlagatelja:",
+    "messagePart16": "Prijavitelj je prihvatio uvjete korištenja Zazelenimo i Pravila privatnosti:",
+    "messagePart17": "Da",
+    "messagePart18": "Ne"
   }
 }
