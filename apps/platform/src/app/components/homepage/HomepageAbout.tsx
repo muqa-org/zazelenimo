@@ -16,7 +16,6 @@ export default function HomepageBanner() {
 				</h2>
 				<div className='mx-auto text-xl text-grayDark lg:w-4/6 lg:px-20'>
 					<p className='mb-6'>{t('firstParagraph')}</p>
-					<p>{t('secondParagraph')}</p>
 					<p>
 						{t.rich('secondParagraph', {
 							link: chunks => (
