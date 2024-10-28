@@ -1,6 +1,6 @@
 // link to external form for submitting projects
 export const CodaFormProjectLink =
-	'/1/projects/propose';
+	'projects/propose';
 
 // link to documentation
 export const DocumentationLink = 'https://docs.zazelenimo.com/';
