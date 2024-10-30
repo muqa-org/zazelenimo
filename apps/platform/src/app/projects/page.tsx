@@ -39,9 +39,7 @@ export default function DiscoverProjectsPage() {
 		},
 	}), [debouncedRoundId]);
 
-	const { data: apps, refetch, isError, error } = useApplications(query);
-
-	const extendedApplications = useMemo(() => extendApplicationData(apps ?? []), [apps]);
+	const { data: apps, refetch, isError, error } = useApplications(query, extendApplicationData);
 
 	if (isError) {
 		console.error(error);
@@ -72,8 +70,12 @@ export default function DiscoverProjectsPage() {
 						tabChangeHandler={handleTabChange}
 						roundIdChangeHandler={handleRoundIdChange}
 					/>
-					{activeTab === 'board' && <ProjectList applications={extendedApplications} />}
-					{activeTab === 'map' && <ProjectListMap applications={extendedApplications} />}
+					{apps && (
+						<>
+							{activeTab === 'board' && <ProjectList applications={apps} />}
+							{activeTab === 'map' && <ProjectListMap applications={apps} />}
+						</>
+					)}
 				</LoadScript>
 			</Container>
 		</section>

@@ -3,7 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useWalletClient } from 'wagmi';
 
 import { useAPI } from '..';
-import { API, ApplicationInput } from '../api/types';
+import { API, Application, ApplicationInput } from '../api/types';
 
 const defaultQuery = {
   where: {},
@@ -11,13 +11,14 @@ const defaultQuery = {
   take: 12,
   orderBy: { createdAt: 'asc' } as const,
 };
-export function useApplications(
+export function useApplications<T>(
   query: Parameters<API['applications']>[number] = defaultQuery,
+  transformer: (applications: Application[]) => T[] = (it) => it as T[],
 ) {
   const api = useAPI();
   return useQuery({
     queryKey: ['applications', query],
-    queryFn: async () => api.applications(query),
+    queryFn: async () => api.applications(query).then(transformer),
   });
 }
 
