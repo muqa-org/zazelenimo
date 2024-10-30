@@ -71,12 +71,15 @@ export default function CartProjectCard({
 					<span>{donationAmount} €</span>
 				) : (
 					<>
-						<input
-							type='text'
-							value={`${donationAmount} €`}
-							onChange={handleInputChange}
-							className='w-20 rounded-md border border-borderGray px-2 py-2 text-left text-sm text-black focus:outline-none'
-						/>
+						<div className="relative">
+							<span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-gray-500">€</span>
+							<input
+								type='text'
+								value={donationAmount}
+								onChange={handleInputChange}
+								className='w-20 rounded-md border border-borderGray px-2 py-2 pl-6 text-left text-sm text-black focus:outline-none'
+							/>
+						</div>
 						<button
 							className='lg:inline-block'
 							onClick={() => removeItem(item.project.id)}>
