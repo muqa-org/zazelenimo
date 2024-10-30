@@ -30,7 +30,10 @@ export default function AddToCart({ application, amount, className, variant }: A
 	}
 
 	return (
-		<button className={`${className} ${notoSans.className}`} onClick={addToCart}>
+		<button
+			className={`${className} ${notoSans.className} active:scale-75 transition-transform`}
+			onClick={addToCart}
+		>
 			{variant === 'icon' ? (
 				<Image
 					src={icons.cartIconGreen}
@@ -40,7 +43,7 @@ export default function AddToCart({ application, amount, className, variant }: A
 					className='mx-2 my-1'
 				/>
 			) : (
-				<span className='flex flex-row items-center justify-between rounded-md bg-green px-5 py-3 text-base text-white hover:opacity-85'>
+				<span className='flex flex-row items-center justify-between rounded-md bg-green px-5 py-3 text-base text-white hover:opacity-85 active:bg-green/90'>
 					<span>
 						<Image
 							src={icons.cartIconWhite}
