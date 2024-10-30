@@ -9,6 +9,7 @@ import ProjectList from '@/app/components/projects/ProjectList';
 import { comethConfig, FundedApplication, useApplications, Application, ApplicationStatus, useDebounce } from '@allo/kit';
 import ProjectListMap from '@/app/components/projects/ProjectListMap';
 import { neighborhoods } from '../config';
+import { useRoundId } from '../contexts/roundIdContext';
 
 // If you need some special libraries, you can add them here
 const libraries: Libraries = [];
@@ -25,10 +26,9 @@ function extendApplicationData(applications: Application[]): FundedApplication[]
 }
 
 export default function DiscoverProjectsPage() {
-	const defaultRoundId = process.env.NEXT_PUBLIC_DEFAULT_ROUND_ID ?? '';
-
 	const [activeTab, setActiveTab] = useState('board');
-	const [roundId, setRoundId] = useState(defaultRoundId);
+
+	const { roundId } = useRoundId();
 	const debouncedRoundId = useDebounce(roundId, 800);
 
 	const query = useMemo(() => ({
@@ -54,22 +54,14 @@ export default function DiscoverProjectsPage() {
 		setActiveTab(tab);
 	};
 
-	const handleRoundIdChange = (roundId: string) => {
-		setRoundId(roundId);
-	};
-
 	return (
 		<section className='py-4'>
 			<Container className='mx-auto mb-6 flex flex-col justify-between gap-10 px-5 py-5'>
 				<LoadScript
 					googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ''}
-					libraries={libraries}
-				>
-					<ProjectListHeader
-						roundId={roundId}
-						tabChangeHandler={handleTabChange}
-						roundIdChangeHandler={handleRoundIdChange}
-					/>
+					libraries={libraries}>
+
+					<ProjectListHeader tabChangeHandler={handleTabChange} />
 					{apps && (
 						<>
 							{activeTab === 'board' && <ProjectList applications={apps} />}
