@@ -31,13 +31,12 @@ export default function ProjectListTable({ applications }: ProjectListProps) {
 						/>
 					))}
 				</div>
-				<div>
-					<Pagination
+					{/* <Pagination
 						currentPage={2}
 						totalPages={10}
 						baseLink='/projects'
 						maxVisiblePages={5}
-					/>
+					/> */}
 				</div>
 			</div>
 			<div className='order-1 mb-10 w-full pl-0 lg:order-2 lg:w-1/6 lg:pl-2 xl:pl-16'>
