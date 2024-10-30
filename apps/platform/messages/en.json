@@ -111,7 +111,8 @@
     "board": "Board",
     "neighborhood": "By neighborhood",
     "filterNeighborhood": "Filter by Neigbourghood",
-    "projectsMap": "Projects on the map"
+    "projectsMap": "Projects on the map",
+    "noApplicationsMessage": "No projects match your criteria"
   },
   "projectCard" : {
     "funded": "funded"
