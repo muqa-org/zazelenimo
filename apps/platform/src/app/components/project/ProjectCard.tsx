@@ -39,7 +39,7 @@ export default function ProjectCard({
 						href='/3/projects/3/'
 						className='text-xl font-medium leading-normal text-primaryBlack hover:text-green'
 					>
-						Klupe od Đardina do Jokera
+						{application.name}
 					</Link>
 					<AddToCart variant='icon' application={application} />
 				</h3>
