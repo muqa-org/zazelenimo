@@ -11,7 +11,7 @@ const defaultQuery = {
   take: 12,
   orderBy: { createdAt: 'asc' } as const,
 };
-export function useApplications<T>(
+export function useApplications<T extends Application>(
   query: Parameters<API['applications']>[number] = defaultQuery,
   transformer: (applications: Application[]) => T[] = (it) => it as T[],
 ) {

@@ -1,7 +1,7 @@
 'use client';
 import { TransactionData } from '@allo-team/allo-v2-sdk';
-import { ComethProvider, ComethWallet } from '@cometh/connect-sdk';
 import { TToken } from '@b0rza/gitcoin-chain-data';
+import { ComethProvider, ComethWallet } from '@cometh/connect-sdk';
 import { parseUnits } from 'viem';
 
 import { Donation } from './qf.types';
