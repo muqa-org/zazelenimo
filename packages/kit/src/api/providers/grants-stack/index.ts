@@ -13,7 +13,7 @@ import { GSRound, GSApplication, GSProject } from './types';
 import { ipfsGateway, queryToFilter } from './utils';
 import { API, Application, Project, Round, Transformers } from '../../types';
 
-const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_URL;
+const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_URL ?? 'https://grants-stack-indexer-v2.gitcoin.co/graphql';
 
 const apiURL = `${INDEXER_URL}/graphql`;
 
