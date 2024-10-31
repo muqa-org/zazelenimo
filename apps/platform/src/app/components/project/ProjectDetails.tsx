@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import Markdown from 'react-markdown'
 
 import ProjectSidebar from '@/app/components/project/ProjectSidebar';
 import ProjectMap from '@/app/components/project/ProjectMap';
@@ -12,7 +11,6 @@ import { Application, comethConfig, FundedApplication, useApplicationById } from
 import { useParams } from 'next/navigation';
 import { neighborhoods } from '@/app/config';
 import { useRoundId } from '@/app/contexts/roundIdContext';
-import { createElement } from 'react';
 
 interface ProjectCardProps {
 	className?: string;
@@ -38,14 +36,14 @@ const useDummyApplication = (): FundedApplication => {
 		id: crypto.randomUUID(),
 		name: 'Klupe od Đardina do Jokera',
 		description: `
-			A new voting mechanism is used, called Quadratic Funding. The project
-			with most donations will get the most funding from the City. It allows
-			anyone to vote by donating money to their favourite projects. With
-			every donation, funding is given to project from the matching pool.
-			--
-			It allows anyone to vote by donating money to their favourite
-			projects. With every donation, funding is given to project from the
-			matching pool.
+A new voting mechanism is used, called Quadratic Funding. The project
+with most donations will get the most funding from the City. It allows
+anyone to vote by donating money to their favourite projects. With
+every donation, funding is given to project from the matching pool.
+--
+It allows anyone to vote by donating money to their favourite
+projects. With every donation, funding is given to project from the
+matching pool.
 		`,
 		recipient: `0x${Math.random().toString(16).slice(2, 40)}`,
 		chainId: 1,
@@ -61,7 +59,7 @@ const useDummyApplication = (): FundedApplication => {
 }
 
 function useResolvedApplication(): FundedApplication | undefined {
-	return USE_DUMMY_DATA
+	return !USE_DUMMY_DATA
 		? useDummyApplication()
 		: useActualApplication();
 }
@@ -121,7 +119,7 @@ export default function ProjectDetails({ className }: ProjectCardProps) {
 				<ProjectMap />
 			</div>
 			<div className='content mt-6 w-full text-base text-grayDark lg:w-4/6'>
-				{createElement(Markdown, { children: application.description })}
+				{application.description}
 			</div>
 			{application.websiteUrl && (
 				<div className='mb-6 mt-14 w-full lg:w-4/6'>
