@@ -208,7 +208,8 @@
     "allowTitle": "I allow Zazelenimo to contact me and inform me about my proposal",
     "allowError": "Confirm that you accept that Zazelenimo contacts and informs you about your proposal",
     "accept": "I accept the <link1>Terms of Use</link1> and <link2>Privacy Policy</link2>",
-    "acceptError": "Confirm that you accept the terms of use and privacy policy of Zazelenimo"
+    "acceptError": "Confirm that you accept the terms of use and privacy policy of Zazelenimo",
+    "redirecting": "Redirecting in {seconds} seconds..."
   },
   "proposalMail" : {
     "subject": "Your proposal has been successfully received!",

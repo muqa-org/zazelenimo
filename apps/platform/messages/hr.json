@@ -208,7 +208,8 @@
     "allowTitle": "Dopuštam da me Zazelenimo kontaktira i obavještava vezano za moj prijedlog",
     "allowError": "Potvrdite da prihvaćate da vas Zazelenimo kontaktira i obavještava vezano za vaš prijedlog.",
     "accept": "Prihvaćam <link1>Uvjete korištenja</link1> i <link2>Pravila privatnosti</link2>",
-    "acceptError": "Potvrdite da prihvaćate uvjete korištenja i pravila privatnosti Zazelenimo"
+    "acceptError": "Potvrdite da prihvaćate uvjete korištenja i pravila privatnosti Zazelenimo",
+    "redirecting": "Preusmjeravam za {seconds} sekundi..."
   },
   "proposalMail" : {
     "subject": "Vaš prijedlog je uspješno zaprimljen!",
