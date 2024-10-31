@@ -118,7 +118,7 @@
     "funded": "financiran"
   },
   "project" : {
-    "funded": "donirano od ciljanih €{amount} ({percentage}%)",
+    "funded": "donirano od ciljanih € {amount}",
     "backers": "donatora",
     "daysGo": "dana preostalo",
     "donationAmount": "Iznos donacije",

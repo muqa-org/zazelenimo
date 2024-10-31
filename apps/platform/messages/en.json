@@ -118,7 +118,7 @@
     "funded": "funded"
   },
   "project" : {
-    "funded": "funded of €{amount} goal ({percentage}%)",
+    "funded": "funded of € {amount} goal",
     "backers": "backers",
     "daysGo": "days to go",
     "donationAmount": "Donation amount",

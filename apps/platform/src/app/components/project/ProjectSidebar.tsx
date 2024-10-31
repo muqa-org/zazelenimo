@@ -44,7 +44,7 @@ export default function ProjectSidebar({ application }: ProjectSidebarProps) {
 			</div>
 			<h2 className='mt-3 text-[32px] text-[#09CE78]'>€ {application.fundedAmount}</h2>
 			<h4 className='leading-normal text-gray'>
-				{t('funded', { amount: application.targetAmount, percentage: application.fundedPercentage })}
+				{t('funded', { amount: application.targetAmount })}
 			</h4>
 			<h3 className='mt-8 text-[32px] leading-normal text-[#3F3F3F]'>67</h3>
 			<h4 className='leading-normal text-gray'>{t('backers')}</h4>
