@@ -36,7 +36,7 @@ export default function ProjectCard({
 			<div className='px-0 pb-1 pt-2'>
 				<h3 className='flex items-center justify-between gap-1'>
 					<Link
-						href='/3/projects/3/'
+						href={`projects/${application.id}`}
 						className='text-xl font-medium leading-normal text-primaryBlack hover:text-green'
 					>
 						{application.name}

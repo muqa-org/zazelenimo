@@ -23,14 +23,16 @@ export function useApplications<T extends Application>(
 }
 
 type ApplicationByID = Parameters<API['applicationById']>;
-export function useApplicationById(
+
+export function useApplicationById<T extends Application>(
   id: ApplicationByID[0],
   opts?: ApplicationByID[1],
+  transformer: (application: Application) => T = (it) => it as T,
 ) {
   const api = useAPI();
   return useQuery({
     queryKey: ['application', { id, opts }],
-    queryFn: async () => api.applicationById(id, opts),
+    queryFn: async () => api.applicationById(id, opts).then(application => application ? transformer(application) : undefined),
     enabled: Boolean(id),
   });
 }

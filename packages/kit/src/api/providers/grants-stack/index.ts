@@ -134,6 +134,7 @@ const transformers: Transformers<GSRound, GSApplication, GSProject> = {
         count: uniqueDonorsCount,
         amount: totalAmountDonatedInUsd,
       },
+      websiteUrl: project?.metadata.website,
     };
   },
 

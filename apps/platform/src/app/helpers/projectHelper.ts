@@ -37,7 +37,7 @@ const getBaseProgressColor = (progress: number): `#${string}` => {
  * - Returns `'bg-green'` if progress is 0% or any other value outside the 1-100 range.
  */
 export const getProjectProgressBGColor = (
-	progress: number,
+	progress = 0,
 ): string => {
 	let progressColor = 'bg-green';
 	if (progress > 0 && progress <= 33) {

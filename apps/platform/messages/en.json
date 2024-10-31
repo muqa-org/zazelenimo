@@ -123,7 +123,8 @@
     "daysGo": "days to go",
     "donationAmount": "Donation amount",
     "estimatedMatch": "Estimated match from the city",
-    "supportProject": "Support the project by sharing"
+    "supportProject": "Support the project by sharing",
+    "projectNotFound": "Project not found"
   },
   "cart" : {
     "addCart": "Add to Cart",

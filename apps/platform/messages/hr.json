@@ -123,7 +123,8 @@
     "daysGo": "dana preostalo",
     "donationAmount": "Iznos donacije",
     "estimatedMatch": "Procijenjeni doprinos iz proračuna",
-    "supportProject": "Podržite projekt dijeljenjem"
+    "supportProject": "Podržite projekt dijeljenjem",
+    "applicationNotFound": "Projekt nije pronađen"
   },
   "cart" : {
     "addCart": "Dodaj u Košaricu",
