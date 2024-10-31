@@ -10,6 +10,7 @@ import { createProjectAction } from './actions';
 import Container from '@/app/components/Container';
 import ProjectProposalFormButton from '@/app/components/project/ProjectProposalFormButton';
 import icons from '@/app/components/common/Icons';
+import Link from 'next/link';
 
 type FileWithPreview = {
 	file: File;
@@ -33,6 +34,7 @@ export default function CreateProjectPage() {
 	const t = useTranslations('proposalForm');
 
 	const [isChecked, setIsChecked] = useState(false);
+	const [seconds, setSeconds] = useState(15);
 
 	const handleCheckboxChange = () => {
 		setIsChecked(prevState => !prevState);
@@ -90,13 +92,20 @@ export default function CreateProjectPage() {
 
 	useEffect(() => {
 		if (state.status && getErrorMessage(state.message, 'success')) {
-			const timer = setTimeout(() => {
+			const redirectTimer = setInterval(() => {
+				setSeconds(prev => (prev > 0 ? prev - 1 : 0));
+			}, 1000);
+
+			const redirect = setTimeout(() => {
 				if (state.message[0]) {
 					window.location.href = state.message[0].notice;
 				}
 			}, 15000);
 
-			return () => clearTimeout(timer);
+			return () => {
+				clearInterval(redirectTimer);
+				clearTimeout(redirect);
+			};
 		}
 	}, [state.status, state.message]);
 
@@ -106,6 +115,14 @@ export default function CreateProjectPage() {
 			<div className='mx-auto mb-10 mt-10 flex h-[calc(100vh-395px)] w-11/12 flex-col items-center justify-center md:w-6/12'>
 				<h1 className='mb-6 text-center text-2xl font-bold'>{t('success')}</h1>
 				<p className='text-center text-lg'>{t('successDesc')}</p>
+				{state.message[0] && (
+					<Link
+						href={state.message[0].notice}
+						className='mt-6 inline-flex items-center justify-center rounded-md bg-green px-4 py-2 text-white hover:opacity-70'
+					>
+						{t('redirecting', { seconds })}
+					</Link>
+				)}
 			</div>
 		);
 	}
