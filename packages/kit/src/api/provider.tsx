@@ -23,10 +23,10 @@ import { quadraticFunding } from '../strategies/quadratic-funding';
 import { Toaster } from '../ui/toaster';
 
 if (typeof window !== 'undefined') {
-  // posthog.init('phc_MkecAopGBhofBbwLqvcvV0iyHBZWSlemr7krp6lxLjl', {
-  //   api_host: 'https://us.i.posthog.com',
-  //   person_profiles: 'always',
-  // });
+  posthog.init('phc_h8kZXpuDPeUSkSNgclmQFhKyMrgWqjwd8BDvO0CWWtE', {
+    api_host: 'https://us.i.posthog.com',
+    person_profiles: 'always',
+  });
 }
 
 const Context = createContext(
