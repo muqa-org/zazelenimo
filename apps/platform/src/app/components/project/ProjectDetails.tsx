@@ -20,25 +20,16 @@ interface ProjectCardProps {
 
 const USE_DUMMY_DATA = process.env.NEXT_PUBLIC_USE_DUMMY_DATA === 'true';
 
-const description = `
-A new voting mechanism is used, called Quadratic Funding. The project
-with most donations will get the most funding from the City. It allows
-anyone to vote by donating money to their favourite projects. With
-every donation, funding is given to project from the matching pool.
---
-It allows anyone to vote by donating money to their favourite
-projects. With every donation, funding is given to project from the
-matching pool.
-`;
-
 function extendApplicationData(application: Application): FundedApplication {
-	const fundedPercentage = Math.floor(Math.random() * 100);
+	const fundedPercentage = Math.round(Math.random() * 100);
+	const targetAmount = Math.round(fundedPercentage / 100 * application.contributors?.amount!);
+	const fundedAmount = Math.round(fundedPercentage / 100 * targetAmount);
 	return {
 		...application,
 		neighborhood: neighborhoods[0]!,
-		fundedAmount: application.contributors?.amount!,
+		fundedAmount,
 		fundedPercentage,
-		targetAmount: (fundedPercentage / 100) * application.contributors?.amount!,
+		targetAmount,
 	};
 }
 
@@ -46,21 +37,36 @@ const useDummyApplication = (): FundedApplication => {
 	const application: Application = {
 		id: crypto.randomUUID(),
 		name: 'Klupe od Đardina do Jokera',
-		description: 'Klupe od Đardina do Jokera',
+		description: `
+			A new voting mechanism is used, called Quadratic Funding. The project
+			with most donations will get the most funding from the City. It allows
+			anyone to vote by donating money to their favourite projects. With
+			every donation, funding is given to project from the matching pool.
+			--
+			It allows anyone to vote by donating money to their favourite
+			projects. With every donation, funding is given to project from the
+			matching pool.
+		`,
 		recipient: `0x${Math.random().toString(16).slice(2, 40)}`,
 		chainId: 1,
 		projectId: crypto.randomUUID(),
 		status: 'APPROVED',
 		bannerUrl: 'https://picsum.photos/908/514',
+		contributors: {
+			amount: 12345,
+			count: 12,
+		}
 	}
 	return extendApplicationData(application);
 }
 
-function resolveApplication(): FundedApplication | undefined {
-	if (USE_DUMMY_DATA) {
-		return useDummyApplication();
-	}
+function useResolvedApplication(): FundedApplication | undefined {
+	return USE_DUMMY_DATA
+		? useDummyApplication()
+		: useActualApplication();
+}
 
+function useActualApplication(): FundedApplication | undefined {
 	const { roundId } = useRoundId();
 	const { projectId: applicationId } = useParams();
 	const { data: application } = useApplicationById(
@@ -68,14 +74,13 @@ function resolveApplication(): FundedApplication | undefined {
 		{ roundId, chainId: comethConfig.chain.id },
 		extendApplicationData,
 	);
-
 	return application;
 }
 
 export default function ProjectDetails({ className }: ProjectCardProps) {
 	const t = useTranslations('project');
 
-	const application = resolveApplication();
+	const application = useResolvedApplication();
 
 	if (!application) {
 		return (
@@ -116,7 +121,7 @@ export default function ProjectDetails({ className }: ProjectCardProps) {
 				<ProjectMap />
 			</div>
 			<div className='content mt-6 w-full text-base text-grayDark lg:w-4/6'>
-				{createElement(Markdown, { children: description })}
+				{createElement(Markdown, { children: application.description })}
 			</div>
 			{application.websiteUrl && (
 				<div className='mb-6 mt-14 w-full lg:w-4/6'>
