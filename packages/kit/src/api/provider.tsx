@@ -23,7 +23,7 @@ import { quadraticFunding } from '../strategies/quadratic-funding';
 import { Toaster } from '../ui/toaster';
 
 if (typeof window !== 'undefined') {
-  posthog.init('phc_h8kZXpuDPeUSkSNgclmQFhKyMrgWqjwd8BDvO0CWWtE', {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_API_KEY || '', {
     api_host: 'https://us.i.posthog.com',
     person_profiles: 'always',
   });
