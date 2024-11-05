@@ -1,8 +1,8 @@
 import { ConnectAdaptor } from '@cometh/connect-sdk';
 
-import { comethConfig } from '../config';
+import { comethConfig, networkConfig } from '../config';
 
 export const connectAdaptor = new ConnectAdaptor({
-  chainId: comethConfig.comethChain,
+  chainId: networkConfig.network,
   apiKey: comethConfig.apiKey,
 });

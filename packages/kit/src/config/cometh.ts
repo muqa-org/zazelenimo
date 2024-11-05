@@ -1,74 +1,68 @@
-'use client';
-import { SupportedNetworks } from '@cometh/connect-sdk';
 import { arbitrumSepolia, avalancheFuji, Chain, optimismSepolia, polygon } from 'viem/chains';
 import yn from 'yn';
 
-const { ARBITRUM_SEPOLIA, OPTIMISM_SEPOLIA, FUJI, POLYGON } = SupportedNetworks;
+import { ChainTypes} from './chainTypes';
 
 type BaseConfig = {
-  [_key in chainType]: {
-    apiKey: string | undefined,
-    tenderlyRpc: string | undefined,
-    chain: Chain
-    comethChain: SupportedNetworks,
-  }
+  chainType: ChainTypes,
+  chain: Chain,
+  apiKey: string | undefined,
+  tenderlyRpc: string | undefined,
 };
 
 type ComethConfig = {
-  apiKey: string,
+  chainType: ChainTypes,
   chain: Chain,
-  comethChain: SupportedNetworks,
+  apiKey: string,
   transportUrl: string | undefined,
 };
-
-type chainType = 'POLYGON' | 'ARBITRUM_SEPOLIA' | 'AVALANCHE_FUJI' | 'OPTIMISM_SEPOLIA';
 
 const assertEnv = (val: string | undefined) => {
   if (!val) throw new Error(`ENV not set: ${val}`);
   return val;
 }
 
-const configs: BaseConfig = {
-  'POLYGON': {
+const configs: BaseConfig[] = [
+  {
+    chainType: 'POLYGON',
+    chain: polygon,
     apiKey: process.env.NEXT_PUBLIC_POLYGON_COMETH_API_KEY,
     tenderlyRpc: process.env.NEXT_PUBLIC_POLYGON_TENDERLY_RPC,
-    chain: polygon,
-    comethChain: POLYGON,
   },
-  'ARBITRUM_SEPOLIA': {
+  {
+    chainType: 'ARBITRUM_SEPOLIA',
+    chain: arbitrumSepolia,
     apiKey: process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_COMETH_API_KEY,
     tenderlyRpc: process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_TENDERLY_RPC,
-    chain: arbitrumSepolia,
-    comethChain: ARBITRUM_SEPOLIA,
   },
-  'AVALANCHE_FUJI': {
+  {
+    chainType: 'AVALANCHE_FUJI',
+    chain: avalancheFuji,
     apiKey: process.env.NEXT_PUBLIC_AVALANCHE_FUJI_COMETH_API_KEY,
     tenderlyRpc: process.env.NEXT_PUBLIC_AVALANCHE_FUJI_TENDERLY_RPC,
-    chain: avalancheFuji,
-    comethChain: FUJI,
   },
-  'OPTIMISM_SEPOLIA': {
+  {
+    chainType: 'OPTIMISM_SEPOLIA',
+    chain: optimismSepolia,
     apiKey: process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_COMETH_API_KEY,
     tenderlyRpc: process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_TENDERLY_RPC,
-    chain: optimismSepolia,
-    comethChain: OPTIMISM_SEPOLIA,
   }
-}
+];
 
 function getConfig(): ComethConfig {
-  const comethProjectChain = assertEnv(process.env.NEXT_PUBLIC_CHAIN) as chainType;
-  const chainConfig = configs[comethProjectChain];
+  const chainType = assertEnv(process.env.NEXT_PUBLIC_CHAIN) as ChainTypes;
+  const chainConfig = configs.find(config => config.chainType === chainType);
 
   if (!chainConfig) {
-    throw new Error(`No Cometh configuration found for chain: ${comethProjectChain}`);
+    throw new Error(`No Cometh configuration found for chain: ${chainType}`);
   }
 
-  const { apiKey, chain, comethChain, tenderlyRpc } = chainConfig;
+  const { apiKey, chain, tenderlyRpc } = chainConfig;
 
   return {
-    apiKey: assertEnv(apiKey),
+    chainType,
     chain,
-    comethChain,
+    apiKey: assertEnv(apiKey),
     transportUrl: yn(process.env.NEXT_PUBLIC_USE_TENDERLY)
       ? assertEnv(tenderlyRpc)
       : undefined,
