@@ -11,6 +11,7 @@ import Container from '@/app/components/Container';
 import ProjectProposalFormButton from '@/app/components/project/ProjectProposalFormButton';
 import icons from '@/app/components/common/Icons';
 import Link from 'next/link';
+import { set } from 'zod';
 
 type FileWithPreview = {
 	file: File;
@@ -35,15 +36,64 @@ export default function CreateProjectPage() {
 
 	const [isChecked, setIsChecked] = useState(false);
 	const [seconds, setSeconds] = useState(15);
+	const [isLoaded, setIsLoaded] = useState(false);
+	const [proposalFormData, setProposalFormData] = useState({
+		project: '',
+		location: '',
+		description: '',
+		name: '',
+		proposer: '',
+		email: '',
+		mobile: '',
+		isChecked: false,
+	});
 
 	const handleCheckboxChange = () => {
 		setIsChecked(prevState => !prevState);
+		setProposalFormData(prevData => ({
+			...prevData,
+			isChecked: !prevData.isChecked,
+		}));
 	};
 
 	const [state, formAction] = useFormState(createProjectAction, {
 		message: [],
 		status: false,
 	});
+
+	// Load data from localStorage when the component mounts
+	useEffect(() => {
+		try {
+			const storedData = JSON.parse(
+				localStorage.getItem('proposalFormData') || '{}',
+			);
+			setProposalFormData({
+				project: storedData.project || '',
+				location: storedData.location || '',
+				description: storedData.description || '',
+				name: storedData.name || '',
+				proposer: storedData.proposer || '',
+				email: storedData.email || '',
+				mobile: storedData.mobile || '',
+				isChecked: storedData.isChecked || false,
+			});
+
+			setIsChecked(storedData.isChecked || false);
+		} catch (error) {
+			console.error('Failed to parse localStorage data:', error);
+		}
+		setIsLoaded(true);
+	}, []);
+
+	// Update localStorage whenever proposalFormData changes, but only after initial load
+	useEffect(() => {
+		if (isLoaded) {
+			localStorage.setItem(
+				'proposalFormData',
+				JSON.stringify(proposalFormData),
+			);
+		}
+	}, [proposalFormData, isLoaded]);
 
 	const [selectedFiles, setSelectedFiles] = useState<FileWithPreview[]>([]);
 	const inputRef = useRef<HTMLInputElement | null>(null);
@@ -90,6 +140,22 @@ export default function CreateProjectPage() {
 		});
 	};
 
+	// Generic input handler
+	const handleInputChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+	) => {
+		const { name, value } = e.target;
+
+		setProposalFormData(prevData => ({
+			...prevData,
+			[name]:
+				e.target instanceof HTMLInputElement && e.target.type === 'checkbox'
+					? e.target.checked
+					: value,
+		}));
+	};
+
+	// If form data is submitted successfully, redirect to forum page, after 15 seconds
 	useEffect(() => {
 		if (state.status && getErrorMessage(state.message, 'success')) {
 			const redirectTimer = setInterval(() => {
@@ -176,6 +242,8 @@ export default function CreateProjectPage() {
 										type='text'
 										id='project'
 										name='project'
+										value={proposalFormData.project}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base ${
 											getErrorMessage(state.message, 'project') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -209,6 +277,8 @@ export default function CreateProjectPage() {
 										type='text'
 										id='proposer'
 										name='proposer'
+										value={proposalFormData.proposer}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base ${
 											getErrorMessage(state.message, 'proposer') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -242,6 +312,8 @@ export default function CreateProjectPage() {
 									<textarea
 										id='location'
 										name='location'
+										value={proposalFormData.location}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block h-60 w-full rounded-md text-base ${
 											getErrorMessage(state.message, 'location') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -276,6 +348,8 @@ export default function CreateProjectPage() {
 									<textarea
 										id='description'
 										name='description'
+										value={proposalFormData.description}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block h-60 w-full rounded-md text-base ${
 											getErrorMessage(state.message, 'description') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -376,6 +450,8 @@ export default function CreateProjectPage() {
 										type='text'
 										id='name'
 										name='name'
+										value={proposalFormData.name}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
 											getErrorMessage(state.message, 'name') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -407,6 +483,8 @@ export default function CreateProjectPage() {
 										type='email'
 										id='email'
 										name='email'
+										value={proposalFormData.email}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
 											getErrorMessage(state.message, 'email') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -438,6 +516,8 @@ export default function CreateProjectPage() {
 										type='text'
 										id='mobile'
 										name='mobile'
+										value={proposalFormData.mobile}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
 											getErrorMessage(state.message, 'mobile') !== null
 												? 'border-borderRed bg-softRedBG'
