@@ -1,13 +1,16 @@
 'use client';
 
-import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
 import { Button, ButtonProps } from './Button';
-import { comethConnector } from '@allo/kit';
-import { PropsWithChildren, useState } from 'react';
+import { comethConnector, useCometh } from '@allo/kit';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { signIn, signOut } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { WalletNonceResponse } from '../api/auth/web3/nonce/route';
+import { ProfileEditModal, ProfileEditModalProps } from './auth/profile';
+import { ProfileField, UserProfile } from '@/lib/next-auth/types';
+import { getMissingFlowFields } from '@/lib/next-auth/validators';
 
 const TRUNCATE_LENGTH = 20;
 const TRUNCATE_OFFSET = 3;
@@ -66,12 +69,11 @@ function AddressTooltip({ show, label, onMouseEnter, onMouseLeave }: {
 }
 
 function LoadingIcon() {
-  const { isConnecting, isReconnecting } = useAccount();
-  const isLoading = isConnecting || isReconnecting;
+  const { isConnecting } = useAccount();
 
   return (
     <>
-    {isLoading && <div className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-primary rounded-full"></div>}
+    {isConnecting && <div className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-primary rounded-full"></div>}
     </>
   );
 }
@@ -92,23 +94,34 @@ async function getNonce(address: `0x${string}`) {
   return nonce;
 }
 
-export default function MuqaConnectButton({ children, ...props }: PropsWithChildren<ButtonProps>): JSX.Element {
+type MuqaConnectButtonProps = ButtonProps & {
+  flow: 'proposer' | 'donator' | undefined,
+  onSave?: (data: Partial<UserProfile>) => Promise<boolean>,
+}
+
+export default function MuqaConnectButton({ children, flow, ...buttonProps }: PropsWithChildren<MuqaConnectButtonProps>): JSX.Element {
   const account = useAccount();
-  const { connectAsync } = useConnect();
+  const { wallet } = useCometh();
+  const { connect } = useConnect();
   const { disconnect } = useDisconnect();
-  const { signMessageAsync } = useSignMessage();
   const [showTooltip, setShowTooltip] = useState(false);
   const label = getLabel();
+  const [profileProps, setProfileProps] = useState<ProfileEditModalProps | null>(null);
+	const { data: session } = useSession();
+
 
   const onMouseEnter = () => setShowTooltip(!!account?.address && true);
   const onMouseLeave = () => setShowTooltip(false);
 
   async function signInWithWeb3() {
-    const { accounts } = await connectAsync({ connector: comethConnector });
-    // const [address] = accounts;
-    // const nonce = await getNonce(address);
-    // const signedNonce = await signMessageAsync({ message: nonce });
-    // await signIn('credentials', { address, signedNonce, redirect: false });
+    const address = account.address;
+    // const address = '0xFA3D3936D7839c17b3cE899D94f4990750663d0E';
+    const nonce = await getNonce(address!);
+    const signedNonce = await wallet!.signMessage(nonce).catch(err => {
+      console.error('Error signing nonce', err);
+      return disconnect();
+    });
+    return signIn('credentials', { address, signedNonce, redirect: false });
   }
 
   async function signOutWithWeb3() {
@@ -116,10 +129,41 @@ export default function MuqaConnectButton({ children, ...props }: PropsWithChild
     await signOut();
   }
 
-  function onClick() {
-    return account.isConnected
-      ? signOutWithWeb3()
-      : signInWithWeb3();
+  async function onClick() {
+    if (account.isConnected) {
+      return signOutWithWeb3();
+    }
+
+    return connect({ connector: comethConnector });
+  }
+
+  useEffect(() => {
+    if (account.isConnected && wallet && session) {
+      signInWithWeb3();
+    }
+  }, [wallet]);
+
+  useEffect(() => {
+    if (!flow || !account.isConnected || !session) return;
+
+    const user = session.user as UserProfile;
+    const missingFields = getMissingFlowFields(user, flow);
+    if (missingFields.length > 0) {
+      showProfileModal(user, missingFields);
+    }
+  }, [account.isConnected, session]);
+
+  async function showProfileModal(user: UserProfile, missingFields: ProfileField[]) {
+    setProfileProps({
+      user,
+      missingFields,
+      onSave: async (data: Partial<UserProfile>) => {
+        console.log('UPDATING USER', data);
+        return true;
+      },
+      onClose: () => setProfileProps(null),
+      open: true,
+    });
   }
 
   return (
@@ -128,7 +172,7 @@ export default function MuqaConnectButton({ children, ...props }: PropsWithChild
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        {...props}
+        {...buttonProps}
       >
         <LoadingIcon />
         {children || label}
@@ -138,6 +182,7 @@ export default function MuqaConnectButton({ children, ...props }: PropsWithChild
         label={account.address}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave} />
+      {profileProps && <ProfileEditModal {...profileProps} />}
      </div>
   )
 }
