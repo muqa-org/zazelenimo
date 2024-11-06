@@ -1,5 +1,5 @@
 'use client';
-import { TContracts } from '@gitcoin/gitcoin-chain-data';
+import { TContracts } from '@b0rza/gitcoin-chain-data';
 import { useMutation } from '@tanstack/react-query';
 import { FunctionComponent, useMemo } from 'react';
 import { Address } from 'viem';
@@ -50,7 +50,7 @@ function getStrategyTypeFromName(strategyName: string, chainId: number) {
 // Helper function to find matching contract from name or address
 function reduceSupportedChains(
   chainId: number,
-  compare: (args: [key: string, address: Address]) => boolean,
+  compare: (args: [key: string, address: Address | number]) => boolean,
 ) {
   return supportedChains?.reduce((match, chain) => {
     const type = Object.entries(chain.contracts ?? {}).find(

@@ -10,7 +10,7 @@ export default function FooterLinks() {
 	const t = useTranslations('footer');
 
 	return (
-		<div className='flex items-center gap-10'>
+		<div className='flex flex-col md:flex-row items-center gap-2 md:gap-10'>
 			<Link
 				href={DocumentationLink}
 				className='flex items-center gap-2 font-medium leading-6 text-primaryBlack hover:text-blue'

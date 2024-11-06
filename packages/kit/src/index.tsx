@@ -38,7 +38,7 @@ export * from './rounds/strategy-badge';
 export * from './hooks/useApplications';
 export * from './hooks/useRounds';
 export * from './hooks/useProjects';
-
+export * from './hooks/useDebounce';
 export * from './checkout/add-to-checkout';
 export * from './strategies';
 export * from './strategies/direct-grants';

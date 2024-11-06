@@ -111,18 +111,20 @@
     "board": "Ploča",
     "neighborhood": "Po kvartovima",
     "filterNeighborhood": "Filter po kvartovima",
-    "projectsMap": "Projekti na karti"
+    "projectsMap": "Projekti na karti",
+    "noApplicationsMessage": "Nema projekata koji odgovaraju vašim kriterijima"
   },
   "projectCard" : {
     "funded": "financiran"
   },
   "project" : {
-    "funded": "donirano od ciljanih €{amount} ({percentage}%)",
+    "funded": "donirano od ciljanih € {amount}",
     "backers": "donatora",
     "daysGo": "dana preostalo",
     "donationAmount": "Iznos donacije",
     "estimatedMatch": "Procijenjeni doprinos iz proračuna",
-    "supportProject": "Podržite projekt dijeljenjem"
+    "supportProject": "Podržite projekt dijeljenjem",
+    "applicationNotFound": "Projekt nije pronađen"
   },
   "cart" : {
     "addCart": "Dodaj u Košaricu",

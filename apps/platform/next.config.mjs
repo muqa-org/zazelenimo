@@ -6,6 +6,11 @@ const isDeployed = process.env.CI === '1';
 
 const withNextIntl = createNextIntlPlugin();
 
+const ipfsImageConfig = process.env.NEXT_PUBLIC_IPFS_GATEWAY_URL ? [{
+  protocol: new URL(process.env.NEXT_PUBLIC_IPFS_GATEWAY_URL).protocol.slice(0, -1),
+  hostname: new URL(process.env.NEXT_PUBLIC_IPFS_GATEWAY_URL).hostname,
+}] : [];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { isServer }) => {
@@ -29,6 +34,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'picsum.photos',
       },
+      ...ipfsImageConfig,
     ],
   },
 };

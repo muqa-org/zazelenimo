@@ -13,7 +13,9 @@ import { GSRound, GSApplication, GSProject } from './types';
 import { ipfsGateway, queryToFilter } from './utils';
 import { API, Application, Project, Round, Transformers } from '../../types';
 
-const apiURL = 'https://grants-stack-indexer-v2.gitcoin.co/graphql';
+const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_URL ?? 'https://grants-stack-indexer-v2.gitcoin.co/graphql';
+
+const apiURL = `${INDEXER_URL}/graphql`;
 
 export const grantsStackAPI: Partial<API> = {
   rounds: async (query) => {
@@ -38,7 +40,7 @@ export const grantsStackAPI: Partial<API> = {
       url: apiURL,
       document: applicationsQuery,
       variables: queryToFilter(query),
-    }).then((res) => (res?.applications ?? []).map(transformers.application));
+    }).then((res) => (res?.applications ?? []).map(transformers.application))
   },
   applicationById: (id, opts) => {
     return request<{ application: GSApplication }>({
@@ -132,6 +134,7 @@ const transformers: Transformers<GSRound, GSApplication, GSProject> = {
         count: uniqueDonorsCount,
         amount: totalAmountDonatedInUsd,
       },
+      websiteUrl: project?.metadata.website,
     };
   },
 

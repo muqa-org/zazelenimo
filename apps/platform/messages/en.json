@@ -111,18 +111,20 @@
     "board": "Board",
     "neighborhood": "By neighborhood",
     "filterNeighborhood": "Filter by Neigbourghood",
-    "projectsMap": "Projects on the map"
+    "projectsMap": "Projects on the map",
+    "noApplicationsMessage": "No projects match your criteria"
   },
   "projectCard" : {
     "funded": "funded"
   },
   "project" : {
-    "funded": "funded of €{amount} goal ({percentage}%)",
+    "funded": "funded of € {amount} goal",
     "backers": "backers",
     "daysGo": "days to go",
     "donationAmount": "Donation amount",
     "estimatedMatch": "Estimated match from the city",
-    "supportProject": "Support the project by sharing"
+    "supportProject": "Support the project by sharing",
+    "projectNotFound": "Project not found"
   },
   "cart" : {
     "addCart": "Add to Cart",
