@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
@@ -11,12 +11,7 @@ import Container from '@/app/components/Container';
 import ProjectProposalFormButton from '@/app/components/project/ProjectProposalFormButton';
 import icons from '@/app/components/common/Icons';
 import Link from 'next/link';
-import { set } from 'zod';
-
-type FileWithPreview = {
-	file: File;
-	url: string;
-};
+import useFileHandler from '@/app/hooks/useFileHandler';
 
 type MessageType = {
 	key: string;
@@ -33,6 +28,14 @@ const getErrorMessage = (
 
 export default function CreateProjectPage() {
 	const t = useTranslations('proposalForm');
+
+	const {
+		selectedFiles,
+		handleFileChange,
+		openFilePicker,
+		removeFile,
+		inputRef,
+	} = useFileHandler();
 
 	const [isChecked, setIsChecked] = useState(false);
 	const [seconds, setSeconds] = useState(15);
@@ -95,51 +98,6 @@ export default function CreateProjectPage() {
 		}
 	}, [proposalFormData, isLoaded]);
 
-	const [selectedFiles, setSelectedFiles] = useState<FileWithPreview[]>([]);
-	const inputRef = useRef<HTMLInputElement | null>(null);
-
-	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const files: File[] = event.target.files
-			? Array.from(event.target.files)
-			: [];
-
-		// Map through files and create a preview URL for each file
-		const filePreviews: FileWithPreview[] = files.map(file => ({
-			file,
-			url: URL.createObjectURL(file),
-		}));
-
-		setSelectedFiles(prevFiles => [...prevFiles, ...filePreviews]);
-	};
-
-	const handleButtonClick = () => {
-		if (inputRef.current) {
-			inputRef.current.click();
-		}
-	};
-
-	const removeFile = (index: number) => {
-		const updatedFiles = selectedFiles.filter((_, i) => i !== index);
-		setSelectedFiles(updatedFiles);
-
-		// Create a new FileList based on updatedFiles
-		const dataTransfer = new DataTransfer();
-		updatedFiles.forEach(filePreview => {
-			dataTransfer.items.add(filePreview.file);
-		});
-
-		// Update the inputRef to reflect the new FileList
-		if (inputRef.current) {
-			inputRef.current.files = dataTransfer.files;
-		}
-	};
-
-	const handleSubmit = (formData: FormData) => {
-		selectedFiles.forEach(({ file }) => {
-			formData.append('photo', file);
-		});
-	};
-
 	// Generic input handler
 	const handleInputChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -167,6 +125,9 @@ export default function CreateProjectPage() {
 					window.location.href = state.message[0].notice;
 				}
 			}, 15000);
+
+			// Delete localStorage data
+			localStorage.removeItem('proposalFormData');
 
 			return () => {
 				clearInterval(redirectTimer);
@@ -424,7 +385,7 @@ export default function CreateProjectPage() {
 
 									<button
 										type='button'
-										onClick={handleButtonClick}
+										onClick={openFilePicker}
 										className='my-2 rounded-lg bg-green px-4 py-2 text-white hover:opacity-70'
 									>
 										{t('fotoButton')}
