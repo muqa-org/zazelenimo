@@ -33,6 +33,14 @@
     "reconnect": "Reconnect...",
     "disconnect": "Disconnect"
   },
+  "profile": {
+    "title": "Complete your profile",
+    "cancel": "Cancel",
+    "save": "Save",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email"
+  },
   "round": {
     "timeline": "Timeline",
     "timelinePeriod": "August - September 2024",

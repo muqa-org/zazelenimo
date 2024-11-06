@@ -33,6 +33,14 @@
     "reconnect": "Ponovno prijavljivanje...",
     "disconnect": "Odjavi"
   },
+  "profile": {
+    "title": "Dovrši svoj profil",
+    "cancel": "Odustani",
+    "save": "Spremi",
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "email": "Email"
+  },
   "round": {
     "timeline": "Raspored",
     "timelinePeriod": "Kolovoz - Rujan 2024",
