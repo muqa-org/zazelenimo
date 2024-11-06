@@ -18,8 +18,6 @@ export const supportedChains = [
   ...customChains,
 ]
 
-console.log(supportedChains);
-
 export const chains = Object.values(wagmiChains).filter((chain) =>
   supportedChains.map((c) => c.id).includes(chain.id),
 ) as unknown as [Chain, ...Chain[]];
