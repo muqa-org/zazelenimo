@@ -26,7 +26,19 @@ const getErrorMessage = (
 	return message ? message.notice : null;
 };
 
+const initialFormData = {
+	project: '',
+	location: '',
+	description: '',
+	name: '',
+	proposer: '',
+	email: '',
+	mobile: '',
+};
+
 export default function CreateProjectPage() {
+	const PROPOSAL_FORM_DATA_KEY = 'proposalFormData';
+
 	const t = useTranslations('proposalForm');
 
 	const {
@@ -40,23 +52,10 @@ export default function CreateProjectPage() {
 	const [isChecked, setIsChecked] = useState(false);
 	const [seconds, setSeconds] = useState(15);
 	const [isLoaded, setIsLoaded] = useState(false);
-	const [proposalFormData, setProposalFormData] = useState({
-		project: '',
-		location: '',
-		description: '',
-		name: '',
-		proposer: '',
-		email: '',
-		mobile: '',
-		isChecked: false,
-	});
+	const [proposalFormData, setProposalFormData] = useState(initialFormData);
 
 	const handleCheckboxChange = () => {
 		setIsChecked(prevState => !prevState);
-		setProposalFormData(prevData => ({
-			...prevData,
-			isChecked: !prevData.isChecked,
-		}));
 	};
 
 	const [state, formAction] = useFormState(createProjectAction, {
@@ -68,31 +67,23 @@ export default function CreateProjectPage() {
 	useEffect(() => {
 		try {
 			const storedData = JSON.parse(
-				localStorage.getItem('proposalFormData') || '{}',
+				localStorage.getItem(PROPOSAL_FORM_DATA_KEY) || '{}',
 			);
 			setProposalFormData({
-				project: storedData.project || '',
-				location: storedData.location || '',
-				description: storedData.description || '',
-				name: storedData.name || '',
-				proposer: storedData.proposer || '',
-				email: storedData.email || '',
-				mobile: storedData.mobile || '',
-				isChecked: storedData.isChecked || false,
+				...initialFormData,
+				...storedData,
 			});
-
-			setIsChecked(storedData.isChecked || false);
 		} catch (error) {
 			console.error('Failed to parse localStorage data:', error);
 		}
 		setIsLoaded(true);
 	}, []);
 
-	// Update localStorage whenever proposalFormData changes, but only after initial load
+	// Update localStorage whenever PROPOSAL_FORM_DATA_KEY changes, but only after initial load
 	useEffect(() => {
 		if (isLoaded) {
 			localStorage.setItem(
-				'proposalFormData',
+				PROPOSAL_FORM_DATA_KEY,
 				JSON.stringify(proposalFormData),
 			);
 		}
@@ -127,7 +118,7 @@ export default function CreateProjectPage() {
 			}, 15000);
 
 			// Delete localStorage data
-			localStorage.removeItem('proposalFormData');
+			localStorage.removeItem(PROPOSAL_FORM_DATA_KEY);
 
 			return () => {
 				clearInterval(redirectTimer);
