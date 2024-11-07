@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
@@ -11,11 +11,7 @@ import Container from '@/app/components/Container';
 import ProjectProposalFormButton from '@/app/components/project/ProjectProposalFormButton';
 import icons from '@/app/components/common/Icons';
 import Link from 'next/link';
-
-type FileWithPreview = {
-	file: File;
-	url: string;
-};
+import useFileHandler from '@/app/hooks/useFileHandler';
 
 type MessageType = {
 	key: string;
@@ -30,11 +26,33 @@ const getErrorMessage = (
 	return message ? message.notice : null;
 };
 
+const initialFormData = {
+	project: '',
+	location: '',
+	description: '',
+	name: '',
+	proposer: '',
+	email: '',
+	mobile: '',
+};
+
 export default function CreateProjectPage() {
+	const PROPOSAL_FORM_DATA_KEY = 'proposalFormData';
+
 	const t = useTranslations('proposalForm');
+
+	const {
+		selectedFiles,
+		handleFileChange,
+		openFilePicker,
+		removeFile,
+		inputRef,
+	} = useFileHandler();
 
 	const [isChecked, setIsChecked] = useState(false);
 	const [seconds, setSeconds] = useState(15);
+	const [isLoaded, setIsLoaded] = useState(false);
+	const [proposalFormData, setProposalFormData] = useState(initialFormData);
 
 	const handleCheckboxChange = () => {
 		setIsChecked(prevState => !prevState);
@@ -45,51 +63,48 @@ export default function CreateProjectPage() {
 		status: false,
 	});
 
-	const [selectedFiles, setSelectedFiles] = useState<FileWithPreview[]>([]);
-	const inputRef = useRef<HTMLInputElement | null>(null);
+	// Load data from localStorage when the component mounts
+	useEffect(() => {
+		try {
+			const storedData = JSON.parse(
+				localStorage.getItem(PROPOSAL_FORM_DATA_KEY) || '{}',
+			);
+			setProposalFormData({
+				...initialFormData,
+				...storedData,
+			});
+		} catch (error) {
+			console.error('Failed to parse localStorage data:', error);
+		}
+		setIsLoaded(true);
+	}, []);
 
-	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const files: File[] = event.target.files
-			? Array.from(event.target.files)
-			: [];
+	// Update localStorage whenever PROPOSAL_FORM_DATA_KEY changes, but only after initial load
+	useEffect(() => {
+		if (isLoaded) {
+			localStorage.setItem(
+				PROPOSAL_FORM_DATA_KEY,
+				JSON.stringify(proposalFormData),
+			);
+		}
+	}, [proposalFormData, isLoaded]);
 
-		// Map through files and create a preview URL for each file
-		const filePreviews: FileWithPreview[] = files.map(file => ({
-			file,
-			url: URL.createObjectURL(file),
+	// Generic input handler
+	const handleInputChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+	) => {
+		const { name, value } = e.target;
+
+		setProposalFormData(prevData => ({
+			...prevData,
+			[name]:
+				e.target instanceof HTMLInputElement && e.target.type === 'checkbox'
+					? e.target.checked
+					: value,
 		}));
-
-		setSelectedFiles(prevFiles => [...prevFiles, ...filePreviews]);
 	};
 
-	const handleButtonClick = () => {
-		if (inputRef.current) {
-			inputRef.current.click();
-		}
-	};
-
-	const removeFile = (index: number) => {
-		const updatedFiles = selectedFiles.filter((_, i) => i !== index);
-		setSelectedFiles(updatedFiles);
-
-		// Create a new FileList based on updatedFiles
-		const dataTransfer = new DataTransfer();
-		updatedFiles.forEach(filePreview => {
-			dataTransfer.items.add(filePreview.file);
-		});
-
-		// Update the inputRef to reflect the new FileList
-		if (inputRef.current) {
-			inputRef.current.files = dataTransfer.files;
-		}
-	};
-
-	const handleSubmit = (formData: FormData) => {
-		selectedFiles.forEach(({ file }) => {
-			formData.append('photo', file);
-		});
-	};
-
+	// If form data is submitted successfully, redirect to forum page, after 15 seconds
 	useEffect(() => {
 		if (state.status && getErrorMessage(state.message, 'success')) {
 			const redirectTimer = setInterval(() => {
@@ -101,6 +116,9 @@ export default function CreateProjectPage() {
 					window.location.href = state.message[0].notice;
 				}
 			}, 15000);
+
+			// Delete localStorage data
+			localStorage.removeItem(PROPOSAL_FORM_DATA_KEY);
 
 			return () => {
 				clearInterval(redirectTimer);
@@ -176,6 +194,8 @@ export default function CreateProjectPage() {
 										type='text'
 										id='project'
 										name='project'
+										value={proposalFormData.project}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base ${
 											getErrorMessage(state.message, 'project') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -209,6 +229,8 @@ export default function CreateProjectPage() {
 										type='text'
 										id='proposer'
 										name='proposer'
+										value={proposalFormData.proposer}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base ${
 											getErrorMessage(state.message, 'proposer') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -242,6 +264,8 @@ export default function CreateProjectPage() {
 									<textarea
 										id='location'
 										name='location'
+										value={proposalFormData.location}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block h-60 w-full rounded-md text-base ${
 											getErrorMessage(state.message, 'location') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -276,6 +300,8 @@ export default function CreateProjectPage() {
 									<textarea
 										id='description'
 										name='description'
+										value={proposalFormData.description}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block h-60 w-full rounded-md text-base ${
 											getErrorMessage(state.message, 'description') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -350,7 +376,7 @@ export default function CreateProjectPage() {
 
 									<button
 										type='button'
-										onClick={handleButtonClick}
+										onClick={openFilePicker}
 										className='my-2 rounded-lg bg-green px-4 py-2 text-white hover:opacity-70'
 									>
 										{t('fotoButton')}
@@ -376,6 +402,8 @@ export default function CreateProjectPage() {
 										type='text'
 										id='name'
 										name='name'
+										value={proposalFormData.name}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
 											getErrorMessage(state.message, 'name') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -407,6 +435,8 @@ export default function CreateProjectPage() {
 										type='email'
 										id='email'
 										name='email'
+										value={proposalFormData.email}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
 											getErrorMessage(state.message, 'email') !== null
 												? 'border-borderRed bg-softRedBG'
@@ -438,6 +468,8 @@ export default function CreateProjectPage() {
 										type='text'
 										id='mobile'
 										name='mobile'
+										value={proposalFormData.mobile}
+										onChange={handleInputChange}
 										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
 											getErrorMessage(state.message, 'mobile') !== null
 												? 'border-borderRed bg-softRedBG'
