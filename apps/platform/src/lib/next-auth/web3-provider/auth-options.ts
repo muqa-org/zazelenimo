@@ -24,11 +24,14 @@ const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
-      session.address = token.sub
+      session.address = token.address
+
+      session.user.id = token.sub;
       session.user.address = token.address;
       session.user.firstName = token.firstName;
       session.user.lastName = token.lastName;
       session.user.email = token.email;
+
       return session
     },
   },
