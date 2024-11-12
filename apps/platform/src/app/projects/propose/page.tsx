@@ -1,17 +1,18 @@
 'use client';
 
 import { useFormState } from 'react-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 import { createProjectAction } from './actions';
 
 import Container from '@/app/components/Container';
-import ProjectProposalFormButton from '@/app/components/project/ProjectProposalFormButton';
 import icons from '@/app/components/common/Icons';
 import Link from 'next/link';
 import useFileHandler from '@/app/hooks/useFileHandler';
+import ProjectProposalFormAction from '@/app/components/project/ProjectProposalFormAction';
+import { useFormStatus } from 'react-dom';
 import FormErrorMessage from '@/app/components/common/FormErrorMessage';
 
 type MessageType = {
@@ -54,6 +55,7 @@ export default function CreateProjectPage() {
 	const [seconds, setSeconds] = useState(15);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [proposalFormData, setProposalFormData] = useState(initialFormData);
+	const { pending } = useFormStatus();
 
 	const handleCheckboxChange = () => {
 		setIsChecked(prevState => !prevState);
@@ -63,6 +65,8 @@ export default function CreateProjectPage() {
 		message: [],
 		status: false,
 	});
+
+	const formRef = useRef<HTMLFormElement>(null);
 
 	// Load data from localStorage when the component mounts
 	useEffect(() => {
@@ -148,36 +152,39 @@ export default function CreateProjectPage() {
 
 	return (
 		<section className='md:py-4'>
-			<Container className='mx-auto mb-6 flex flex-wrap justify-between gap-10 px-5 py-5'>
-				<div className='flex h-full w-full flex-col flex-wrap justify-between'>
-					<h1 className='w-full border-b border-borderGrayLight pb-10 pt-4 text-center text-[28px] font-normal leading-normal text-primaryBlack md:pb-14 md:text-left md:text-4xl'>
-						{t('title')}
+			<Container className='mx-auto mb-6 flex flex-wrap justify-between gap-5 px-5 py-5'>
+				<div className='flex h-full w-full flex-col flex-wrap justify-between border-b border-borderGrayLight'>
+					<h1 className='mb-2 text-[28px] text-primaryBlack'>
+						{t('details')}
 					</h1>
+					<div className='mb-6 text-base text-black'>
+						{t.rich('description', {
+							link: chunks => (
+								<a
+									href='https://docs.zazelenimo.com/sudjeluj/quickstart'
+									target='_blank'
+									className='underline hover:text-blue'
+								>
+									{chunks}
+								</a>
+							),
+						})}
+					</div>
 				</div>
 				<div className='w-full'>
 					<form
 						id='proposal-form'
+						ref={formRef}
 						action={formAction}
-						className='mx-auto py-4 md:p-4'
+						className='mx-auto'
 					>
+						<input type='hidden' name='firstName' value={proposalFormData.firstName} />
+						<input type='hidden' name='lastName' value={proposalFormData.lastName} />
+						<input type='hidden' name='email' value={proposalFormData.email} />
+						<input type='hidden' name='mobile' value={proposalFormData.mobile} />
+
 						<div className='flex flex-row flex-wrap'>
 							<div className='w-full md:w-1/2 md:pr-16'>
-								<h2 className='mb-2 text-[28px] text-primaryBlack'>
-									{t('details')}
-								</h2>
-								<div className='mb-6 text-base text-black'>
-									{t.rich('description', {
-										link: chunks => (
-											<a
-												href='https://docs.zazelenimo.com/sudjeluj/quickstart'
-												target='_blank'
-												className='underline hover:text-blue'
-											>
-												${chunks}
-											</a>
-										),
-									})}
-								</div>
 								<div className='mb-6'>
 									<label
 										htmlFor='project'
@@ -261,6 +268,8 @@ export default function CreateProjectPage() {
 									)}
 								</div>
 							</div>
+							<div className='w-full md:w-1/2 md:pl-16'>
+								<div className='mb-6'>
 									<label
 										htmlFor='description'
 										className='mb-2 block text-sm font-bold text-softBlack'
@@ -287,7 +296,7 @@ export default function CreateProjectPage() {
 									)}
 								</div>
 
-								<div className='mb-10'>
+								<div className='mb-6'>
 									<label
 										htmlFor='photo'
 										className='mb-2 block text-sm font-bold text-softBlack'
@@ -346,115 +355,8 @@ export default function CreateProjectPage() {
 										{t('fotoButton')}
 									</button>
 								</div>
-							</div>
-							<div className='w-full md:w-1/2 md:pl-16'>
-								<h2 className='mb-2 text-[28px] text-primaryBlack'>
-									{t('contact')}
-								</h2>
-								<div className='mb-6 text-base text-black'>
-									{t('contactDescription')}
-								</div>
 
-								<div className='mb-6'>
-									<label
-										htmlFor='name'
-										className='mb-2 block text-sm font-bold text-softBlack'
-									>
-										{t('nameTitle')}
-									</label>
-									<input
-										type='text'
-										id='name'
-										name='name'
-										value={proposalFormData.name}
-										onChange={handleInputChange}
-										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
-											getErrorMessage(state.message, 'name') !== null
-												? 'border-borderRed bg-softRedBG'
-												: 'border-borderGray bg-white'
-										} border p-2 shadow-sm`}
-									/>
-									{getErrorMessage(state.message, 'name') && (
-										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{getErrorMessage(state.message, 'name')}
-										</div>
-									)}
-								</div>
-
-								<div className='mb-6'>
-									<label
-										htmlFor='email'
-										className='mb-2 block text-sm font-bold text-softBlack'
-									>
-										{t('emailTitle')}
-									</label>
-									<input
-										type='email'
-										id='email'
-										name='email'
-										value={proposalFormData.email}
-										onChange={handleInputChange}
-										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
-											getErrorMessage(state.message, 'email') !== null
-												? 'border-borderRed bg-softRedBG'
-												: 'border-borderGray bg-white'
-										} border p-2 shadow-sm`}
-									/>
-									{getErrorMessage(state.message, 'email') && (
-										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{getErrorMessage(state.message, 'email')}
-										</div>
-									)}
-								</div>
-
-								<div className='mb-6'>
-									<label
-										htmlFor='mobile'
-										className='mb-2 block text-sm font-bold text-softBlack'
-									>
-										{t('mobileTitle')}
-									</label>
-									<input
-										type='text'
-										id='mobile'
-										name='mobile'
-										value={proposalFormData.mobile}
-										onChange={handleInputChange}
-										className={`mb-2 mt-1 block w-full rounded-md text-base md:w-3/6 ${
-											getErrorMessage(state.message, 'mobile') !== null
-												? 'border-borderRed bg-softRedBG'
-												: 'border-borderGray bg-white'
-										} border p-2 shadow-sm`}
-									/>
-									{getErrorMessage(state.message, 'mobile') && (
-										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{getErrorMessage(state.message, 'mobile')}
-										</div>
-									)}
-								</div>
-
-								<div className='mb-6'>
+								<div className='mb-6 flex flex-col justify-end'>
 									<label
 										key='accept'
 										htmlFor='accept'
@@ -503,39 +405,24 @@ export default function CreateProjectPage() {
 										</span>
 									</label>
 									{getErrorMessage(state.message, 'accept') && (
-										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{getErrorMessage(state.message, 'accept')}
-										</div>
+										<FormErrorMessage message={getErrorMessage(state.message, 'accept')} />
 									)}
 								</div>
-
 								<div className='flex flex-row items-start'>
-									<div className='w-auto'>
-										<ProjectProposalFormButton />
-									</div>
-									{!state.status && state.message.length > 0 && (
-										<div className='mx-auto mt-1 inline-flex w-auto items-start pl-6 text-xs font-bold text-darkRed md:pl-0 md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{t('notification')}
-										</div>
+									{state.status && state.message.length > 0 && (
+										<FormErrorMessage message={t('notification')} />
 									)}
 								</div>
 							</div>
 						</div>
 					</form>
+				</div>
+				<div className='w-full flex flex-row items-center justify-center'>
+					<ProjectProposalFormAction
+						formRef={formRef}
+						disabled={!isChecked}
+						pending={pending}
+					/>
 				</div>
 			</Container>
 		</section>
