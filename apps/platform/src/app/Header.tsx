@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,11 +26,13 @@ export default function Header() {
 		setIsOpen(!isOpen);
 	};
 
-	if (session) {
-		console.log(`Signed in as ${session.user?.name}`);
-	} else {
-		console.log('Not signed in');
-	}
+	useEffect(() => {
+		if (session) {
+			console.log('Signed in', session);
+		} else {
+			console.log('Not signed in');
+		}
+	}, [session]);
 
 	return (
 		<header className='border-b border-borderGray bg-white'>
