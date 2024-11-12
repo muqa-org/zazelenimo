@@ -12,6 +12,7 @@ import ProjectProposalFormButton from '@/app/components/project/ProjectProposalF
 import icons from '@/app/components/common/Icons';
 import Link from 'next/link';
 import useFileHandler from '@/app/hooks/useFileHandler';
+import FormErrorMessage from '@/app/components/common/FormErrorMessage';
 
 type MessageType = {
 	key: string;
@@ -203,16 +204,7 @@ export default function CreateProjectPage() {
 										} border p-2 shadow-sm`}
 									/>
 									{getErrorMessage(state.message, 'project') && (
-										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{getErrorMessage(state.message, 'project')}
-										</div>
+										<FormErrorMessage message={getErrorMessage(state.message, 'project')} />
 									)}
 								</div>
 								<div className='mb-6'>
@@ -238,16 +230,7 @@ export default function CreateProjectPage() {
 										} border p-2 shadow-sm`}
 									/>
 									{getErrorMessage(state.message, 'proposer') && (
-										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{getErrorMessage(state.message, 'proposer')}
-										</div>
+										<FormErrorMessage message={getErrorMessage(state.message, 'proposer')} />
 									)}
 								</div>
 
@@ -274,20 +257,10 @@ export default function CreateProjectPage() {
 										placeholder={t('locationPlaceholder')}
 									/>
 									{getErrorMessage(state.message, 'location') && (
-										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{getErrorMessage(state.message, 'location')}
-										</div>
+										<FormErrorMessage message={getErrorMessage(state.message, 'location')} />
 									)}
 								</div>
-
-								<div className='mb-6'>
+							</div>
 									<label
 										htmlFor='description'
 										className='mb-2 block text-sm font-bold text-softBlack'
@@ -310,16 +283,7 @@ export default function CreateProjectPage() {
 										placeholder={t('descriptionPlaceholder')}
 									/>
 									{getErrorMessage(state.message, 'description') && (
-										<div className='mx-auto mt-1 inline-flex max-w-2xl items-start text-xs font-bold text-darkRed md:text-sm'>
-											<Image
-												src={icons.errorIcon}
-												alt='Warning'
-												width={15}
-												height={15}
-												className='mr-2 mt-0 inline-block md:mt-[2px]'
-											/>
-											{getErrorMessage(state.message, 'description')}
-										</div>
+										<FormErrorMessage message={getErrorMessage(state.message, 'description')} />
 									)}
 								</div>
 
