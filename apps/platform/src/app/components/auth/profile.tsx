@@ -33,11 +33,11 @@ const errorMessages: Record<ProfileField, string> = {
 };
 
 export function ProfileEditModal({
+  open,
   user,
   missingFields,
-  onSave,
   onClose,
-  open
+  onSave,
 }: ProfileEditModalProps) {
   const [formData, setFormData] = useState<Partial<UserProfile>>(user);
   const [errors, setErrors] = useState<Partial<Record<ProfileField, string>>>({});

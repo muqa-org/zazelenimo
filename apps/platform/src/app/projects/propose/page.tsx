@@ -56,7 +56,7 @@ export default function CreateProjectPage() {
 	const [seconds, setSeconds] = useState(15);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [proposalFormData, setProposalFormData] = useState(initialFormData);
-	const { pending } = useFormStatus();
+	const [pending, setPending] = useState(false);
 
 	const handleCheckboxChange = () => {
 		setIsChecked(prevState => !prevState);
@@ -112,25 +112,27 @@ export default function CreateProjectPage() {
 
 	// If form data is submitted successfully, redirect to forum page, after 15 seconds
 	useEffect(() => {
-		if (state.status && getErrorMessage(state.message, 'success')) {
-			const redirectTimer = setInterval(() => {
-				setSeconds(prev => (prev > 0 ? prev - 1 : 0));
-			}, 1000);
+		setPending(false);
 
-			const redirect = setTimeout(() => {
-				if (state.message[0]) {
-					window.location.href = state.message[0].notice;
-				}
-			}, 15000);
+		if (!state.status || !getErrorMessage(state.message, 'success')) return;
 
-			// Delete localStorage data
-			localStorage.removeItem(PROPOSAL_FORM_DATA_KEY);
+		const redirectTimer = setInterval(() => {
+			setSeconds(prev => (prev > 0 ? prev - 1 : 0));
+		}, 1000);
 
-			return () => {
-				clearInterval(redirectTimer);
-				clearTimeout(redirect);
-			};
-		}
+		const redirect = setTimeout(() => {
+			if (state.message[0]) {
+				window.location.href = state.message[0].notice;
+			}
+		}, 15000);
+
+		// Delete localStorage data
+		localStorage.removeItem(PROPOSAL_FORM_DATA_KEY);
+
+		return () => {
+			clearInterval(redirectTimer);
+			clearTimeout(redirect);
+		};
 	}, [state.status, state.message]);
 
 	// Redirect use to forum page if propsal form data are submitted successfully
@@ -423,6 +425,7 @@ export default function CreateProjectPage() {
 						formRef={formRef}
 						disabled={!isChecked}
 						pending={pending}
+						setPending={setPending}
 					/>
 				</div>
 			</Container>

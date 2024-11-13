@@ -6,7 +6,7 @@ import { AddressTooltip } from './AddressTooltip';
 import { Button, ButtonProps } from '../Button';
 import { comethConnector, useCometh } from '@allo/kit';
 import { PropsWithChildren, useEffect, useState, useRef, forwardRef } from 'react';
-import { getSession, signIn, signOut, useSession } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { useConnection } from '../../contexts/ConnectionContext';
 import { v4 as uuidv4 } from 'uuid';
 import { getLabel, getNonce } from './utils';
@@ -21,7 +21,6 @@ type MuqaConnectButtonProps = ButtonProps & {
 const MuqaConnectButton = forwardRef<HTMLButtonElement, MuqaConnectButtonProps>(
   ({
     children,
-    type,
     afterSignIn,
     ...buttonProps
   }: PropsWithChildren<MuqaConnectButtonProps>,
@@ -81,28 +80,27 @@ const MuqaConnectButton = forwardRef<HTMLButtonElement, MuqaConnectButtonProps>(
     console.log('signing in with web3', instanceId.current);
 
     setPendingConnection(null);
-    signInWithWeb3(account.address!).then(() => {
-      afterSignIn ? getSession().then(afterSignIn) : {}
-    });
+    signInWithWeb3(account.address!).then(
+      afterSignIn ?? (() => {})
+    );
   }, [wallet]);
-
-
-
-  useEffect(() => {
-    console.log(`Component instance ID: ${instanceId.current}`);
-  }, []);
 
   return (
      <div className='relative'>
       <Button
+        {...buttonProps}
         ref={ref}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        {...buttonProps}
       >
-        <LoadingIcon />
-        {children || label}
+        {children
+          ? children
+          : <>
+              <LoadingIcon />
+              {label}
+            </>
+        }
       </Button>
       <AddressTooltip
         show={showTooltip}

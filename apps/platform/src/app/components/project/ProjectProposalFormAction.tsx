@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { ProfileEditModalProps, ProfileEditModal } from '../auth/profile';
 import { getMissingFlowFields } from '@/lib/next-auth/validators';
 import { UserProfile } from '@/lib/next-auth/types';
@@ -15,6 +15,7 @@ type ProjectProposalFormActionProps = {
 	formRef: React.RefObject<HTMLFormElement>,
 	disabled: boolean,
 	pending: boolean,
+	setPending: Dispatch<SetStateAction<boolean>>,
 }
 
 /**
@@ -40,9 +41,10 @@ type ProjectProposalFormActionProps = {
  * @param {React.RefObject<HTMLFormElement>} props.formRef - Reference to the parent form element
  * @param {boolean} props.disabled - Whether the form submission is disabled
  * @param {boolean} props.pending - Whether a submission is currently in progress
+ * @param {Dispatch<SetStateAction<boolean>>} props.setPending - A function to set the pending state
  * @returns {JSX.Element} A button component with associated profile modal
  */
-const ProjectProposalFormAction = ({ formRef, pending, disabled = false }: ProjectProposalFormActionProps) => {
+const ProjectProposalFormAction = ({ formRef, pending, setPending, disabled = false }: ProjectProposalFormActionProps) => {
 	const t = useTranslations('proposalForm');
 	const { data: session } = useSession();
 	const [button, setButton] = useState<JSX.Element | null>(null);
@@ -52,34 +54,32 @@ const ProjectProposalFormAction = ({ formRef, pending, disabled = false }: Proje
 
 	function onClick() {
 		return async (e: React.MouseEvent<HTMLButtonElement>) => {
+			setPending(true);
 			e.preventDefault();
-			verifyProfile(setModalProps, submitForm);
+			verifyProfile();
 		}
 	}
 
-	function afterSignIn() {
-		return verifyProfile(setModalProps, submitForm);
-	}
-
-	async function verifyProfile(
-		setModalProps: (props: ProfileEditModalProps | null) => void,
-		cb: (userProfile: UserProfile) => unknown
-	) {
+	async function verifyProfile() {
 		const userProfile = await getUserProfile();
 		const missingFields = getMissingFlowFields(userProfile, 'proposer');
 
 		if (missingFields.length === 0) {
 			setModalProps(null);
-			cb(userProfile);
+			submitForm(userProfile);
 			return;
 		}
 
+		console.log('missingFields', missingFields);
 		setModalProps({
 			open: true,
 			user: userProfile,
 			missingFields,
-			onSave: (data: UserProfile) => updateUser(data as UpdateUserRequestDTO).then(cb),
 			onClose: () => setModalProps(null),
+			onSave: async (data: UserProfile) => {
+				await updateUser(data as UpdateUserRequestDTO);
+				submitForm(data);
+			},
 		});
 	}
 
@@ -94,7 +94,6 @@ const ProjectProposalFormAction = ({ formRef, pending, disabled = false }: Proje
 				(input as HTMLInputElement).value = value;
 			}
 		});
-
 		form.requestSubmit();
 	}
 
@@ -106,6 +105,16 @@ const ProjectProposalFormAction = ({ formRef, pending, disabled = false }: Proje
 
 	const connectButtonRef = useRef<HTMLButtonElement>(null);
 
+	const label = pending
+		? <div className='flex items-center gap-2'>
+				<div className="animate-spin h-5 w-5 border-t-2 border-b-2 border-primary rounded-full"></div>
+				{t('buttonSubmitting')}
+			</div>
+		: t('buttonName');
+
+	console.log('session', session);
+	console.log('user', user);
+
 	const regularButton = (
 		<button
 			type='submit'
@@ -113,18 +122,19 @@ const ProjectProposalFormAction = ({ formRef, pending, disabled = false }: Proje
 			onClick={onClick()}
 			className={className}
 		>
-			{pending ? t('buttonSubmitting') : t('buttonName')}
+			{label}
 		</button>
 	);
 
 	const connectButton = (
 		<MuqaConnectButton
 			ref={connectButtonRef}
+			onClick={() => setPending(true)}
 			className={className}
 			disabled={pending || disabled}
-			afterSignIn={afterSignIn}
+			afterSignIn={verifyProfile}
 		>
-			{pending ? t('buttonSubmitting') : t('buttonName')}
+			{label}
 		</MuqaConnectButton>
 	);
 
