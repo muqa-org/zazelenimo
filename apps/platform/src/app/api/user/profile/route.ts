@@ -4,13 +4,7 @@ import { getUser, updateUser, User } from '@muqa/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/next-auth/web3-provider/auth-options';
-
-export const UpdateUserRequestSchema = z.object({
-  firstName: z.string().min(1, 'firstNameError'),
-  lastName: z.string().min(1, 'lastNameError'),
-  email: z.string().email('emailError'),
-  mobile: z.string().min(1, 'mobileError'),
-}).strip();
+import { UpdateUserRequestSchema } from './schema';
 
 export type UpdateUserRequestDTO = z.infer<typeof UpdateUserRequestSchema>;
 export type UpdateUserResponse = {

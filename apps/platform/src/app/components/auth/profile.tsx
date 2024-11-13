@@ -1,4 +1,4 @@
-import { UpdateUserRequestSchema } from '@/app/api/user/profile/route';
+import { UpdateUserRequestSchema } from '@/app/api/user/profile/schema';
 import { ProfileField, UserProfile } from '@/lib/next-auth/types';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
