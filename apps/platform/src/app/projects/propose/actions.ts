@@ -74,20 +74,11 @@ export async function createProjectAction(
 
 	// If there are any errors, return them
 	if (errors.length > 0) {
-		console.log('errors', errors);
 		return {
 			status: false,
 			message: errors,
 		};
 	}
-
-	console.log('formData', formData);
-	return {
-		status: true,
-		message: [
-			{ key: 'success', notice: 'success' },
-		],
-	};
 
 	// Upload file(s) to Discourse if it exist
 	const files = formData.getAll('photo') as File[];
