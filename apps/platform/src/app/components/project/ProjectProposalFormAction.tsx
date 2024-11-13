@@ -33,6 +33,7 @@ type ProjectProposalFormActionProps = {
  * When profile updates are needed, the component will:
  * - Display a modal to collect missing information
  * - Update the user profile via API
+ * - Set the form values to the user profile
  * - Automatically continue with form submission after profile completion
  *
  * @param {Object} props
@@ -45,33 +46,32 @@ const ProjectProposalFormAction = ({ formRef, pending, disabled = false }: Proje
 	const t = useTranslations('proposalForm');
 	const { data: session } = useSession();
 	const [button, setButton] = useState<JSX.Element | null>(null);
-
 	const [modalProps, setModalProps] = useState<ProfileEditModalProps | null>(null);
+
+	const user = session?.user;
 
 	function onClick() {
 		return async (e: React.MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			const userProfile = await getUserProfile();
-			verifyProfile(userProfile, setModalProps, submitForm);
+			verifyProfile(setModalProps, submitForm);
 		}
 	}
 
-	async function afterSignIn() {
-		const userProfile = await getUserProfile();
-		return verifyProfile(userProfile, setModalProps, submitForm);
+	function afterSignIn() {
+		return verifyProfile(setModalProps, submitForm);
 	}
 
 	async function verifyProfile(
-		userProfile: UserProfile,
 		setModalProps: (props: ProfileEditModalProps | null) => void,
-		cb: (data: UpdateUserRequestDTO | null) => unknown
+		cb: (userProfile: UserProfile) => unknown
 	) {
-
+		const userProfile = await getUserProfile();
 		const missingFields = getMissingFlowFields(userProfile, 'proposer');
 
-		if (missingFields.length <= 0) {
+		if (missingFields.length === 0) {
 			setModalProps(null);
-			cb(null);
+			cb(userProfile);
+			return;
 		}
 
 		setModalProps({
@@ -83,18 +83,17 @@ const ProjectProposalFormAction = ({ formRef, pending, disabled = false }: Proje
 		});
 	}
 
-	async function submitForm(data: UpdateUserRequestDTO | null) {
+	async function submitForm(userProfile: UserProfile) {
 		const form = formRef.current;
-		if (!form) return;
+		if (!form) throw new Error('Form not found');
 
-		if (data) {
-			Object.entries(data).forEach(([key, value]) => {
-				const input = form.elements.namedItem(key);
-				if (input) {
-					(input as HTMLInputElement).value = value;
-				}
-			});
-		}
+		// Set the form values to the user profile
+		Object.entries(userProfile).forEach(([key, value]) => {
+			const input = form.elements.namedItem(key);
+			if (input) {
+				(input as HTMLInputElement).value = value;
+			}
+		});
 
 		form.requestSubmit();
 	}
@@ -125,15 +124,15 @@ const ProjectProposalFormAction = ({ formRef, pending, disabled = false }: Proje
 			disabled={pending || disabled}
 			afterSignIn={afterSignIn}
 		>
-			{disabled ? t('buttonSubmitting') : t('buttonName')}
+			{pending ? t('buttonSubmitting') : t('buttonName')}
 		</MuqaConnectButton>
 	);
 
 	useEffect(() => {
-		return session?.user
+		return user
 			? setButton(regularButton)
 			: setButton(connectButton);
-	}, [session?.user, className]);
+	}, [user, className, pending]);
 
 	return <>
 		{button}
@@ -149,7 +148,7 @@ async function getUserProfile() {
 	return user as UserProfile;
 }
 
-async function updateUser(data: UpdateUserRequestDTO): Promise<UpdateUserRequestDTO | null> {
+async function updateUser(data: UpdateUserRequestDTO): Promise<UserProfile> {
 	try {
 		const res = await fetch(profileApi, {
 			method: 'POST',
@@ -158,9 +157,9 @@ async function updateUser(data: UpdateUserRequestDTO): Promise<UpdateUserRequest
 		});
 
 		await res.json() as UpdateUserResponse;
-		return data;
+		return data as UserProfile;
 	} catch (error) {
 		console.error('Error updating user profile:', error);
-		return null;
+		return Promise.reject(error);
 	}
 }
