@@ -175,7 +175,7 @@ export async function createProjectAction(
 
 			const sendMailData = sendMail({
 				from: 'Zazelenimo <postmaster@forum.zazelenimo.com>',
-				to: process.env.MAILGUN_RECEIVER_EMAIL,
+				to: process.env.MAILGUN_RECEIVER_EMAIL!,
 				subject: 'Novi prijedlog je predan',
 				html: `
 					<p>${tMail('messagePart2')}</p>
