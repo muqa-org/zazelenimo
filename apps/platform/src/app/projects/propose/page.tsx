@@ -29,14 +29,14 @@ const getErrorMessage = (
 };
 
 const initialFormData = {
-	project: 'asdfasdfasdfasdfasdfasdfasdfa',
-	proposer: ' asdf asdf asdfasd fasdf',
-	location: 'asdfasdfas dfaSD fasdf asdf asdf asdf asdf asdf',
-	description: 'asd fasdf asdf asdfasdfasdf asdf asdf asdfasdf asdfasdfasdfasdf asdf asdf asdf asdf asdfasdf asd ',
-	firstName: 'asdf asdf asdf asdf asdfasdf ',
-	lastName: 'asdf asdf asdf asdf asdfasdf ',
-	email: 'asd fasdfa sdf asdf asdf asdf',
-	mobile: ' asdfa sdf asdf',
+	project: '',
+	proposer: '',
+	location: '',
+	description: '',
+	firstName: '',
+	lastName: '',
+	email: '',
+	mobile: '',
 };
 
 export default function CreateProjectPage() {
