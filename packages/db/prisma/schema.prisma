@@ -22,6 +22,7 @@ model User {
   password          String?
   firstName         String?   @map("first_name")
   lastName          String?   @map("last_name")
+  mobile            String?   @unique @map("mobile")
   accounts          Account[]
   sessions          Session[]
   authNonce         AuthNonce?

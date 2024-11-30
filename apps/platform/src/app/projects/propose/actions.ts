@@ -24,10 +24,11 @@ export async function createProjectAction(
 	const apiUsername = process.env.NEXT_DISCOURSE_USERNAME || '';
 
 	const project = formData.get('project')?.toString().trim() ?? '';
+	const proposer = formData.get('proposer')?.toString().trim() ?? '';
 	const location = formData.get('location')?.toString().trim() ?? '';
 	const description = formData.get('description')?.toString().trim() ?? '';
-	const name = formData.get('name')?.toString().trim() ?? '';
-	const proposer = formData.get('proposer')?.toString().trim() ?? '';
+	const firstName = formData.get('firstName')?.toString().trim() ?? '';
+	const lastName = formData.get('lastName')?.toString().trim() ?? '';
 	const email = formData.get('email')?.toString().trim() ?? '';
 	const mobile = formData.get('mobile')?.toString().trim() ?? '';
 	const accept = formData.get('accept')?.toString().trim() ?? '';
@@ -39,6 +40,10 @@ export async function createProjectAction(
 		errors.push({ key: 'project', notice: t('projectError') });
 	}
 
+		if (!proposer) {
+			errors.push({ key: 'proposer', notice: t('proposerError') });
+		}
+
 	if (!location || location.length < 15) {
 		errors.push({ key: 'location', notice: t('locationError') });
 	}
@@ -47,8 +52,12 @@ export async function createProjectAction(
 		errors.push({ key: 'description', notice: t('descriptionError') });
 	}
 
-	if (!name || name.length < 2) {
-		errors.push({ key: 'name', notice: t('nameError') });
+	if (!firstName || firstName.length < 2) {
+		errors.push({ key: 'firstName', notice: t('nameError') });
+	}
+
+	if (!lastName || lastName.length < 2) {
+		errors.push({ key: 'lastName', notice: t('nameError') });
 	}
 
 	if (!email || !email.includes('@')) {
@@ -57,10 +66,6 @@ export async function createProjectAction(
 
 	if (!mobile || mobile.length < 6) {
 		errors.push({ key: 'mobile', notice: t('mobileError') });
-	}
-
-	if (!proposer) {
-		errors.push({ key: 'proposer', notice: t('proposerError') });
 	}
 
 	if (!accept) {
@@ -138,7 +143,7 @@ export async function createProjectAction(
 				to: email,
 				subject: tMail('subject'),
 				html: `
-				<p>${tMail('messagePart1', { name: name })}</p>
+				<p>${tMail('messagePart1', { name: `${firstName} ${lastName}` })}</p>
 				<p>${tMail('messagePart2')}</p>
 				<p><strong>${tMail('messagePart3')}</strong></p>
 				<hr />
@@ -170,7 +175,7 @@ export async function createProjectAction(
 
 			const sendMailData = sendMail({
 				from: 'Zazelenimo <postmaster@forum.zazelenimo.com>',
-				to: process.env.MAILGUN_RECEIVER_EMAIL,
+				to: process.env.MAILGUN_RECEIVER_EMAIL!,
 				subject: 'Novi prijedlog je predan',
 				html: `
 					<p>${tMail('messagePart2')}</p>
@@ -178,7 +183,7 @@ export async function createProjectAction(
 					<hr />
 					<p><strong>${tMail('messagePart4')}</strong> ${project}</p>
 					<p><strong>${tMail('messagePart5')}</strong> ${proposer}</p>
-					<p><strong>${tMail('messagePart13')}</strong> ${name}</p>
+					<p><strong>${tMail('messagePart13')}</strong> ${firstName} ${lastName}</p>
 					<p><strong>${tMail('messagePart14')}</strong> ${email}</p>
 					<p><strong>${tMail('messagePart15')}</strong> ${mobile}</p>
 					<p><strong>${tMail('messagePart16')}</strong> ${accept && accept.trim() === 'on' ? tMail('messagePart17') : tMail('messagePart17')}</p>

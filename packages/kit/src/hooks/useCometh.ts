@@ -1,3 +1,5 @@
+'use client';
+
 import { ComethWallet } from '@cometh/connect-sdk';
 import { getConnectViemAccount } from '@cometh/connect-sdk-viem';
 import { useState, useEffect } from 'react';
@@ -25,25 +27,25 @@ export function useCometh() {
   const [comethClient, setComethClient] = useState<WalletClient | null>();
   const [comethWallet, setComethWallet] = useState<ComethWallet | null>();
 
-  useEffect(() => {
-    async function createComethClient() {
-      if (!walletClient) return;
+  async function createComethClient() {
+    if (!walletClient) return;
 
-      if (account.isConnected && connector) {
-        const wallet = await connector.getComethWallet();
-        const comethAccount = getConnectViemAccount(wallet);
+    if (account.isConnected && connector) {
+      const wallet = await connector.getComethWallet();
+      const comethAccount = getConnectViemAccount(wallet);
 
-        setComethWallet(wallet);
-        // We need to explicitly assign the account because it doesn't get set automatically for some reason
-        setComethClient({
-          ...walletClient,
-          account: comethAccount,
-        });
-      } else {
-        setComethClient(walletClient);
-      }
+      setComethWallet(wallet);
+      // We need to explicitly assign the account because it doesn't get set automatically for some reason
+      setComethClient({
+        ...walletClient,
+        account: comethAccount,
+      });
+    } else {
+      setComethClient(walletClient);
     }
+  }
 
+  useEffect(() => {
     createComethClient();
   }, [account.isConnected, connector, walletClient]);
 

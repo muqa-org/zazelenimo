@@ -36,6 +36,7 @@ export * from './rounds/network-badge';
 export * from './rounds/strategy-badge';
 
 export * from './hooks/useApplications';
+export * from './hooks/useCometh';
 export * from './hooks/useRounds';
 export * from './hooks/useProjects';
 export * from './hooks/useDebounce';

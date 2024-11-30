@@ -1,0 +1,1 @@
+export type ChainTypes = 'POLYGON' | 'ARBITRUM_SEPOLIA' | 'AVALANCHE_FUJI' | 'OPTIMISM_SEPOLIA';
