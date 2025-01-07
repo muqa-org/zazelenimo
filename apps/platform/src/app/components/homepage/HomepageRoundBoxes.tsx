@@ -19,8 +19,8 @@ export default function HomepageRoundBoxes({
 				<RoundPhase
 					key={phase.id}
 					title={t(`round${phase.title}`)}
-					startDate={new Date(phase.startDate)}
-					endDate={new Date(phase.endDate)}
+					//startDate={new Date(phase.startDate)}
+					//endDate={new Date(phase.endDate)}
 				/>
 			))}
 		</div>
