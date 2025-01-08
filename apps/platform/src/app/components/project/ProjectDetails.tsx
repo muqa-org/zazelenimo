@@ -42,7 +42,6 @@ const useDummyApplication = (): FundedApplication => {
 }
 
 function useResolvedApplication(): FundedApplication | undefined {
-	console.log('USE_DUMMY_DATA', USE_DUMMY_DATA);
 	return USE_DUMMY_DATA
 		? useDummyApplication()
 		: useActualApplication();
