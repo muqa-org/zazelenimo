@@ -121,15 +121,13 @@ export default function ProjectDetails({ className }: ProjectCardProps) {
 			<div className='content mt-6 w-full text-base text-grayDark lg:w-4/6'>
 				{application.description}
 			</div>
-			{application.websiteUrl && (
-				<div className='mb-6 mt-14 w-full lg:w-4/6'>
-					<h3>{t('supportProject')}</h3>
-					<ProjectSocialIcons
-						url={application.websiteUrl}
-						title={application.name}
-					/>
-				</div>
-			)}
+			<div className='mb-6 mt-14 w-full lg:w-4/6'>
+				<h3>{t('supportProject')}</h3>
+				<ProjectSocialIcons
+					id={application.id}
+					title={application.name}
+				/>
+			</div>
 		</div>
 	);
 }
