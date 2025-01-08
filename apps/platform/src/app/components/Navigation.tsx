@@ -30,6 +30,18 @@ export default function Navigation({ screen }: { screen: string }) {
 			>
 				{t('home')}
 			</Link>
+			{process.env.NEXT_PUBLIC_SHOW_PROJECTS_PAGE === 'true' && (
+				<Link
+					href={'/projects'}
+					className={`${linkClassName} ${
+						pathname === '/projects'
+							? 'border-borderGreen text-primaryBlack'
+							: 'border-white text-primaryBlack'
+					}`}
+				>
+					{t('projects')}
+				</Link>
+			)}
 			<Link
 				href={DocumentationLink}
 				className={`${linkClassName} ${
