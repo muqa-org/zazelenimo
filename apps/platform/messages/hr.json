@@ -33,6 +33,15 @@
     "reconnect": "Ponovno prijavljivanje...",
     "disconnect": "Odjavi"
   },
+  "profile": {
+    "title": "Dovrši svoj profil",
+    "cancel": "Odustani",
+    "save": "Spremi",
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "email": "E-mail",
+    "mobile": "Broj mobitela"
+  },
   "round": {
     "timeline": "Raspored",
     "timelinePeriod": "Kolovoz - Rujan 2024",
@@ -168,9 +177,10 @@
     "descriptionDesc": "Što treba napraviti? Zašto je to važno? Zašto ta lokacija? Tko će sve imati koristi od ovog projekta?",
     "descriptionPlaceholder": "Posadite visoka stabla između postojećih malih stabala oleandra posađenih u ovom području. Visoka stabla će pješacima stvarati potrebnu hladovinu, činiti zrak čišćim i hladnijim, posebno ljeti, štititi ulaz u tunel od vjetrova, a zgrade štititi od buke iz tunela.",
     "descriptionError": "Napišite malo više o vašem prijedlogu projekta.",
-    "nameTitle": "Tvoje ime i prezime",
-    "nameDesc": "Navedite svoje ime i prezime.",
-    "nameError": "Unesite svoje ime i prezime.",
+    "firstNameTitle": "Tvoje ime",
+    "firstNameError": "Unesite svoje ime.",
+    "lastNameTitle": "Tvoje prezime",
+    "lastNameError": "Unesite svoje prezime.",
     "proposerTitle": "Naziv predlagatelja",
     "proposerDesc": "Navedite ime pojedinog građanina, grupe građana ili organizacije koja daje prijedlog. Ako želite ostati javno neidentificirani, možete koristiti nadimak.",
     "proposerError": "Unesite vaše ime ili naziv organizacije.",

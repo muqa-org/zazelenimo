@@ -3,7 +3,7 @@
 import { ApiProvider, ComethProvider, strategies } from '@allo/kit';
 import { SessionProvider } from "next-auth/react";
 import { RoundIdProvider } from './contexts/roundIdContext';
-
+import { ConnectionProvider } from './contexts/ConnectionContext';
 export function MuqaSessionProvider({
 	children,
 	session,
@@ -28,7 +28,9 @@ export function AlloKitProviders({
   return (
     <ApiProvider strategies={strategies} api={api}>
       <RoundIdProvider>
-        <ComethProvider>{children}</ComethProvider>
+        <ConnectionProvider>
+          <ComethProvider>{children}</ComethProvider>
+        </ConnectionProvider>
       </RoundIdProvider>
     </ApiProvider>
   );

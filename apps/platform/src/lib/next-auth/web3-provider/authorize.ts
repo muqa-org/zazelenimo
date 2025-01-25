@@ -17,7 +17,12 @@ export default async function authorize(
 
   // Check nonce signature against Cometh's api
   const verification = await verifySignature(
-    address, user.authNonce.nonce, signedNonce);
+    address, user.authNonce.nonce, signedNonce
+  )
+    .catch(err => {
+      console.error('Error verifying signature', err);
+      return Promise.reject(err);
+    });
 
   if (!verification.result) return null;
 
@@ -27,8 +32,5 @@ export default async function authorize(
   // Everything is fine, clear the nonce and return the user
   await deleteUserNonce(user);
 
-  return {
-    id: user.id,
-    address: user.address,
-  };
+  return user;
 }

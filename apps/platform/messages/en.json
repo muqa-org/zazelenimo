@@ -33,6 +33,15 @@
     "reconnect": "Reconnect...",
     "disconnect": "Disconnect"
   },
+  "profile": {
+    "title": "Complete your profile",
+    "cancel": "Cancel",
+    "save": "Save",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "E-mail",
+    "mobile": "Phone number"
+  },
   "round": {
     "timeline": "Timeline",
     "timelinePeriod": "August - September 2024",
@@ -168,9 +177,10 @@
     "descriptionDesc": "What should be done? Why is that important? Why that location? Who all will benefit from this project?",
     "descriptionPlaceholder": "Plant tall trees between existing small Oleander trees planted in this strip. Tall trees will provide needed shade for pedestrians, make the air cleaner and cooler, especially in the summer, and shield the entrance of the tunnel from the winds, while shielding the buildings from the noise from the tunnel.",
     "descriptionError": "Write a little more about your project proposal.",
-    "nameTitle": "Your name and surname",
-    "nameDesc": "Enter your first and last name.",
-    "nameError": "Enter your name and surname.",
+    "firstNameTitle": "Your first name",
+    "firstNameError": "Enter your first name.",
+    "lastNameTitle": "Your last name",
+    "lastNameError": "Enter your last name.",
     "proposerTitle": "Name of proposer",
     "proposerDesc": "Provide the name of the individual citizen, group of citizens, or an organisation making the proposal. If you want to remain publicly unidentified, you can use a nickname.",
     "proposerError": "Enter your name or organization name.",
