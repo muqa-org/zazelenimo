@@ -11,6 +11,7 @@ import { Application, comethConfig, FundedApplication, useApplicationById } from
 import { useParams } from 'next/navigation';
 import { neighborhoods } from '@/app/config';
 import { useRoundId } from '@/app/contexts/roundIdContext';
+import dummyApplications from '@/data/sample_content/applications.json';
 
 interface ProjectCardProps {
 	className?: string;
@@ -32,34 +33,16 @@ function extendApplicationData(application: Application): FundedApplication {
 }
 
 const useDummyApplication = (): FundedApplication => {
-	const application: Application = {
-		id: crypto.randomUUID(),
-		name: 'Klupe od Đardina do Jokera',
-		description: `
-A new voting mechanism is used, called Quadratic Funding. The project
-with most donations will get the most funding from the City. It allows
-anyone to vote by donating money to their favourite projects. With
-every donation, funding is given to project from the matching pool.
---
-It allows anyone to vote by donating money to their favourite
-projects. With every donation, funding is given to project from the
-matching pool.
-		`,
-		recipient: `0x${Math.random().toString(16).slice(2, 40)}`,
-		chainId: 1,
-		projectId: crypto.randomUUID(),
-		status: 'APPROVED',
-		bannerUrl: 'https://picsum.photos/908/514',
-		contributors: {
-			amount: 12345,
-			count: 12,
-		}
+	const { projectId: applicationId } = useParams();
+	const application = dummyApplications.find(app => app.id === applicationId);
+	if (!application) {
+		return extendApplicationData(dummyApplications[0] as Application);
 	}
-	return extendApplicationData(application);
+	return extendApplicationData(application as Application);
 }
 
 function useResolvedApplication(): FundedApplication | undefined {
-	return !USE_DUMMY_DATA
+	return USE_DUMMY_DATA
 		? useDummyApplication()
 		: useActualApplication();
 }
@@ -121,15 +104,13 @@ export default function ProjectDetails({ className }: ProjectCardProps) {
 			<div className='content mt-6 w-full text-base text-grayDark lg:w-4/6'>
 				{application.description}
 			</div>
-			{application.websiteUrl && (
-				<div className='mb-6 mt-14 w-full lg:w-4/6'>
-					<h3>{t('supportProject')}</h3>
-					<ProjectSocialIcons
-						url={application.websiteUrl}
-						title={application.name}
-					/>
-				</div>
-			)}
+			<div className='mb-6 mt-14 w-full lg:w-4/6'>
+				<h3>{t('supportProject')}</h3>
+				<ProjectSocialIcons
+					id={application.id}
+					title={application.name}
+				/>
+			</div>
 		</div>
 	);
 }

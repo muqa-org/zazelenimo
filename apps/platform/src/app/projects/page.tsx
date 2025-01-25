@@ -10,9 +10,11 @@ import { comethConfig, FundedApplication, useApplications, Application, Applicat
 import ProjectListMap from '@/app/components/projects/ProjectListMap';
 import { neighborhoods } from '../config';
 import { useRoundId } from '../contexts/roundIdContext';
+import dummyApplications from '@/data/sample_content/applications.json';
 
-// If you need some special libraries, you can add them here
 const libraries: Libraries = [];
+
+const USE_DUMMY_DATA = process.env.NEXT_PUBLIC_USE_DUMMY_DATA === 'true';
 
 function extendApplicationData(applications: Application[]): FundedApplication[] {
 	const fundedPercentages = applications.map(() => Math.floor(Math.random() * 100));
@@ -39,7 +41,13 @@ export default function DiscoverProjectsPage() {
 		},
 	}), [debouncedRoundId]);
 
-	const { data: apps, refetch, isError, error } = useApplications(query, extendApplicationData);
+	const { data, refetch, isError, error } = useApplications(query, extendApplicationData);
+
+	const extendedDummyApplications = extendApplicationData(dummyApplications as Application[]);
+
+	const apps = USE_DUMMY_DATA
+		? extendedDummyApplications
+		: data;
 
 	if (isError) {
 		console.error(error);

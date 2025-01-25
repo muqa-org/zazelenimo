@@ -4,6 +4,8 @@
     "build": {
       "dependsOn": ["^build"],
       "env": [
+        "NEXT_PUBLIC_URL",
+
         "NEXT_PUBLIC_CHAIN",
         "NEXT_PUBLIC_USE_TENDERLY",
         "NEXT_PUBLIC_ROUND_ID",
@@ -28,7 +30,7 @@
         "NEXT_PUBLIC_SHOW_CART_LINK",
         "NEXT_PUBLIC_ALLOW_ROUND_INPUT",
         "NEXT_PUBLIC_USE_DUMMY_DATA",
-
+        "NEXT_PUBLIC_SHOW_PROJECTS_PAGE",
         "PINATA_JWT",
         "PINATA_GATEWAY_URL",
 
