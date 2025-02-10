@@ -82,10 +82,13 @@ export function useStrategyAddon(
   const addon = type && (strategies as any)?.[type]?.components?.[component];
   return {
     ...addon,
-    // Wrap the strategy call function in useMutation (for loading + error states)
-    // Include api + signer
     call: useMutation({
-      mutationFn: (args: unknown[]) => addon?.call?.(...args, wallet, api, signer),
+      mutationFn: (args: unknown[]) => {
+        if (!wallet) {
+          throw new Error('Wallet not initialized');
+        }
+        return addon?.call?.(...args, wallet, api, signer);
+      },
       onSuccess: (data) => {
         console.log('call mutation data', data);
       },

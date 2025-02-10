@@ -3,11 +3,11 @@
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi';
 
 import { Button, ButtonProps } from './Button';
-import { comethConnector } from '@allo/kit';
 import { PropsWithChildren, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { signIn, signOut } from 'next-auth/react';
 import { WalletNonceResponse } from '../api/auth/web3/nonce/route';
+import { comethConnector } from '@allo/kit/wagmi/connectors/cometh';
 
 const TRUNCATE_LENGTH = 20;
 const TRUNCATE_OFFSET = 3;
@@ -104,16 +104,34 @@ export default function MuqaConnectButton({ children, ...props }: PropsWithChild
   const onMouseLeave = () => setShowTooltip(false);
 
   async function signInWithWeb3() {
-    const { accounts } = await connectAsync({ connector: comethConnector });
-    // const [address] = accounts;
-    // const nonce = await getNonce(address);
-    // const signedNonce = await signMessageAsync({ message: nonce });
-    // await signIn('credentials', { address, signedNonce, redirect: false });
+    try {
+      // Connect using our custom Cometh connector
+      const result = await connectAsync({ connector: comethConnector });
+      const address = result.accounts[0];
+
+      if (!address) {
+        throw new Error('No address returned from connector');
+      }
+
+      // The smart account is already initialized in the connector
+      // No need to initialize it again
+      
+      // Get nonce and sign it (if needed)
+      // const nonce = await getNonce(address);
+      // const signedNonce = await signMessageAsync({ message: nonce });
+      // await signIn('credentials', { address, signedNonce, redirect: false });
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+    }
   }
 
   async function signOutWithWeb3() {
-    disconnect();
-    await signOut();
+    try {
+      disconnect();
+      await signOut();
+    } catch (error) {
+      console.error('Error disconnecting wallet:', error);
+    }
   }
 
   function onClick() {
@@ -123,7 +141,7 @@ export default function MuqaConnectButton({ children, ...props }: PropsWithChild
   }
 
   return (
-     <div className='relative'>
+    <div className='relative'>
       <Button
         onClick={onClick}
         onMouseEnter={onMouseEnter}
@@ -137,7 +155,8 @@ export default function MuqaConnectButton({ children, ...props }: PropsWithChild
         show={showTooltip}
         label={account.address}
         onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave} />
-     </div>
-  )
+        onMouseLeave={onMouseLeave} 
+      />
+    </div>
+  );
 }

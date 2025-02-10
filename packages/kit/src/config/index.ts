@@ -1,3 +1,3 @@
 export * from './chains';
-export * from './cometh';
-export * from './connector';
+export * from './comethPublicClient';
+export * from './smartAccountClient';

@@ -1,7 +1,7 @@
 'use client';
 import { SupportedNetworks } from '@cometh/connect-sdk';
+import { http, HttpTransport } from 'viem';
 import { arbitrumSepolia, avalancheFuji, Chain, optimismSepolia, polygon } from 'viem/chains';
-import yn from 'yn';
 
 const { ARBITRUM_SEPOLIA, OPTIMISM_SEPOLIA, FUJI, POLYGON } = SupportedNetworks;
 
@@ -18,7 +18,10 @@ type ComethConfig = {
   apiKey: string,
   chain: Chain,
   comethChain: SupportedNetworks,
-  transportUrl: string | undefined,
+  transport: HttpTransport,
+  bundlerUrl: string,
+  cacheTime: number,
+  batch: {},
 };
 
 type chainType = 'POLYGON' | 'ARBITRUM_SEPOLIA' | 'AVALANCHE_FUJI' | 'OPTIMISM_SEPOLIA';
@@ -63,16 +66,21 @@ function getConfig(): ComethConfig {
     throw new Error(`No Cometh configuration found for chain: ${comethProjectChain}`);
   }
 
-  const { apiKey, chain, comethChain, tenderlyRpc } = chainConfig;
+  const { apiKey, chain, comethChain } = chainConfig;
+
+  const bundlerUrl = 'https://bundler.cometh.io/'+chain.id+'?apikey='+apiKey;
 
   return {
     apiKey: assertEnv(apiKey),
     chain,
     comethChain,
-    transportUrl: yn(process.env.NEXT_PUBLIC_USE_TENDERLY)
-      ? assertEnv(tenderlyRpc)
-      : undefined,
+    bundlerUrl,
+    transport: http(),
+    cacheTime: 60_000,
+    batch: {
+        multicall: { wait: 50 },
+    },
   };
 }
 
-export const comethConfig = getConfig();
+export const publicClient = getConfig();

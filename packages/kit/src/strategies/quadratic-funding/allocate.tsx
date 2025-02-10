@@ -3,6 +3,7 @@ import { TransactionData } from '@allo-team/allo-v2-sdk';
 import { TToken } from '@b0rza/gitcoin-chain-data';
 import { ComethProvider, ComethWallet } from '@cometh/connect-sdk';
 import { parseUnits } from 'viem';
+import { SmartAccount } from '@cometh/connect-sdk-4337';
 
 import { Donation } from './qf.types';
 import { generateAllocateTransaction, generateApprovalTransaction } from './utils/payload';
@@ -12,7 +13,7 @@ export const call = async (
   round: Round,
   token: TToken,
   donations: Donation[],
-  wallet: ComethWallet,
+  wallet: SmartAccount,
 ) => {
   const transactions: TransactionData[] = [];
 
@@ -36,7 +37,7 @@ export const call = async (
   return approveAndSendTransactions(wallet, transactions);
 };
 
-async function approveAndSendTransactions(wallet: ComethWallet, txData: TransactionData[]) {
+async function approveAndSendTransactions(wallet: SmartAccount, txData: TransactionData[]) {
   const logNamespace = 'approveAndSendTransaction';
   const provider = new ComethProvider(wallet!);
 

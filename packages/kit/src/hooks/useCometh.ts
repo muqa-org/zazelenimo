@@ -1,51 +1,52 @@
-import { ComethWallet } from '@cometh/connect-sdk';
-import { getConnectViemAccount } from '@cometh/connect-sdk-viem';
 import { useState, useEffect } from 'react';
-import { WalletClient } from 'viem';
-import { useAccount, useWalletClient } from 'wagmi';
+import { useAccount } from 'wagmi';
+import type { SmartAccount } from '@cometh/connect-sdk-4337';
+import type { SmartAccountClient } from '@cometh/connect-sdk-4337/clients';
 
-import { ComethConnector } from '../config';
+import { initializeSmartAccount } from '../config';
 
 /**
- * A custom hook to manage Cometh wallet and client.
+ * A custom hook to manage Cometh smart account and client.
  *
  * @remarks
- * This hook handles the creation and management of Cometh wallet and client.
- * It's important to note that we need to explicitly assign the account to the client
- * because it doesn't get set automatically when using the Cometh connector.
- * This ensures that the account information is correctly associated with the client.
+ * This hook handles the creation and management of Cometh smart account and client.
+ * It uses the configuration from comethPublicClient and smartAccountClient to properly
+ * initialize the 4337 smart account with the correct chain and API settings.
  *
- * @returns An object containing the Cometh client, wallet, and connector.
+ * @returns An object containing the Cometh smart account client and wallet.
  */
 export function useCometh() {
   const account = useAccount();
-  const connector = account.connector as ComethConnector;
-  const { data: walletClient } = useWalletClient();
-
-  const [comethClient, setComethClient] = useState<WalletClient | null>();
-  const [comethWallet, setComethWallet] = useState<ComethWallet | null>();
+  const [comethClient, setComethClient] = useState<SmartAccountClient | null>(null);
+  const [comethWallet, setComethWallet] = useState<SmartAccount | null>(null);
 
   useEffect(() => {
-    async function createComethClient() {
-      if (!walletClient) return;
+    async function initializeAccount() {
+      try {
+        // Initialize smart account client using the config
+        const smartAccountClient = await initializeSmartAccount(
+          account.isConnected ? account.address : undefined
+        );
 
-      if (account.isConnected && connector) {
-        const wallet = await connector.getComethWallet();
-        const comethAccount = getConnectViemAccount(wallet);
+        // Get the smart account instance from the client
+        const smartAccount = smartAccountClient.account;
 
-        setComethWallet(wallet);
-        // We need to explicitly assign the account because it doesn't get set automatically for some reason
-        setComethClient({
-          ...walletClient,
-          account: comethAccount,
-        });
-      } else {
-        setComethClient(walletClient);
+        setComethClient(smartAccountClient);
+        setComethWallet(smartAccount);
+
+      } catch (error) {
+        console.error('Error initializing Cometh account:', error);
       }
     }
 
-    createComethClient();
-  }, [account.isConnected, connector, walletClient]);
+    initializeAccount();
+  }, [account.isConnected, account.address]);
 
-  return { client: comethClient, wallet: comethWallet, connector };
+  return {
+    client: comethClient,
+    wallet: comethWallet,
+    isConnected: account.isConnected,
+    status: account.status,
+    address: account.address
+  };
 }

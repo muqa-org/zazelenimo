@@ -14,6 +14,8 @@ import {
   parseAbiParameters,
 } from 'viem';
 import { decodeEventLog, type Address, type Chain } from 'viem';
+import { SmartAccount } from '@cometh/connect-sdk-4337';
+import { initializeSmartAccount } from '@cometh/connect-sdk-4337';
 
 import { API } from '../../types';
 
@@ -31,10 +33,11 @@ export const alloNativeToken: Address =
 export const allo2API: Partial<API> = {
   createRound: async function (data, signer: WalletClient, account) {
     try {
-      let comethWallet: ComethWallet;
-      if (account?.connector) {
-        comethWallet = await account.connector.getComethWallet();
-        const connectViemAccount = getConnectViemAccount(comethWallet);
+      let smartAccount: SmartAccount;
+      if (account?.address) {
+        const smartAccountClient = await initializeSmartAccount(account.address);
+        smartAccount = smartAccountClient.account;
+        const connectViemAccount = getConnectViemAccount(smartAccount);
         signer.account = connectViemAccount;
       }
 
@@ -44,7 +47,7 @@ export const allo2API: Partial<API> = {
 
       const client = signer.extend(publicActions);
       // Annoying that a profile must be created to deploy a pool
-      const profileId = await getOrCreateProfile(signer, comethWallet!);
+      const profileId = await getOrCreateProfile(signer, smartAccount!);
 
       const {
         amount = BigInt(0),
@@ -69,9 +72,9 @@ export const allo2API: Partial<API> = {
       });
       console.log('txData', txData);
 
-      const provider = new ComethProvider(comethWallet!);
+      const provider = new ComethProvider(smartAccount!);
 
-      const safeTx = await comethWallet!.sendTransaction(txData);
+      const safeTx = await smartAccount!.sendTransaction(txData);
       console.log('safeTx', safeTx);
 
       const txPending = await provider.getTransaction(safeTx.safeTxHash, safeTx.relayId);
@@ -148,7 +151,7 @@ export const allo2API: Partial<API> = {
   distribute: () => {},
 };
 
-async function getOrCreateProfile(signer: WalletClient, wallet: ComethWallet) {
+async function getOrCreateProfile(signer: WalletClient, wallet: SmartAccount) {
   const registry = new Registry(createAlloOpts(signer.chain!));
   const address = getAddress(signer.account?.address!);
   return registry
