@@ -1,4 +1,4 @@
-import { TChain } from '@gitcoin/gitcoin-chain-data';
+import { TChain } from '@b0rza/gitcoin-chain-data';
 
 export const customChains: TChain[] = [{
   // rpc: 'https://sepolia-rollup.arbitrum.io/rpc',

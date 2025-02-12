@@ -1,6 +1,6 @@
 'use client';
 
-import { TContracts } from '@gitcoin/gitcoin-chain-data';
+import { TContracts } from '@b0rza/gitcoin-chain-data';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PropsWithChildren, createElement, useState } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';

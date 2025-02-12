@@ -1,13 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 import { neighborhoods } from '@/app/config';
 import icons from '@/app/components/common/Icons';
 
-export default function ProjectsSidebar() {
+type NeighborhoodSelectorProps = {
+	onChange: (neighborhoods: string[]) => void;
+};
+
+export default function NeighborhoodSelector({ onChange }: NeighborhoodSelectorProps) {
 	const t = useTranslations('projects');
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -22,6 +26,11 @@ export default function ProjectsSidebar() {
 				: [...prevSelected, neighborhood],
 		);
 	};
+
+
+	useEffect(() => {
+		onChange(selectedNeighborhoods);
+	}, [selectedNeighborhoods]);
 
 	return (
 		<div className='space-y-2'>

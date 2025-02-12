@@ -43,22 +43,25 @@ export default function Header() {
 				</div>
 
 				<div className='ml-auto flex items-center justify-end'>
-					<div className='mr-4 hidden md:block'>
+					{process.env.NEXT_PUBLIC_SHOW_CONNECT_BUTTON === 'true' && (
+						<MuqaConnectButton className='mx-2 rounded-md bg-blue px-10 py-[0.55em]' />
+					)}
+					<div className='mx-1 hidden md:block'>
 						<LanguageSwitcher screen='desktop' />
 					</div>
-					{process.env.NEXT_PUBLIC_SHOW_CONNECT_BUTTON === 'true' && (
-						<MuqaConnectButton className='mx-4 rounded-md bg-blue px-10 py-[0.55em]' />
-					)}
 					<Link
 						href={CodaFormProjectLink}
-						className='rounded-md bg-green px-10 py-[0.55em] mx-4 text-base font-normal text-white hover:opacity-85'
+						className='rounded-md bg-green px-10 py-[0.55em] mx-2 text-base font-normal text-white hover:opacity-85'
 					>
 						{t('propose')}
 					</Link>
 					{process.env.NEXT_PUBLIC_SHOW_CART_LINK === 'true' && (
 						<Link
 							href={'/cart'}
-							className='flex items-center justify-center rounded-md bg-green px-2 py-[0.55em] text-base font-normal text-white hover:opacity-85 w-[70px]'
+							className={`flex items-center justify-center rounded-md bg-green px-2 py-[0.55em] text-base font-normal text-white hover:opacity-85 w-[70px] ${
+								items.length > 0 ? 'animate-pop' : ''
+							}`}
+							key={items.length}
 						>
 							<Image
 								src={icons.cartIconWhite}

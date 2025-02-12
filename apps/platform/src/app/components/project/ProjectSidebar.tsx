@@ -8,36 +8,16 @@ import { getProjectProgressBGColor } from '@/app/helpers/projectHelper';
 import AddToCart from '@/app/components/cart/AddToCart';
 import { FundedApplication } from '@allo/kit';
 
-const fetchApplication = (): FundedApplication => {
-	const targetAmount = Math.floor(Math.random() * 10000);
-	const fundedPercentage = Math.floor(Math.random() * 100);
-	const fundedAmount = Math.floor(targetAmount * (fundedPercentage / 100));
-
-	return {
-		id: crypto.randomUUID(),
-		name: 'Klupe od Đardina do Jokera',
-		description: 'Klupe od Đardina do Jokera',
-		recipient: `0x${Math.random().toString(16).slice(2, 40)}`,
-		chainId: 1,
-		projectId: crypto.randomUUID(),
-		status: 'APPROVED',
-		bannerUrl: 'https://picsum.photos/150/95',
-
-		targetAmount,
-		fundedPercentage,
-		fundedAmount,
-	}
+type ProjectSidebarProps = {
+	application: FundedApplication;
 };
 
-export default function ProjectSidebar() {
+export default function ProjectSidebar({ application }: ProjectSidebarProps) {
 	const t = useTranslations('project');
 	const [donationAmount, setDonationAmount] = useState(10);
 
 	// You can adjust this
-	const estimatedMatch = donationAmount * 28.6;
-
-	// TODO: load this from db/graphql
-	const application = fetchApplication();
+	const estimatedMatch = Math.round(donationAmount * 28.6);
 
 	let progressColor = getProjectProgressBGColor(application.fundedPercentage);
 
@@ -64,7 +44,7 @@ export default function ProjectSidebar() {
 			</div>
 			<h2 className='mt-3 text-[32px] text-[#09CE78]'>€ {application.fundedAmount}</h2>
 			<h4 className='leading-normal text-gray'>
-				{t('funded', { amount: application.targetAmount, percentage: application.fundedPercentage })}
+				{t('funded', { amount: application.targetAmount })}
 			</h4>
 			<h3 className='mt-8 text-[32px] leading-normal text-[#3F3F3F]'>67</h3>
 			<h4 className='leading-normal text-gray'>{t('backers')}</h4>
@@ -88,20 +68,23 @@ export default function ProjectSidebar() {
 							background: `linear-gradient(to right, #39A56A ${donationAmount}%, black ${donationAmount}%)`,
 						}}
 					/>
-					<input
-						type='text'
-						id='donation-amount'
-						value={`${donationAmount} €`}
-						onChange={handleInputChange}
-						className='w-20 rounded-md border border-borderGray px-2 py-2 text-left text-sm text-black focus:outline-none'
-					/>
+					<div className="relative">
+						<span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-gray">€</span>
+						<input
+							type='text'
+							id='donation-amount'
+							value={donationAmount}
+							onChange={handleInputChange}
+							className='w-20 rounded-md border border-borderGray px-2 py-2 pl-6 text-left text-sm text-black focus:outline-none'
+						/>
+					</div>
 				</div>
 
 				<div className='mb-6 flex items-center justify-between'>
 					<label className='text-xs text-black'>{t('estimatedMatch')}</label>
 					<input
 						type='text'
-						value={`${estimatedMatch.toFixed(2)} €`}
+						value={`€ ${estimatedMatch}`}
 						readOnly
 						className='w-20 rounded-md border border-borderGray px-2 py-2 text-left text-sm text-grayLight focus:outline-none'
 					/>

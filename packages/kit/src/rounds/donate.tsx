@@ -1,5 +1,5 @@
 'use client';
-import { getChainById } from '@gitcoin/gitcoin-chain-data';
+import { getChainById } from '@b0rza/gitcoin-chain-data';
 import { PropsWithChildren, useMemo } from 'react';
 
 import { Button, comethConfig } from '..';

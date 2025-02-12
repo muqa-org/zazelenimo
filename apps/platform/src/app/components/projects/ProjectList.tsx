@@ -1,18 +1,35 @@
+import NeighborhoodSelector from '@/app/components/projects/NeighborhoodSelector';
 import ProjectCard from '@/app/components/project/ProjectCard';
 import Pagination from '@/app/components/Pagination';
-import ProjectsSidebar from '@/app/components/projects/ProjectsSidebar';
 import { FundedApplication } from '@allo/kit';
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 type ProjectListProps = {
 	applications: FundedApplication[];
 };
 
 export default function ProjectListTable({ applications }: ProjectListProps) {
+	const t = useTranslations('projects');
+
+	const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
+
+	function neighborhoodChangeHandler(neighborhoods: string[]) {
+		setNeighborhoods(neighborhoods);
+	}
+
+	const filteredApplications = neighborhoods.length > 0
+		? applications.filter(({ neighborhood }) => neighborhoods.includes(neighborhood))
+		: applications;
+
 	return (
 		<div className='mt-2 flex flex-row flex-wrap'>
 			<div className='order-2 w-full lg:order-1 lg:w-5/6'>
-				<div className='grid w-full grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3'>
-					{applications.map((item) => (
+				<div className='grid w-full grid-cols-1 gap-7 lg:grid-cols-2 lg:grid-cols-3'>
+					{filteredApplications.length === 0 && (
+						<div className='noApplicationsMessage'>{t('noApplicationsMessage')}</div>
+					)}
+					{filteredApplications.map((item) => (
 						<ProjectCard
 							key={item.id}
 							application={item}
@@ -20,17 +37,17 @@ export default function ProjectListTable({ applications }: ProjectListProps) {
 						/>
 					))}
 				</div>
-				<div>
-					<Pagination
-						currentPage={2}
-						totalPages={10}
-						baseLink='/projects'
-						maxVisiblePages={5}
-					/>
-				</div>
+				{/* <Pagination
+					currentPage={2}
+					totalPages={10}
+					baseLink='/projects'
+					maxVisiblePages={5}
+				/> */}
 			</div>
 			<div className='order-1 mb-10 w-full pl-0 lg:order-2 lg:w-1/6 lg:pl-2 xl:pl-16'>
-				<ProjectsSidebar />
+				{applications.length > 0 && (
+					<NeighborhoodSelector onChange={neighborhoodChangeHandler} />
+				)}
 			</div>
 		</div>
 	);

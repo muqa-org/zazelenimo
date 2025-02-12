@@ -1,7 +1,7 @@
 'use client';
 import '@rainbow-me/rainbowkit/styles.css';
 
-import { getChains } from '@gitcoin/gitcoin-chain-data';
+import { getChains } from '@b0rza/gitcoin-chain-data';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';

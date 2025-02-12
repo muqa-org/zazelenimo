@@ -182,6 +182,7 @@ export type Application = BaseApplication & {
     amount?: number;
   };
   status: ApplicationStatus;
+  websiteUrl?: string;
 };
 
 export type ApplicationInput = BaseApplication & {

@@ -1,0 +1,142 @@
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Zelena sjenica u Marmontovoj ulici",
+    "description": "Projekt 'Zelena sjenica' predviđa postavljanje pergola prekrivenih penjačicama duž Marmontove ulice. Ovaj korak stvara prirodni hlad za šetače i doprinosi estetici jedne od najprometnijih pješačkih zona u Splitu. Sjenice će biti prekrivene biljkama poput bršljana i glicinije, stvarajući oazu mira usred gradske vreve. \n\nOsim vizualnog i estetskog doprinosa, projekt potiče bioraznolikost i pruža utočište pticama. Planirane su klupe ispod sjenica kako bi prolaznici mogli uživati u hladu, a poseban naglasak stavlja se na održivost i korištenje kišnice za navodnjavanje biljaka.",
+    "recipient": "0x1234567890123456789012345678901234567890",
+    "chainId": 1,
+    "projectId": "8a7b6c5d-4e3f-2a1b-9c8d-7e6f5a4b3c2d",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/19/908/514",
+    "contributors": {
+      "amount": 12345,
+      "count": 12
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "name": "Drvoredi života – Sadnja stabala na Rivi",
+    "description": "Sadnjom novih stabala na splitskoj Rivi stvara se hladovina i ugodniji prostor za šetnju i odmor. Projekt 'Drvoredi života' uključuje sadnju autohtonih mediteranskih vrsta poput česmine i murve, čime se ističe lokalni identitet i očuvanje kulturne baštine. \n\nOsim funkcionalnog aspekta, cilj projekta je smanjiti emisije CO2, poboljšati kvalitetu zraka i ojačati otpornost grada na klimatske promjene. Projekt predviđa i edukativne ploče s informacijama o vrstama stabala te njihovom ekološkom značaju.",
+    "recipient": "0x2345678901234567890123456789012345678901",
+    "chainId": 1,
+    "projectId": "9b8a7c6d-5e4f-3b2c-0d9e-8f7g6h5i4j3k",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/25/908/514",
+    "contributors": {
+      "amount": 23456,
+      "count": 18
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "name": "Urbani vrtovi na Gripama",
+    "description": "Projekt predviđa stvaranje zajedničkih urbanih vrtova na neiskorištenom prostoru u kvartu Gripe. Cilj je omogućiti stanovnicima da uzgajaju vlastito povrće i začinsko bilje, educiraju se o održivom vrtlarstvu i stvaraju zelene oaze u urbanom okruženju. \n\nProjekt uključuje postavljanje povišenih gredica, sustava za navodnjavanje i kompostiranje, te organizaciju radionica o organskom vrtlarstvu. Poseban naglasak stavlja se na uključivanje starijih osoba i djece iz obližnjih škola.",
+    "recipient": "0x3456789012345678901234567890123456789012",
+    "chainId": 1,
+    "projectId": "7c6d5e4f-3b2a-1c9d-8e7f-6g5h4i3j2k1l",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/61/908/514",
+    "contributors": {
+      "amount": 34567,
+      "count": 25
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "name": "Zeleni krovovi Splita",
+    "description": "Inicijativa za pretvaranje ravnih krovova javnih zgrada u zelene površine. Projekt obuhvaća postavljanje vegetacije na krovove škola, vrtića i drugih gradskih ustanova, stvarajući dodatne zelene površine koje pomažu u regulaciji temperature, smanjenju potrošnje energije i poboljšanju kvalitete zraka. \n\nOsim ekoloških prednosti, zeleni krovovi služit će i kao edukativni prostori za učenike i građane, gdje će se održavati radionice o održivom razvoju i urbanoj ekologiji.",
+    "recipient": "0x4567890123456789012345678901234567890123",
+    "chainId": 1,
+    "projectId": "6d5e4f3c-2b1a-0d9e-7f6g-5h4i3j2k1l0m",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/70/908/514",
+    "contributors": {
+      "amount": 45678,
+      "count": 30
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440004",
+    "name": "Zelena oaza na Trgu Gaje Bulata",
+    "description": "Na Trgu Gaje Bulata planira se formiranje zelene oaze s gustim krošnjama i niskim grmljem. Projekt uključuje sadnju stabala poput borova i čempresa, stvarajući prirodni hlad i pročišćavanje zraka. \n\nProstor je zamišljen kao mirno utočište za odmor u urbanom okruženju, a posebna pažnja bit će posvećena održavanju zelenih površina. U sklopu projekta predviđene su i edukativne radionice o urbanom vrtlarstvu za građane svih uzrasta.",
+    "recipient": "0x5678901234567890123456789012345678901234",
+    "chainId": 1,
+    "projectId": "5e4f3c2b-1a0d-9e8f-7g6h-5i4j3k2l1m0n",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/81/908/514",
+    "contributors": {
+      "amount": 56789,
+      "count": 42
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440005",
+    "name": "Aleja trešanja u Ulici kralja Zvonimira",
+    "description": "Projekt 'Aleja trešanja' pretvara Ulicu kralja Zvonimira u vizualno atraktivnu šetnicu s drvoredom japanskih trešanja. Cvjetovi trešanja u proljeće pružaju poseban ugođaj, dok krošnje stvaraju hlad tijekom ljeta. \n\nOva inicijativa ne samo da uljepšava prostor, već i povećava zelenu infrastrukturu u urbanoj sredini. Projekt uključuje sustav navodnjavanja kap po kap i posebne klupe kako bi građani mogli uživati u pogledu na cvjetni pejzaž.",
+    "recipient": "0x6789012345678901234567890123456789012345",
+    "chainId": 1,
+    "projectId": "4f3c2b1a-0d9e-8f7g-6h5i-4j3k2l1m0n9o",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/90/908/514",
+    "contributors": {
+      "amount": 67890,
+      "count": 55
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440006",
+    "name": "Zeleni zid Dioklecijanove palače",
+    "description": "Inovativni projekt vertikalnog ozelenjivanja zidova uz Dioklecijanovu palaču, koji kombinira povijesnu baštinu s modernim pristupom urbanom zelenilu. Projekt predviđa postavljanje posebnih sustava za vertikalne vrtove koji neće narušiti povijesnu strukturu. \n\nBiljke će biti pažljivo odabrane kako bi se uklopile u mediteranski ambijent i povijesni kontekst, uz korištenje autohtonih vrsta. Sustav za navodnjavanje bit će automatiziran i energetski učinkovit.",
+    "recipient": "0x7890123456789012345678901234567890123456",
+    "chainId": 1,
+    "projectId": "3c2b1a0d-9e8f-7g6h-5i4j-3k2l1m0n9o8p",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/186/908/514",
+    "contributors": {
+      "amount": 78901,
+      "count": 63
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440007",
+    "name": "Vrt leptira u Ulici Ruđera Boškovića",
+    "description": "Vrt leptira planiran je kao prostor pun cvijeća i biljaka koje privlače leptire, poput lavande, kadulje i origana. Smješten u Ulici Ruđera Boškovića, vrt pruža utočište za oprašivače, čime doprinosi lokalnoj bioraznolikosti. \n\nProstor je dizajniran kao edukativno-rekreativna zona, uključujući informativne table o vrstama leptira i njihovom značaju za ekosustav. Projekt također predviđa male klupe i šetnice za opuštanje posjetitelja.",
+    "recipient": "0x8901234567890123456789012345678901234567",
+    "chainId": 1,
+    "projectId": "2b1a0d9e-8f7g-6h5i-4j3k-2l1m0n9o8p7q",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/212/908/514",
+    "contributors": {
+      "amount": 89012,
+      "count": 71
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440008",
+    "name": "Livadica za igru u Ulici Matice hrvatske",
+    "description": "Projekt 'Livadica za igru' stvara zelenu površinu u Ulici Matice hrvatske prilagođenu dječjoj igri i obiteljskom druženju. Prostor će sadržavati travnate površine, drvene konstrukcije za penjanje i ljuljačke. \n\nPosebna pažnja bit će posvećena sigurnosnim standardima i upotrebi prirodnih materijala. Cilj projekta je stvoriti prostor gdje djeca mogu provoditi vrijeme na otvorenom, potičući zdrav razvoj kroz igru.",
+    "recipient": "0x9012345678901234567890123456789012345678",
+    "chainId": 1,
+    "projectId": "1a0d9e8f-7g6h-5i4j-3k2l-1m0n9o8p7q6r",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/221/908/514",
+    "contributors": {
+      "amount": 90123,
+      "count": 84
+    }
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440009",
+    "name": "Zeleni trg na Peristilu",
+    "description": "Projekt 'Zeleni trg' predviđa postavljanje mobilnih vrtova i cvjetnih aranžmana na Peristilu, čime se stvara spoj povijesne i moderne estetike. Biljke će se birati prema sezoni, pružajući dinamičan izgled kroz godinu. \n\nUz hortikulturne elemente, projekt uključuje umjetničke instalacije i prostor za male manifestacije. Cilj je oživjeti povijesnu jezgru Splita uz poštovanje njezine kulturne vrijednosti.",
+    "recipient": "0x0123456789012345678901234567890123456789",
+    "chainId": 1,
+    "projectId": "0d9e8f7g-6h5i-4j3k-2l1m-0n9o8p7q6r5s",
+    "status": "APPROVED",
+    "bannerUrl": "https://picsum.photos/id/259/908/514",
+    "contributors": {
+      "amount": 101234,
+      "count": 92
+    }
+  }
+]

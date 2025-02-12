@@ -2,6 +2,7 @@
 
 import { ApiProvider, ComethProvider, strategies } from '@allo/kit';
 import { SessionProvider } from "next-auth/react";
+import { RoundIdProvider } from './contexts/roundIdContext';
 
 export function MuqaSessionProvider({
 	children,
@@ -18,17 +19,17 @@ export function AlloKitProviders({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const api = {
+    upload: async (data: any) =>
+      fetch(`/api/ipfs`, { method: 'POST', body: data })
+        .then((r) => r.json())
+        .then((r) => r.cid),
+  }
   return (
-    <ApiProvider
-      strategies={strategies}
-      api={{
-        upload: async (data) =>
-          fetch(`/api/ipfs`, { method: 'POST', body: data })
-            .then((r) => r.json())
-            .then((r) => r.cid),
-      }}
-    >
-      <ComethProvider>{children}</ComethProvider>
+    <ApiProvider strategies={strategies} api={api}>
+      <RoundIdProvider>
+        <ComethProvider>{children}</ComethProvider>
+      </RoundIdProvider>
     </ApiProvider>
   );
 }

@@ -1,4 +1,4 @@
-import { TToken } from '@gitcoin/gitcoin-chain-data';
+import { TToken } from '@b0rza/gitcoin-chain-data';
 import { getContract, parseAbi, WalletClient } from 'viem';
 
 import { TokenMetadata } from '../qf.types';

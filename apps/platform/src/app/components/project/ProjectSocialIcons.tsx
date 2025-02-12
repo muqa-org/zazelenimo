@@ -5,19 +5,21 @@ import Image from 'next/image';
 import icons from '@/app/components/common/Icons';
 
 export default function ProjectSocialIcons({
-	url,
+	id,
 	title,
 }: {
-	url: string;
+	id: string;
 	title: string;
 }) {
+	const shareableUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_URL}/projects/${id}`);
+	const shareableTitle = encodeURIComponent(title);
 	const shareOnFacebook = () => {
-		const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+		const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareableUrl}`;
 		window.open(facebookUrl, '_blank', 'noopener,noreferrer');
 	};
 
 	const shareOnTwitter = () => {
-		const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+		const twitterUrl = `https://twitter.com/intent/tweet?url=${shareableUrl}&text=${shareableTitle}`;
 		window.open(twitterUrl, '_blank', 'noopener,noreferrer');
 	};
 
