@@ -15,7 +15,12 @@
 		"bannerMessage": "Now accepting proposals",
 		"projectsSuffix": "projects",
 		"days": "days",
-		"bannerButtonText": "Propose a project"
+		"bannerButtonText": "Propose a project",
+		"exampleProjectTitle": "Blatine - planting trees along Dubrovačka street",
+		"exampleProjectLocation": "Below the tunnel, above the hospital",
+		"exampleProjectStreet": "Dubrovnik street",
+		"exampleProjectNeighborhood": "Blatine-Škrape and Gripe",
+		"exampleProjectDescriptionText": "Plant trees to provide the shade along the wide sidewalks. Where necessary, make holes in asphalt for trees."
 	},
 	"navigation": {
 		"home": "Home",

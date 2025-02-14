@@ -16,7 +16,7 @@ export default function HomepageExampleProject() {
 					{t('exampleProjectSubtitle')}
 				</h4>
 				<h2 className='mb-5 text-center text-4xl font-normal text-primaryBlack'>
-					Blatine - planting trees along Dubrovačka street
+					{t('exampleProjectTitle')}
 				</h2>
 				<div className='mx-0 mt-10 grid grid-cols-1 sm:gap-14 sm:p-6 sm:mx-4 lg:mx-20 lg:grid-cols-3'>
 					<div className='relative col-span-1 rounded lg:static mb-6 sm:mb-0'>
@@ -51,20 +51,16 @@ export default function HomepageExampleProject() {
 					<div className='col-span-1'>
 						<div className='text-left text-base text-grayDark'>
 							<p>
-								<strong>{t('exampleNeighborhood')}:</strong> Blatine-Škrape and
-								Gripe
+								<strong>{t('exampleNeighborhood')}:</strong> {t('exampleProjectNeighborhood')}
 							</p>
 							<p>
-								<strong>{t('exampleStreet')}:</strong> Dubrovnik street
+								<strong>{t('exampleStreet')}:</strong> {t('exampleProjectStreet')}
 							</p>
 							<p>
-								<strong>{t('exampleLocationDescription')}:</strong> Below the
-								tunnel, above the hospital
+								<strong>{t('exampleLocationDescription')}:</strong> {t('exampleProjectLocation')}
 							</p>
 							<p className='mt-4'>
-								<strong>{t('exampleProjectDescription')}:</strong> Along the
-								street we can plant trees to provide the shade along the wide
-								sidewalks. Where necessary, make holes in asphalt for trees.
+								<strong>{t('exampleProjectDescription')}:</strong> {t('exampleProjectDescriptionText')}
 							</p>
 						</div>
 					</div>
