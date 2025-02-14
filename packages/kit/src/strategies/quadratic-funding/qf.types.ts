@@ -20,4 +20,5 @@ export type FundedApplication = Application & {
   targetAmount: number;
   fundedAmount: number;
   fundedPercentage: number;
+  neighborhood: string;
 }

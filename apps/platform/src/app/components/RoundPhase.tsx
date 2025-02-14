@@ -32,7 +32,7 @@ export default function RoundPhase({ title, startDate, endDate }: RoundBoxProps)
 		>
 			<div className='relative w-full'>
 				<h4 className='mb-2 text-base font-bold'>{title}</h4>
-				<p className='text-sm font-medium'>{formattedDateTime}</p>
+				{/* <p className='text-sm font-medium'>{formattedDateTime}</p> */}
 				{type === 'past' && (
 					<span className='absolute right-1 top-1 block h-[18px] w-[18px]'>
 						<Image

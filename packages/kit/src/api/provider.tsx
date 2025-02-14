@@ -22,11 +22,11 @@ import { directGrants } from '../strategies/direct-grants';
 import { quadraticFunding } from '../strategies/quadratic-funding';
 import { Toaster } from '../ui/toaster';
 
-if (typeof window !== 'undefined') {
-  // posthog.init('phc_MkecAopGBhofBbwLqvcvV0iyHBZWSlemr7krp6lxLjl', {
-  //   api_host: 'https://us.i.posthog.com',
-  //   person_profiles: 'always',
-  // });
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_API_KEY) {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_API_KEY, {
+    api_host: 'https://us.i.posthog.com',
+    person_profiles: 'always',
+  });
 }
 
 const Context = createContext(

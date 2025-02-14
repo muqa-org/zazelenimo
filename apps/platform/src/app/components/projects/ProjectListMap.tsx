@@ -66,10 +66,10 @@ export default function ProjectListMap({ applications }: ProjectListProps) {
 		{ coords: { lat: 43.52046275847196, lng: 16.44811046218916 } },
 	];
 
-	const markers: ApplicationWithCoords[] = coordinates.map((coordinate, index) => ({
-		...applications[index]!,
-		...coordinate,
-		icon: { url: getCustomPercentageMarkerIcon(applications[index]!.fundedPercentage) },
+	const markers: ApplicationWithCoords[] = applications.map((application, index) => ({
+		...application,
+		...coordinates[index]!,
+		icon: { url: getCustomPercentageMarkerIcon(application.fundedPercentage) },
 	}));
 
 	return (

@@ -10,6 +10,7 @@ export type ApplicationCard = Application & {
   isLoading?: boolean;
 };
 type ApplicationComponent = 'contributors' | 'add_button';
+
 export function ApplicationCard({
   name,
   description,

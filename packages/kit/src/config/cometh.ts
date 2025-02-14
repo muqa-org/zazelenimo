@@ -1,9 +1,9 @@
 'use client';
 import { SupportedNetworks } from '@cometh/connect-sdk';
-import { arbitrumSepolia, avalancheFuji, Chain, polygon } from 'viem/chains';
+import { arbitrumSepolia, avalancheFuji, Chain, optimismSepolia, polygon } from 'viem/chains';
 import yn from 'yn';
 
-const { ARBITRUM_SEPOLIA, FUJI, POLYGON } = SupportedNetworks;
+const { ARBITRUM_SEPOLIA, OPTIMISM_SEPOLIA, FUJI, POLYGON } = SupportedNetworks;
 
 type BaseConfig = {
   [_key in chainType]: {
@@ -21,7 +21,7 @@ type ComethConfig = {
   transportUrl: string | undefined,
 };
 
-type chainType = 'POLYGON' | 'ARBITRUM_SEPOLIA' | 'AVALANCHE_FUJI';
+type chainType = 'POLYGON' | 'ARBITRUM_SEPOLIA' | 'AVALANCHE_FUJI' | 'OPTIMISM_SEPOLIA';
 
 const assertEnv = (val: string | undefined) => {
   if (!val) throw new Error(`ENV not set: ${val}`);
@@ -46,6 +46,12 @@ const configs: BaseConfig = {
     tenderlyRpc: process.env.NEXT_PUBLIC_AVALANCHE_FUJI_TENDERLY_RPC,
     chain: avalancheFuji,
     comethChain: FUJI,
+  },
+  'OPTIMISM_SEPOLIA': {
+    apiKey: process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_COMETH_API_KEY,
+    tenderlyRpc: process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_TENDERLY_RPC,
+    chain: optimismSepolia,
+    comethChain: OPTIMISM_SEPOLIA,
   }
 }
 

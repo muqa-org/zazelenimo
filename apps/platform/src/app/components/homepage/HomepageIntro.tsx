@@ -20,9 +20,9 @@ export default function HomepageIntro({ phases }: HomepageIntroProps) {
 				<h1 className='mb-7 text-center text-5xl font-normal uppercase text-primaryBlack'>
 					{t('timeline')}
 				</h1>
-				<div className='text-center text-xl font-normal text-gray'>
+				{/* <div className='text-center text-xl font-normal text-gray'>
 					{t('timelinePeriod')}
-				</div>
+				</div> */}
 				<HomepageRoundBoxes phases={phases} />
 				<div className='mt-10'>
 					<Link

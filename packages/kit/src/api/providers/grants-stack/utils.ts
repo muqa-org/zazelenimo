@@ -1,8 +1,11 @@
 import { RoundsQuery } from '../../types';
 
-export const ipfsGateway = (cid: string) => {
+const IPFS_GATEWAY_URL = process.env.NEXT_PUBLIC_IPFS_GATEWAY_URL ?? 'https://ipfs.io';
+
+export const ipfsGateway = (cid: string, type?: 'string' | undefined) => {
   if (!cid) return '';
-  return cid?.includes('http') ? cid : `https://ipfs.io/ipfs/${cid}`;
+  const url = cid?.includes('http') ? cid : `${IPFS_GATEWAY_URL}/ipfs/${cid}`;
+  return type ? `${url}?${type}` : url;
 };
 
 export function queryToFilter(query: RoundsQuery) {
@@ -21,8 +24,8 @@ export function queryToFilter(query: RoundsQuery) {
     roundEnd: 'donationsEndTime',
   }).where;
 
-  /* 
-  
+  /*
+
   Queries can contain nested props. For example the round query:
   {
     where: {

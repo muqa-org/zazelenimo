@@ -1,7 +1,7 @@
 'use client';
 
 import { NATIVE } from '@allo-team/allo-v2-sdk';
-import { TToken } from '@gitcoin/gitcoin-chain-data';
+import { TToken } from '@b0rza/gitcoin-chain-data';
 import { useMutation } from '@tanstack/react-query';
 import { LoaderIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
