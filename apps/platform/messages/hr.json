@@ -15,7 +15,12 @@
 		"bannerMessage": "Upravo prikupljamo prijedloge",
 		"projectsSuffix": "projekata",
 		"days": "dana",
-		"bannerButtonText": "Predloži projekt"
+		"bannerButtonText": "Predloži projekt",
+		"exampleProjectTitle": "Blatine - sadnja drveća uz Dubrovačku ulicu",
+		"exampleProjectLocation": "Ispod tunela, iznad bolnice",
+		"exampleProjectNeighborhood": "Blatine-Škrape i Gripe",
+		"exampleProjectStreet": "Dubrovačka",
+		"exampleProjectDescriptionText": "Uz ulicu možemo posaditi drveće da pruža hladovinu širokom nogostupu."
 	},
 	"navigation": {
 		"home": "Naslovnica",
