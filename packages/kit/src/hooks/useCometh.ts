@@ -1,31 +1,38 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
-import type { SmartAccount } from '@cometh/connect-sdk-4337';
-import type { SmartAccountClient } from '@cometh/connect-sdk-4337/clients';
+// Comment out the incorrect import and use any type for now
+// import type { SmartAccountClient } from '@cometh/connect-sdk-4337';
 
-import { initializeSmartAccount } from '../config';
+import { initializeComethSmartAccount } from '../config/comethSmartAccount.js';
 
 /**
  * A custom hook to manage Cometh smart account and client.
  *
  * @remarks
  * This hook handles the creation and management of Cometh smart account and client.
- * It uses the configuration from comethPublicClient and smartAccountClient to properly
- * initialize the 4337 smart account with the correct chain and API settings.
+ * It uses the 4337 SDK to initialize the smart account with the correct chain and API settings.
  *
  * @returns An object containing the Cometh smart account client and wallet.
  */
 export function useCometh() {
   const account = useAccount();
-  const [comethClient, setComethClient] = useState<SmartAccountClient | null>(null);
-  const [comethWallet, setComethWallet] = useState<SmartAccount | null>(null);
+  const [comethClient, setComethClient] = useState<any | null>(null);
+  const [comethWallet, setComethWallet] = useState<any | null>(null);
 
   useEffect(() => {
     async function initializeAccount() {
       try {
+        if (!account.isConnected) {
+          setComethClient(null);
+          setComethWallet(null);
+          return;
+        }
+
         // Initialize smart account client using the config
-        const smartAccountClient = await initializeSmartAccount(
-          account.isConnected ? account.address : undefined
+        const smartAccountClient = await initializeComethSmartAccount(
+          account.address
         );
 
         // Get the smart account instance from the client

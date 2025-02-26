@@ -7,7 +7,7 @@ import { PropsWithChildren, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { signIn, signOut } from 'next-auth/react';
 import { WalletNonceResponse } from '../api/auth/web3/nonce/route';
-import { comethConnector } from '@allo/kit/wagmi/connectors/cometh';
+import { comethConnector } from '@allo/kit';
 
 const TRUNCATE_LENGTH = 20;
 const TRUNCATE_OFFSET = 3;

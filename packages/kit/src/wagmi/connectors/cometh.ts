@@ -1,79 +1,175 @@
-import { createSafeSmartAccount, createSmartAccountClient } from '@cometh/connect-sdk-4337';
+'use client';
+
+import { 
+  createSafeSmartAccount, 
+  createSmartAccountClient,
+  createComethPaymasterClient
+} from '@cometh/connect-sdk-4337';
+import { getConnectViemAccount } from '@cometh/connect-sdk-viem';
 import { http } from 'viem';
 import { createConnector } from 'wagmi';
 
-import { publicClient } from '../../config/comethPublicClient';
+import { comethConfig } from '../../config/comethConfig.js';
 
-const { apiKey, chain, bundlerUrl } = publicClient;
+const { apiKey, chain, bundlerUrl, paymasterUrl } = comethConfig;
 
-export const comethConnector = createConnector((config) => ({
-  id: 'cometh',
-  name: 'Cometh',
-  type: 'cometh',
+// Define a minimal interface for what we need from the account
+interface ComethAccount {
+  address: `0x${string}`;
+}
+
+// Initialize the smart account client early to avoid "No provider available" error
+let globalSmartAccountClient: any | undefined;
+let globalViemAccount: ComethAccount | undefined;
+
+// Function to initialize the smart account if not already done
+async function initializeSmartAccount() {
+  if (globalSmartAccountClient) return { smartAccountClient: globalSmartAccountClient, viemAccount: globalViemAccount };
   
-  async connect({ chainId } = {}) {
-    try {
-      // Create safe smart account
-      const smartAccount = await createSafeSmartAccount({
-        apiKey,
-        chain,
-        publicClient: config.publicClient
-      });
+  try {
+    console.log('Initializing Cometh smart account...');
+    
+    // Create safe smart account - make sure to await this!
+    const smartAccount = await createSafeSmartAccount({
+      apiKey,
+      chain,
+    });
+    
+    console.log('Smart account created successfully');
 
-      // Create smart account client
-      const smartAccountClient = createSmartAccountClient({
-        account: smartAccount,
-        chain,
-        bundlerTransport: http(bundlerUrl)
-      });
+    // Create paymaster client for gasless transactions
+    const paymasterClient = await createComethPaymasterClient({
+      transport: http(paymasterUrl),
+      chain,
+    });
 
-      const address = smartAccount.address;
+    // Create smart account client
+    globalSmartAccountClient = createSmartAccountClient({
+      account: smartAccount,
+      chain,
+      bundlerTransport: http(bundlerUrl),
+      paymaster: paymasterClient
+    });
 
-      return {
-        accounts: [address],
-        chainId: chain.id,
-        chain: {
-          id: chain.id,
-          unsupported: false
+    // We need to handle the type conversion carefully due to SDK compatibility issues
+    // The SDK expects a ComethWallet type but we have a SafeSmartAccount
+    // We'll extract the address directly from the smart account
+    const accountAddress = smartAccount.address;
+    
+    if (!accountAddress || typeof accountAddress !== 'string') {
+      throw new Error('Failed to get account address from smart account');
+    }
+    
+    // Create a simple account object with just the address
+    globalViemAccount = { address: accountAddress as `0x${string}` };
+    
+    console.log('Account initialized with address:', accountAddress);
+    
+    return { smartAccountClient: globalSmartAccountClient, viemAccount: globalViemAccount };
+  } catch (error) {
+    console.error('Error initializing Cometh smart account:', error);
+    throw error;
+  }
+}
+
+/**
+ * Cometh Connect connector for Wagmi
+ * Provides a way to connect to Cometh Smart Accounts through Wagmi
+ */
+export const comethConnector = createConnector((config) => {
+  return {
+    id: 'cometh',
+    name: 'Cometh Connect',
+    type: 'cometh',
+    
+    async connect({ chainId } = {}) {
+      try {
+        console.log('Connecting to Cometh...');
+        const { smartAccountClient, viemAccount } = await initializeSmartAccount();
+        
+        if (!viemAccount) {
+          throw new Error('Failed to initialize Cometh account');
         }
-      };
-    } catch (error) {
-      console.error('Error connecting Cometh:', error);
-      throw error;
-    }
-  },
+        
+        const address = viemAccount.address;
+        console.log('Connected to Cometh with address:', address);
 
-  async disconnect() {
-    // Clean up any state if needed
-  },
+        return {
+          accounts: [address],
+          chainId: chain.id,
+          chain: {
+            id: chain.id,
+            unsupported: false
+          }
+        };
+      } catch (error) {
+        console.error('Error connecting Cometh:', error);
+        throw error;
+      }
+    },
 
-  async getAccounts() {
-    // Return the smart account address if connected
-    if (!this.data?.account) {
-      throw new Error('No account connected');
-    }
-    return [this.data.account.address];
-  },
+    async disconnect() {
+      // Clean up any state if needed
+      // We don't reset the global variables to maintain the provider
+      return;
+    },
 
-  async isAuthorized() {
-    // Check if we have an active session
-    try {
-      const accounts = await this.getAccounts();
-      return !!accounts.length;
-    } catch {
-      return false;
-    }
-  },
+    async getAccounts() {
+      // Return the smart account address if connected
+      if (!globalViemAccount) {
+        // Try to initialize if not already done
+        const { viemAccount } = await initializeSmartAccount().catch(() => ({ viemAccount: undefined }));
+        if (!viemAccount) {
+          throw new Error('No account connected');
+        }
+        return [viemAccount.address];
+      }
+      return [globalViemAccount.address];
+    },
 
-  onAccountsChanged(accounts) {
-    if (accounts.length === 0) this.disconnect();
-  },
+    async getChainId() {
+      // Return the chain ID
+      return chain.id;
+    },
 
-  onChainChanged(chain) {
-    // Handle chain changes if needed
-  },
+    async getProvider() {
+      // Return the provider
+      if (!globalSmartAccountClient) {
+        console.log('No provider available, initializing...');
+        // Try to initialize if not already done
+        const { smartAccountClient } = await initializeSmartAccount();
+        if (!smartAccountClient) {
+          throw new Error('No provider available');
+        }
+        return smartAccountClient;
+      }
+      return globalSmartAccountClient;
+    },
 
-  onDisconnect() {
-    this.disconnect();
-  },
-})); 
+    async isAuthorized() {
+      // Check if we have an active session
+      try {
+        if (!globalViemAccount) {
+          // Try to initialize if not already done
+          const { viemAccount } = await initializeSmartAccount().catch(() => ({ viemAccount: undefined }));
+          return !!viemAccount;
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    },
+
+    onAccountsChanged(accounts) {
+      if (accounts.length === 0) this.disconnect();
+    },
+
+    onChainChanged(chainId) {
+      // Handle chain changes if needed
+    },
+
+    onDisconnect() {
+      this.disconnect();
+    },
+  };
+}); 

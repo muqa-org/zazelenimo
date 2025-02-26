@@ -163,9 +163,6 @@ importers:
       '@b0rza/gitcoin-chain-data':
         specifier: 1.1.2
         version: 1.1.2(typescript@5.7.3)(zod@3.24.1)
-      '@cometh/connect-sdk':
-        specifier: ^1.2.29
-        version: 1.2.31(typescript@5.7.3)(zod@3.24.1)
       '@cometh/connect-sdk-4337':
         specifier: ^1.0.1
         version: 1.0.1(typescript@5.7.3)(viem@2.22.14)(wagmi@2.9.0)(webauthn-p256@0.0.10)

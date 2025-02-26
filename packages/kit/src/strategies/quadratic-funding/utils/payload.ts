@@ -1,12 +1,12 @@
 import { DonationVotingMerkleDistributionStrategy, TransactionData } from '@allo-team/allo-v2-sdk';
-import { getAddress } from '@allo-team/allo-v2-sdk/dist/Allo/allo.config';
-import { Allocation, Permit2Data, PermitType } from '@allo-team/allo-v2-sdk/dist/strategies/DonationVotingMerkleDistributionStrategy/types';
+import { getAddress } from '@allo-team/allo-v2-sdk/dist/Allo/allo.config.js';
+import { Allocation, Permit2Data, PermitType } from '@allo-team/allo-v2-sdk/dist/strategies/DonationVotingMerkleDistributionStrategy/types.js';
 import { Chain, encodeFunctionData, WalletClient } from 'viem';
 
-import { signPermit2612 } from './signPermit2612';
-import { Round } from '../../../api/types';
-import { comethConfig } from '../../../config';
-import { TokenMetadata } from '../qf.types';
+import { signPermit2612 } from './signPermit2612.js';
+import { Round } from '../../../api/types.js';
+import { comethConfig } from '../../../config/index.js';
+import { TokenMetadata } from '../qf.types.js';
 
 /**
  * Generates an approval transaction for ERC20 tokens.
@@ -51,11 +51,10 @@ export async function generateAllocateTransaction(
   recipientId: `0x${string}`,
   amount: bigint,
 ) {
-  // TODO: check rpc url
+  // Create a strategy instance for the round
   const strategy = new DonationVotingMerkleDistributionStrategy({
     chain: round.chainId,
-    // rpc: signer.chain?.rpcUrls.default.http[0],
-    rpc: comethConfig.transportUrl,
+    rpc: comethConfig.chain.rpcUrls.default.http[0] || '',
     address: getAddress({ id: round.chainId } as Chain),
     poolId: BigInt(round.id),
   });

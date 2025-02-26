@@ -1,19 +1,28 @@
 'use client';
 import { TransactionData } from '@allo-team/allo-v2-sdk';
 import { TToken } from '@b0rza/gitcoin-chain-data';
-import { ComethProvider, ComethWallet } from '@cometh/connect-sdk';
 import { parseUnits } from 'viem';
-import { SmartAccount } from '@cometh/connect-sdk-4337';
+// Comment out the incorrect import and use any type for now
+// import type { SmartAccountClient } from '@cometh/connect-sdk-4337';
 
-import { Donation } from './qf.types';
-import { generateAllocateTransaction, generateApprovalTransaction } from './utils/payload';
-import { Round } from '../../api/types';
+import { Donation } from './qf.types.js';
+import { generateAllocateTransaction, generateApprovalTransaction } from './utils/payload.js';
+import { Round } from '../../api/types.js';
 
+/**
+ * Handles allocation of funds to recipients in a quadratic funding round
+ * 
+ * @param round - The round to allocate funds in
+ * @param token - The token to use for allocation
+ * @param donations - The donations to allocate
+ * @param client - The Cometh smart account client
+ * @returns The transaction hash
+ */
 export const call = async (
   round: Round,
   token: TToken,
   donations: Donation[],
-  wallet: SmartAccount,
+  client: any, // Changed from SmartAccountClient to any
 ) => {
   const transactions: TransactionData[] = [];
 
@@ -34,19 +43,39 @@ export const call = async (
     transactions.push(approvalTxData, allocateTxData);
   };
 
-  return approveAndSendTransactions(wallet, transactions);
+  return sendBatchTransactions(client, transactions);
 };
 
-async function approveAndSendTransactions(wallet: SmartAccount, txData: TransactionData[]) {
-  const logNamespace = 'approveAndSendTransaction';
-  const provider = new ComethProvider(wallet!);
+/**
+ * Sends a batch of transactions using the Cometh smart account client
+ * 
+ * @param client - The Cometh smart account client
+ * @param txData - The transaction data to send
+ * @returns The transaction hash
+ */
+async function sendBatchTransactions(client: any, txData: TransactionData[]) {
+  const logNamespace = 'sendBatchTransactions';
+  
+  try {
+    // Convert the transactions to the format expected by the client
+    const transactions = txData.map(tx => ({
+      to: tx.to as `0x${string}`,
+      data: tx.data as `0x${string}`,
+      value: BigInt(0)
+    }));
 
-  const safeTx = await wallet!.sendBatchTransactions(txData);
-  console.log(`${logNamespace} safeTx`, safeTx);
-
-  const txPending = await provider.getTransaction(safeTx.safeTxHash, safeTx.relayId);
-  console.log(`${logNamespace} txPending`, txPending);
-
-  const txReceipt = await txPending.wait();
-  console.log(`${logNamespace} txReceipt`, txReceipt);
+    // Send the batch of transactions
+    console.log(`${logNamespace} sending batch of ${transactions.length} transactions`);
+    const txHash = await client.sendTransactions({ transactions });
+    console.log(`${logNamespace} txHash`, txHash);
+    
+    // Wait for the transaction receipt
+    const receipt = await client.waitForTransactionReceipt({ hash: txHash });
+    console.log(`${logNamespace} receipt`, receipt);
+    
+    return txHash;
+  } catch (error) {
+    console.error(`${logNamespace} error:`, error);
+    throw error;
+  }
 }
