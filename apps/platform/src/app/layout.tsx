@@ -32,7 +32,9 @@ export default async function RootLayout({
 
 	return (
 		<html lang={locale}>
-			<body className={`${dmSans.className} bg-[#FBFBFB] flex flex-col min-h-screen`}>
+			<body
+				className={`${dmSans.className} flex min-h-screen flex-col bg-[#FBFBFB]`}
+			>
 				<NextIntlClientProvider messages={messages}>
 					<MuqaSessionProvider session={session}>
 						<AlloKitProviders>
@@ -40,7 +42,7 @@ export default async function RootLayout({
 								<NotificationBar message='notification' />
 								<Header />
 								<WalletStatus />
-								<main className="flex-grow">{children}</main>
+								<main className='flex-grow'>{children}</main>
 								<Footer />
 							</CartProvider>
 						</AlloKitProviders>
