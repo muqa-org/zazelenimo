@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
 // Comment out the incorrect import and use any type for now
 // import type { SmartAccountClient } from '@cometh/connect-sdk-4337';
 
-import { initializeComethSmartAccount } from '../config/comethSmartAccount.js';
+import { initializeComethSmartAccount } from "../config/comethSmartAccount.js";
 
 /**
  * A custom hook to manage Cometh smart account and client.
@@ -32,7 +32,7 @@ export function useCometh() {
 
         // Initialize smart account client using the config
         const smartAccountClient = await initializeComethSmartAccount(
-          account.address
+          account.address,
         );
 
         // Get the smart account instance from the client
@@ -40,9 +40,8 @@ export function useCometh() {
 
         setComethClient(smartAccountClient);
         setComethWallet(smartAccount);
-
       } catch (error) {
-        console.error('Error initializing Cometh account:', error);
+        console.error("Error initializing Cometh account:", error);
       }
     }
 
@@ -54,6 +53,6 @@ export function useCometh() {
     wallet: comethWallet,
     isConnected: account.isConnected,
     status: account.status,
-    address: account.address
+    address: account.address,
   };
 }

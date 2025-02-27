@@ -90,12 +90,6 @@ function clearSession() {
   }
 }
 
-// Function to check if the user is authenticated
-function isAuthenticated(): boolean {
-  const session = getSession();
-  return !!session?.authenticated;
-}
-
 // Function to authenticate with passkey and verify the address
 async function authenticateWithPasskey(): Promise<string | null> {
   try {

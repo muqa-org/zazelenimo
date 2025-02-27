@@ -1,7 +1,7 @@
 'use client';
 
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import { Button, ButtonProps } from './Button';
 import { PropsWithChildren } from 'react';
@@ -28,11 +28,33 @@ function useTranslationsSafe(namespace: string) {
 	}
 }
 
-function getLabel(isClient: boolean, account: ReturnType<typeof useAccount>) {
-	// Only try to use translations on the client side
+// Function to save Cometh session to localStorage
+function saveComethSession(address: string, authenticated: boolean = true) {
+	if (typeof window === 'undefined') return;
+
+	try {
+		// Create a session that expires in 24 hours
+		const session = {
+			address,
+			authenticated,
+			expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+		};
+
+		localStorage.setItem('cometh_session', JSON.stringify(session));
+		console.log('Cometh session saved for address:', address);
+	} catch (error) {
+		console.error('Error saving Cometh session:', error);
+	}
+}
+
+// Modified to not use hooks internally
+function getButtonLabel(
+	isClient: boolean,
+	account: ReturnType<typeof useAccount>,
+	t: (key: string) => string,
+) {
 	if (!isClient) return 'Connect';
 
-	const t = useTranslationsSafe('auth');
 	const { isConnected, isConnecting, isReconnecting } = account;
 
 	let label = t('connect');
@@ -124,6 +146,16 @@ export default function MuqaConnectButton({
 	const { disconnect } = useDisconnect();
 	const { signMessageAsync } = useSignMessage();
 
+	// Always call the translations hook, regardless of client state
+	const t = useTranslationsSafe('auth');
+
+	// Define event handlers - converted to useCallback to maintain consistent hook order
+	const onMouseEnter = useCallback(
+		() => setShowTooltip(!!account?.address && true),
+		[account?.address],
+	);
+	const onMouseLeave = useCallback(() => setShowTooltip(false), []);
+
 	// Set up client-side detection
 	useEffect(() => {
 		setIsClient(true);
@@ -136,14 +168,19 @@ export default function MuqaConnectButton({
 		}
 	}, [account.isConnected]);
 
-	// Get the label based on client state and account data
-	const label = isClient ? getLabel(isClient, account) : 'Connect';
+	// Add effect to save session when connected
+	useEffect(() => {
+		// Only run on the client side when connected and we have an address
+		if (isClient && account.isConnected && account.address) {
+			// Save the session to enable auto-reconnect on page refresh
+			saveComethSession(account.address);
+		}
+	}, [isClient, account.isConnected, account.address]);
 
-	// Define event handlers
-	const onMouseEnter = () => setShowTooltip(!!account?.address && true);
-	const onMouseLeave = () => setShowTooltip(false);
+	// Get the label using the translation function we've already called
+	const label = getButtonLabel(isClient, account, t);
 
-	async function signInWithWeb3() {
+	const signInWithWeb3 = useCallback(async () => {
 		try {
 			setConnectionError(null);
 			console.log('Attempting to connect with Cometh...');
@@ -169,6 +206,9 @@ export default function MuqaConnectButton({
 
 			console.log('Successfully connected with address:', address);
 
+			// Manually save the session to ensure it persists correctly
+			saveComethSession(address);
+
 			// The smart account is already initialized in the connector
 			// No need to initialize it again
 
@@ -183,9 +223,9 @@ export default function MuqaConnectButton({
 				error instanceof Error ? error.message : 'Failed to connect wallet',
 			);
 		}
-	}
+	}, [connectAsync, setConnectionError]);
 
-	async function signOutWithWeb3() {
+	const signOutWithWeb3 = useCallback(async () => {
 		try {
 			setConnectionError(null);
 			console.log('Disconnecting wallet...');
@@ -193,6 +233,8 @@ export default function MuqaConnectButton({
 			// Set the disconnection flag to prevent automatic reconnection
 			try {
 				localStorage.setItem('cometh_user_disconnected', 'true');
+				// Also remove the session
+				localStorage.removeItem('cometh_session');
 			} catch (error) {
 				console.error('Error setting disconnect flag:', error);
 			}
@@ -210,14 +252,14 @@ export default function MuqaConnectButton({
 				error instanceof Error ? error.message : 'Failed to disconnect wallet',
 			);
 		}
-	}
+	}, [disconnect, setConnectionError]);
 
-	function onClick() {
+	const onClick = useCallback(() => {
 		// Only allow connection/disconnection on the client side
 		if (!isClient) return;
 
 		return account.isConnected ? signOutWithWeb3() : signInWithWeb3();
-	}
+	}, [isClient, account.isConnected, signInWithWeb3, signOutWithWeb3]);
 
 	// Only render LoadingIcon on the client side
 	const showLoadingIcon =
