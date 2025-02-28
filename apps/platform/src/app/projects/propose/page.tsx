@@ -36,6 +36,9 @@ const initialFormData = {
 	mobile: '',
 };
 
+// Check if we're running on the server
+const isServer = typeof window === 'undefined';
+
 export default function CreateProjectPage() {
 	const PROPOSAL_FORM_DATA_KEY = 'proposalFormData';
 
@@ -65,6 +68,9 @@ export default function CreateProjectPage() {
 
 	// Load data from localStorage when the component mounts
 	useEffect(() => {
+		// Skip localStorage operations on the server
+		if (isServer) return;
+
 		try {
 			const storedData = JSON.parse(
 				localStorage.getItem(PROPOSAL_FORM_DATA_KEY) || '{}',
@@ -81,12 +87,13 @@ export default function CreateProjectPage() {
 
 	// Update localStorage whenever PROPOSAL_FORM_DATA_KEY changes, but only after initial load
 	useEffect(() => {
-		if (isLoaded) {
-			localStorage.setItem(
-				PROPOSAL_FORM_DATA_KEY,
-				JSON.stringify(proposalFormData),
-			);
-		}
+		// Skip localStorage operations on the server
+		if (isServer || !isLoaded) return;
+
+		localStorage.setItem(
+			PROPOSAL_FORM_DATA_KEY,
+			JSON.stringify(proposalFormData),
+		);
 	}, [proposalFormData, isLoaded]);
 
 	// Generic input handler
@@ -112,13 +119,18 @@ export default function CreateProjectPage() {
 			}, 1000);
 
 			const redirect = setTimeout(() => {
+				// Don't attempt to redirect on the server
+				if (isServer) return;
+
 				if (state.message[0]) {
 					window.location.href = state.message[0].notice;
 				}
 			}, 15000);
 
-			// Delete localStorage data
-			localStorage.removeItem(PROPOSAL_FORM_DATA_KEY);
+			// Delete localStorage data - skip on server
+			if (!isServer) {
+				localStorage.removeItem(PROPOSAL_FORM_DATA_KEY);
+			}
 
 			return () => {
 				clearInterval(redirectTimer);

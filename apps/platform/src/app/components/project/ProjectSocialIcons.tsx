@@ -1,8 +1,12 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import icons from '@/app/components/common/Icons';
+
+// Check if we're running on the server
+const isServer = typeof window === 'undefined';
 
 export default function ProjectSocialIcons({
 	id,
@@ -11,14 +15,23 @@ export default function ProjectSocialIcons({
 	id: string;
 	title: string;
 }) {
-	const shareableUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_URL}/projects/${id}`);
+	const shareableUrl = encodeURIComponent(
+		`${process.env.NEXT_PUBLIC_URL}/projects/${id}`,
+	);
 	const shareableTitle = encodeURIComponent(title);
+
 	const shareOnFacebook = () => {
+		// Don't attempt to open window on the server
+		if (isServer) return;
+
 		const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareableUrl}`;
 		window.open(facebookUrl, '_blank', 'noopener,noreferrer');
 	};
 
 	const shareOnTwitter = () => {
+		// Don't attempt to open window on the server
+		if (isServer) return;
+
 		const twitterUrl = `https://twitter.com/intent/tweet?url=${shareableUrl}&text=${shareableTitle}`;
 		window.open(twitterUrl, '_blank', 'noopener,noreferrer');
 	};

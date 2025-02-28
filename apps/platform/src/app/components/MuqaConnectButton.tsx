@@ -6,9 +6,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { Button, ButtonProps } from './Button';
 import { PropsWithChildren } from 'react';
 import { useTranslations } from 'next-intl';
-import { signIn, signOut } from 'next-auth/react';
-import { WalletNonceResponse } from '../api/auth/web3/nonce/route';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { comethConnector } from '@allo/kit';
+import { useRouter } from 'next/navigation';
+
+// Check if we're running on the server
+const isServer = typeof window === 'undefined';
 
 const TRUNCATE_LENGTH = 20;
 const TRUNCATE_OFFSET = 3;
@@ -23,46 +26,93 @@ function useTranslationsSafe(namespace: string) {
 	try {
 		return useTranslations(namespace);
 	} catch (error) {
-		// Return a fallback function that returns the key
-		return (key: string) => key;
+		console.warn(
+			`Translation namespace '${namespace}' not available, using fallbacks`,
+		);
+		// Return a fallback function that returns the key with default translations
+		return (key: string) => {
+			// Default translations for common button states
+			const defaults: Record<string, string> = {
+				connect: 'Connect',
+				connecting: 'Connecting...',
+				reconnect: 'Reconnect',
+				disconnect: 'Disconnect',
+				authenticate: 'Authenticate',
+			};
+
+			return defaults[key] || key;
+		};
 	}
 }
 
-// Function to save Cometh session to localStorage
-function saveComethSession(address: string, authenticated: boolean = true) {
-	if (typeof window === 'undefined') return;
+// Function to get a nonce from the server
+const getNonce = async (address: string): Promise<string> => {
+	// Don't attempt to get nonce on the server
+	if (isServer) {
+		console.log('Skipping getNonce on server');
+		throw new Error('Cannot get nonce on the server');
+	}
 
 	try {
-		// Create a session that expires in 24 hours
-		const session = {
-			address,
-			authenticated,
-			expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-		};
+		console.log('Getting nonce for address:', address);
+		const response = await fetch('/api/auth/web3/nonce', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ address }),
+		});
 
-		localStorage.setItem('cometh_session', JSON.stringify(session));
-		console.log('Cometh session saved for address:', address);
+		if (!response.ok) {
+			const errorText = await response.text();
+			console.error(
+				`Failed to get nonce: ${response.status} ${response.statusText}`,
+				errorText,
+			);
+			throw new Error(
+				`Failed to get nonce: ${response.status} ${response.statusText}`,
+			);
+		}
+
+		const data = await response.json();
+		if (!data.nonce) {
+			console.error('No nonce returned from server:', data);
+			throw new Error('No nonce returned from server');
+		}
+		return data.nonce;
 	} catch (error) {
-		console.error('Error saving Cometh session:', error);
+		console.error('Error getting nonce:', error);
+		throw error;
 	}
-}
+};
 
 // Modified to not use hooks internally
 function getButtonLabel(
 	isClient: boolean,
 	account: ReturnType<typeof useAccount>,
+	session: ReturnType<typeof useSession>,
 	t: (key: string) => string,
 ) {
 	if (!isClient) return 'Connect';
 
 	const { isConnected, isConnecting, isReconnecting } = account;
+	const isAuthenticated = session.status === 'authenticated';
 
 	let label = t('connect');
 	const address = truncate(account.address);
 
 	if (isConnecting) label = t('connecting');
 	else if (isReconnecting) label = t('reconnect');
-	else if (isConnected) label = `${t('disconnect')} ${address}`;
+	else if (isConnected && isAuthenticated)
+		label = `${t('disconnect')} ${address}`;
+	else if (isConnected) {
+		// Fallback if translation is missing
+		try {
+			label = `${t('authenticate')} ${address}`;
+		} catch (error) {
+			label = `Authenticate ${address}`;
+		}
+	}
 
 	return label;
 }
@@ -77,6 +127,9 @@ function AddressTooltip({
 	onMouseLeave?: () => void;
 }) {
 	const copyToClipboard = () => {
+		// Skip clipboard operations on the server
+		if (typeof navigator === 'undefined') return;
+
 		navigator.clipboard.writeText(label);
 	};
 
@@ -101,34 +154,15 @@ function AddressTooltip({
 }
 
 function LoadingIcon({ account }: { account: ReturnType<typeof useAccount> }) {
-	// On the server or when not loading, return null
-	// This ensures consistent rendering between server and client
-	if (typeof window === 'undefined') return null;
-
-	const { isConnecting, isReconnecting } = account;
-	const isLoading = isConnecting || isReconnecting;
+	// Don't check for window here - this causes hydration mismatch
+	const { isConnecting: accountConnecting, isReconnecting } = account;
+	const isLoading = accountConnecting || isReconnecting;
 
 	if (!isLoading) return null;
 
 	return (
 		<div className='border-primary mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-t-2'></div>
 	);
-}
-
-async function getNonce(address: `0x${string}`) {
-	const body = JSON.stringify({ address });
-	const headers = {
-		'Content-Type': 'application/json',
-	};
-
-	const res = await fetch('/api/auth/web3/nonce', {
-		method: 'POST',
-		headers,
-		body,
-	});
-
-	const { nonce } = (await res.json()) as WalletNonceResponse;
-	return nonce;
 }
 
 export default function MuqaConnectButton({
@@ -139,12 +173,17 @@ export default function MuqaConnectButton({
 	const [isClient, setIsClient] = useState(false);
 	const [showTooltip, setShowTooltip] = useState(false);
 	const [connectionError, setConnectionError] = useState<string | null>(null);
+	const [autoConnectAttempted, setAutoConnectAttempted] = useState(false);
+	const [isConnecting, setIsConnecting] = useState(false);
+	const [connectAttempts, setConnectAttempts] = useState(0);
+	const router = useRouter();
 
 	// Call all wagmi hooks at the top level
 	const account = useAccount();
 	const { connectAsync } = useConnect();
-	const { disconnect } = useDisconnect();
+	const { disconnectAsync } = useDisconnect();
 	const { signMessageAsync } = useSignMessage();
+	const session = useSession();
 
 	// Always call the translations hook, regardless of client state
 	const t = useTranslationsSafe('auth');
@@ -165,119 +204,228 @@ export default function MuqaConnectButton({
 	useEffect(() => {
 		if (account.isConnected) {
 			setConnectionError(null);
+			setConnectAttempts(0);
 		}
 	}, [account.isConnected]);
 
-	// Add effect to save session when connected
-	useEffect(() => {
-		// Only run on the client side when connected and we have an address
-		if (isClient && account.isConnected && account.address) {
-			// Save the session to enable auto-reconnect on page refresh
-			saveComethSession(account.address);
-		}
-	}, [isClient, account.isConnected, account.address]);
-
 	// Get the label using the translation function we've already called
-	const label = getButtonLabel(isClient, account, t);
+	const label = getButtonLabel(isClient, account, session, t);
 
 	const signInWithWeb3 = useCallback(async () => {
+		// Don't attempt to sign in on the server
+		if (isServer) {
+			console.log('Skipping signInWithWeb3 on server');
+			return;
+		}
+
 		try {
 			setConnectionError(null);
+			setIsConnecting(true);
 			console.log('Attempting to connect with Cometh...');
 
-			// Clear the disconnection flag since user is explicitly connecting
-			try {
-				localStorage.removeItem('cometh_user_disconnected');
-			} catch (error) {
-				console.error('Error clearing disconnect flag:', error);
+			// Connect using our custom Cometh connector if not already connected
+			if (!account.isConnected) {
+				try {
+					setConnectAttempts(prev => prev + 1);
+					console.log(`Connection attempt ${connectAttempts + 1}`);
+
+					const result = await connectAsync({ connector: comethConnector });
+					const address = result.accounts[0];
+
+					if (!address) {
+						const error = 'No address returned from connector';
+						console.error(error);
+						setConnectionError(error);
+						throw new Error(error);
+					}
+
+					console.log('Successfully connected with address:', address);
+				} catch (error) {
+					console.error('Error connecting with Cometh:', error);
+
+					// Provide more specific error messages based on the error
+					let errorMessage = 'Failed to connect wallet';
+					if (error instanceof Error) {
+						if (error.message.includes('timeout')) {
+							errorMessage = 'Connection timed out. Please try again.';
+						} else if (error.message.includes('passkey')) {
+							errorMessage =
+								'Passkey error. Please check your browser settings.';
+						} else if (error.message.includes('disconnected')) {
+							errorMessage = 'Connection was disconnected. Please try again.';
+						} else {
+							errorMessage = error.message;
+						}
+					}
+
+					setConnectionError(errorMessage);
+					setIsConnecting(false);
+					return; // Exit early if connection fails
+				}
 			}
 
-			// Connect using our custom Cometh connector
-			// This will check for existing passkeys first before prompting to create a new one
-			const result = await connectAsync({ connector: comethConnector });
-			const address = result.accounts[0];
+			// If already connected but not authenticated with NextAuth, authenticate with backend
+			if (
+				account.isConnected &&
+				session.status !== 'authenticated' &&
+				account.address
+			) {
+				try {
+					// Get nonce from the server
+					const nonce = await getNonce(account.address);
+					console.log('Got nonce:', nonce);
 
-			if (!address) {
-				const error = 'No address returned from connector';
-				console.error(error);
-				setConnectionError(error);
-				throw new Error(error);
+					try {
+						// Sign the nonce with the wallet
+						console.log('Signing message:', nonce);
+						const signedNonce = await signMessageAsync({ message: nonce });
+						console.log('Signed nonce:', signedNonce);
+
+						// Authenticate with the backend
+						const result = await signIn('credentials', {
+							address: account.address,
+							signedNonce: signedNonce,
+							redirect: false,
+						});
+
+						if (result?.error) {
+							console.error('Authentication error:', result.error);
+							setConnectionError(result.error);
+						} else {
+							console.log('Successfully authenticated with backend');
+						}
+					} catch (error) {
+						console.error('Error signing message:', error);
+						setConnectionError(
+							error instanceof Error
+								? `Signing error: ${error.message}`
+								: 'Failed to sign message',
+						);
+					}
+				} catch (error) {
+					console.error('Error during authentication:', error);
+					setConnectionError(
+						error instanceof Error
+							? `Authentication error: ${error.message}`
+							: 'Failed to authenticate',
+					);
+				}
 			}
 
-			console.log('Successfully connected with address:', address);
-
-			// Manually save the session to ensure it persists correctly
-			saveComethSession(address);
-
-			// The smart account is already initialized in the connector
-			// No need to initialize it again
-
-			// If you need to authenticate with your backend:
-			// const nonce = await getNonce(address);
-			// const signedNonce = await signMessageAsync({ message: nonce });
-			// await signIn('credentials', { address, signedNonce, redirect: false });
+			setIsConnecting(false);
 		} catch (error) {
 			console.error('Error connecting wallet:', error);
 			// Set error message for user feedback
 			setConnectionError(
 				error instanceof Error ? error.message : 'Failed to connect wallet',
 			);
+			setIsConnecting(false);
 		}
-	}, [connectAsync, setConnectionError]);
+	}, [
+		connectAsync,
+		signMessageAsync,
+		account,
+		session.status,
+		connectAttempts,
+		setConnectionError,
+	]);
+
+	// Don't auto-connect on refresh
+	useEffect(() => {
+		// Skip on server
+		if (isServer) return;
+
+		// Only run this effect once
+		if (isClient && !autoConnectAttempted) {
+			setAutoConnectAttempted(true);
+
+			// If we're already connected but not authenticated, try to authenticate
+			if (
+				account.isConnected &&
+				session.status !== 'authenticated' &&
+				account.address
+			) {
+				console.log(
+					'Already connected but not authenticated, attempting to authenticate...',
+				);
+				signInWithWeb3();
+			}
+		}
+	}, [
+		isClient,
+		autoConnectAttempted,
+		account.isConnected,
+		session.status,
+		account.address,
+		signInWithWeb3,
+	]);
 
 	const signOutWithWeb3 = useCallback(async () => {
-		try {
-			setConnectionError(null);
-			console.log('Disconnecting wallet...');
+		// Don't attempt to sign out on the server
+		if (isServer) {
+			console.log('Skipping signOutWithWeb3 on server');
+			return;
+		}
 
-			// Set the disconnection flag to prevent automatic reconnection
-			try {
-				localStorage.setItem('cometh_user_disconnected', 'true');
-				// Also remove the session
-				localStorage.removeItem('cometh_session');
-			} catch (error) {
-				console.error('Error setting disconnect flag:', error);
+		try {
+			console.log('Signing out...');
+			setIsConnecting(true);
+
+			// Sign out from NextAuth first
+			await signOut({ redirect: false });
+
+			// Then disconnect from wallet
+			if (account.isConnected) {
+				await disconnectAsync();
 			}
 
-			// Disconnect from the wallet
-			disconnect();
-
-			// Sign out from the backend if needed
-			await signOut();
-
-			console.log('Successfully disconnected wallet');
+			console.log('Successfully signed out');
+			setIsConnecting(false);
 		} catch (error) {
-			console.error('Error disconnecting wallet:', error);
+			console.error('Error signing out:', error);
 			setConnectionError(
-				error instanceof Error ? error.message : 'Failed to disconnect wallet',
+				error instanceof Error ? error.message : 'Failed to sign out',
 			);
+			setIsConnecting(false);
 		}
-	}, [disconnect, setConnectionError]);
+	}, [disconnectAsync, account.isConnected]);
 
-	const onClick = useCallback(() => {
-		// Only allow connection/disconnection on the client side
-		if (!isClient) return;
+	// Handle button click based on connection state
+	const handleClick = useCallback(() => {
+		if (isConnecting) return; // Prevent multiple clicks while processing
 
-		return account.isConnected ? signOutWithWeb3() : signInWithWeb3();
-	}, [isClient, account.isConnected, signInWithWeb3, signOutWithWeb3]);
-
-	// Only render LoadingIcon on the client side
-	const showLoadingIcon =
-		isClient && (account.isConnecting || account.isReconnecting);
+		if (account.isConnected && session.status === 'authenticated') {
+			signOutWithWeb3();
+		} else {
+			signInWithWeb3();
+		}
+	}, [
+		account.isConnected,
+		session.status,
+		signInWithWeb3,
+		signOutWithWeb3,
+		isConnecting,
+	]);
 
 	// Only show tooltip on the client side when we have an address
 	const shouldShowTooltip = isClient && showTooltip && !!account?.address;
 
+	// Only show loading icon on client-side to prevent hydration mismatch
+	const showLoadingIcon =
+		isClient &&
+		(account.isConnecting || account.isReconnecting || isConnecting);
+
 	return (
 		<div className='relative'>
 			<Button
-				onClick={onClick}
+				onClick={handleClick}
 				onMouseEnter={onMouseEnter}
 				onMouseLeave={onMouseLeave}
+				disabled={isConnecting}
 				{...props}
 			>
-				{showLoadingIcon && <LoadingIcon account={account} />}
-				{children || label}
+				{showLoadingIcon ? <LoadingIcon account={account} /> : null}
+				{isConnecting ? t('connecting') : label}
 			</Button>
 			{shouldShowTooltip && account.address && (
 				<AddressTooltip
@@ -286,9 +434,17 @@ export default function MuqaConnectButton({
 					onMouseLeave={onMouseLeave}
 				/>
 			)}
-			{connectionError && isClient && (
-				<div className='absolute right-0 top-12 mt-2 w-max rounded bg-red-500 p-2 text-sm text-white'>
+			{connectionError && (
+				<div className='absolute right-0 top-full mt-2 rounded bg-red-100 p-2 text-sm text-red-700'>
 					{connectionError}
+					{connectAttempts > 0 && (
+						<button
+							onClick={signInWithWeb3}
+							className='ml-2 font-semibold underline'
+						>
+							Retry
+						</button>
+					)}
 				</div>
 			)}
 		</div>

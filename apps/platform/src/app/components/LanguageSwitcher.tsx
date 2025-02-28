@@ -6,6 +6,9 @@ import Image from 'next/image';
 
 import icons from '@/app/components/common/Icons';
 
+// Check if we're running on the server
+const isServer = typeof window === 'undefined';
+
 export default function LanguageSwitcher({ screen }: { screen: string }) {
 	const t = useTranslations('languages');
 	const locale = useLocale();
@@ -22,7 +25,10 @@ export default function LanguageSwitcher({ screen }: { screen: string }) {
 	const setLang = async (lang: string) => {
 		const body = { lang };
 		await fetch('/api/locale', { method: 'POST', body: JSON.stringify(body) });
-		location.reload();
+		// Skip reload on the server
+		if (!isServer) {
+			location.reload();
+		}
 	};
 
 	const togglerIcon =
