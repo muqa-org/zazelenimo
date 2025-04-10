@@ -13,7 +13,9 @@ import { GSRound, GSApplication, GSProject } from './types';
 import { ipfsGateway, queryToFilter } from './utils';
 import { API, Application, Project, Round, Transformers } from '../../types';
 
-const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_URL ?? 'https://grants-stack-indexer-v2.gitcoin.co/graphql';
+const INDEXER_URL =
+  process.env.NEXT_PUBLIC_INDEXER_URL ??
+  'https://grants-stack-indexer-v2.gitcoin.co/graphql';
 
 const apiURL = `${INDEXER_URL}/graphql`;
 
@@ -40,7 +42,7 @@ export const grantsStackAPI: Partial<API> = {
       url: apiURL,
       document: applicationsQuery,
       variables: queryToFilter(query),
-    }).then((res) => (res?.applications ?? []).map(transformers.application))
+    }).then((res) => (res?.applications ?? []).map(transformers.application));
   },
   applicationById: (id, opts) => {
     return request<{ application: GSApplication }>({
@@ -62,7 +64,7 @@ export const grantsStackAPI: Partial<API> = {
       variables: queryToFilter(query),
     }).then((res) => (res?.rounds ?? []).map(transformers.project));
   },
-  projectById: (id, opts) => {
+  projectById: (id, _opts) => {
     return request<{ projects: GSProject[] }>({
       url: apiURL,
       // Query projectById requires chainId and doesn't always match with the rounds chainId
@@ -89,7 +91,6 @@ const transformers: Transformers<GSRound, GSApplication, GSProject> = {
     matchTokenAddress,
     applications,
     applicationsStartTime,
-    applicationsEndTime,
     donationsStartTime,
     donationsEndTime,
     strategyAddress,

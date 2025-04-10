@@ -1,8 +1,8 @@
 'use client';
 
-import Container from '@/app/components/Container';
-
 import { useTranslations } from 'next-intl';
+
+import Container from '@/app/components/Container';
 
 export default function HomepageEligibleProjects() {
 	const t = useTranslations('eligibleProjects');
@@ -45,7 +45,7 @@ export default function HomepageEligibleProjects() {
 	];
 
 	return (
-		<div className='py-10 sm:pb-20 sm:pt-20 leading-normal'>
+		<div className='py-10 leading-normal sm:pb-20 sm:pt-20'>
 			<Container>
 				<div className='flex flex-col px-5 sm:px-16 xl:px-44'>
 					<h2 className='mb-12 text-center text-4xl font-semibold'>

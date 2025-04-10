@@ -1,4 +1,4 @@
-import { Account, Address, Hash, WalletClient } from 'viem';
+import { Address, Hash, WalletClient } from 'viem';
 
 type OrderBy = 'asc' | 'desc';
 
@@ -88,45 +88,45 @@ export interface API {
   rounds: (query: RoundsQuery) => Promise<Round[]>;
   roundById: (id: string, opts?: QueryOpts) => Promise<Round | undefined>;
   createRound: (
-    data: RoundInput,
-    signer: WalletClient,
-    account?: any,
+    _data: RoundInput,
+    _signer: WalletClient,
+    _account?: any,
   ) => Promise<RoundCreated>;
-  projects: (query: ProjectsQuery) => Promise<Project[]>;
-  projectById: (id: string, opts?: QueryOpts) => Promise<Project | undefined>;
+  projects: (_query: ProjectsQuery) => Promise<Project[]>;
+  projectById: (_id: string, _opts?: QueryOpts) => Promise<Project | undefined>;
   createProject: (
-    data: ProjectInput,
-    signer: WalletClient,
+    _data: ProjectInput,
+    _signer: WalletClient,
   ) => Promise<ProjectCreated>;
-  applications: (query: ApplicationsQuery) => Promise<Application[]>;
+  applications: (_query: ApplicationsQuery) => Promise<Application[]>;
   applicationById: (
-    id: string,
-    opts?: QueryOpts,
+    _id: string,
+    _opts?: QueryOpts,
   ) => Promise<Application | undefined>;
   createApplication: (
-    data: ApplicationInput,
-    signer: WalletClient,
+    _data: ApplicationInput,
+    _signer: WalletClient,
   ) => Promise<ApplicationCreated>;
   ballot: () => Promise<Ballot>;
-  addToBallot: (ballot: Ballot) => Promise<Ballot>;
-  saveBallot: (ballot: Ballot) => Promise<Ballot>;
+  addToBallot: (_ballot: Ballot) => Promise<Ballot>;
+  saveBallot: (_ballot: Ballot) => Promise<Ballot>;
   allocate: (
-    tx: TransactionInput,
-    signer: WalletClient,
+    _tx: TransactionInput,
+    _signer: WalletClient,
   ) => Promise<Address | undefined>;
   distribute: () => void;
-  upload: (data: FormData) => Promise<string>;
+  upload: (_data: FormData) => Promise<string>;
   sendTransaction: (
-    tx: { to: `0x${string}`; data: `0x${string}`; value: string | bigint },
-    signer: WalletClient, // TODO: Use something more generic than WalletClient?
+    _tx: { to: `0x${string}`; data: `0x${string}`; value: string | bigint },
+    _signer: WalletClient, // TODO: Use something more generic than WalletClient?
   ) => Promise<Hash>;
 }
 // Transforms data from API into a common shape
 
 export interface Transformers<TRound, TApplication, TProject> {
-  round: (round: TRound) => Round;
-  application: (application: TApplication) => Application;
-  project: (project: TProject) => Project;
+  round: (_round: TRound) => Round;
+  application: (_application: TApplication) => Application;
+  project: (_project: TProject) => Project;
 }
 
 type BaseRound = {
@@ -207,8 +207,8 @@ export type ProjectInput = BaseProject & {};
 export type ProjectCreated = { id: string; chainId: number };
 
 export type AllocateInput = {
-  roundId: string;
-  data: `0x${string}`;
+  _roundId: string;
+  _data: `0x${string}`;
 };
 
 export type TransactionInput = {

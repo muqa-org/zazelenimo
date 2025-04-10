@@ -1,11 +1,9 @@
-import { prisma } from '../lib/client';
-import seedRoundPhases from './seeds/round-phases';
+import { prisma } from "../lib/client";
+import seedRoundPhases from "./seeds/round-phases";
 
-const alwaysRunSeeds = [
-  seedRoundPhases,
-];
+const alwaysRunSeeds = [seedRoundPhases];
 
-const nonCISeeds: ((() => Promise<void>)[]) = [
+const nonCISeeds: (() => Promise<void>)[] = [
   // Add any seeds that should not run in CI environment
 ];
 
@@ -23,10 +21,10 @@ async function seed() {
 
 seed()
   .then(async () => {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { FundedApplication } from '@allo/kit';
 import { useTranslations } from 'next-intl';
-
-import { getProjectProgressBGColor } from '@/app/helpers/projectHelper';
+import { useState } from 'react';
 
 import AddToCart from '@/app/components/cart/AddToCart';
-import { FundedApplication } from '@allo/kit';
+import { getProjectProgressBGColor } from '@/app/helpers/projectHelper';
 
 type ProjectSidebarProps = {
 	application: FundedApplication;
@@ -19,7 +18,7 @@ export default function ProjectSidebar({ application }: ProjectSidebarProps) {
 	// You can adjust this
 	const estimatedMatch = Math.round(donationAmount * 28.6);
 
-	let progressColor = getProjectProgressBGColor(application.fundedPercentage);
+	const progressColor = getProjectProgressBGColor(application.fundedPercentage);
 
 	const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setDonationAmount(Number(e.target.value));
@@ -42,7 +41,9 @@ export default function ProjectSidebar({ application }: ProjectSidebarProps) {
 					style={{ width: `${application.fundedPercentage}%` }}
 				></div>
 			</div>
-			<h2 className='mt-3 text-[32px] text-[#09CE78]'>€ {application.fundedAmount}</h2>
+			<h2 className='mt-3 text-[32px] text-[#09CE78]'>
+				€ {application.fundedAmount}
+			</h2>
 			<h4 className='leading-normal text-gray'>
 				{t('funded', { amount: application.targetAmount })}
 			</h4>
@@ -68,8 +69,10 @@ export default function ProjectSidebar({ application }: ProjectSidebarProps) {
 							background: `linear-gradient(to right, #39A56A ${donationAmount}%, black ${donationAmount}%)`,
 						}}
 					/>
-					<div className="relative">
-						<span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-gray">€</span>
+					<div className='relative'>
+						<span className='absolute left-2 top-1/2 -translate-y-1/2 text-sm text-gray'>
+							€
+						</span>
 						<input
 							type='text'
 							id='donation-amount'
@@ -89,7 +92,11 @@ export default function ProjectSidebar({ application }: ProjectSidebarProps) {
 						className='w-20 rounded-md border border-borderGray px-2 py-2 text-left text-sm text-grayLight focus:outline-none'
 					/>
 				</div>
-				<AddToCart application={application} amount={donationAmount} variant='text' />
+				<AddToCart
+					application={application}
+					amount={donationAmount}
+					variant='text'
+				/>
 			</div>
 		</>
 	);

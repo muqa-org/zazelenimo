@@ -4,11 +4,10 @@ import { useTranslations } from 'next-intl';
 
 import Container from '@/app/components/Container';
 import HomepageRoundBoxes from '@/app/components/homepage/HomepageRoundBoxes';
-
 import { CodaFormProjectLink } from '@/app/config';
 
 type HomepageIntroProps = {
-	phases: RoundPhase[]
+	phases: RoundPhase[];
 };
 
 export default function HomepageIntro({ phases }: HomepageIntroProps) {

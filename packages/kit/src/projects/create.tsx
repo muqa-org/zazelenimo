@@ -29,7 +29,7 @@ const baseProjectSchema = z.object({
 export function CreateProject({
   onCreated,
 }: {
-  onCreated: (project: ProjectCreated) => void;
+  onCreated: (_project: ProjectCreated) => void;
 }) {
   const schema = baseProjectSchema;
   const form = useForm<z.infer<typeof schema>>({

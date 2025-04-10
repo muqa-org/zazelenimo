@@ -19,7 +19,7 @@ export default function HomepageHero({ locale }: { locale: string }) {
 				backgroundPosition: 'bottom right, center -155px',
 				backgroundRepeat: 'no-repeat, no-repeat',
 			}}
-			className='pt-20 bg-[length:120%,cover] bg-no-repeat px-5 pb-[25em] sm:pb-[40em] md:pb-[40em] lg:bg-[length:auto,cover] lg:pb-[16em] lg:pt-44'
+			className='bg-[length:120%,cover] bg-no-repeat px-5 pb-[25em] pt-20 sm:pb-[40em] md:pb-[40em] lg:bg-[length:auto,cover] lg:pb-[16em] lg:pt-44'
 		>
 			<Container className='mx-auto flex flex-col'>
 				<Image width='354' height='83' alt='Zazelenimo Split Logo' src={logo} />

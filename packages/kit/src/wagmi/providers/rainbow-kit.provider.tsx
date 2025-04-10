@@ -13,10 +13,7 @@ import { customChains } from '../../config';
 
 const gitcoinChains = getChains();
 
-export const supportedChains = [
-  ...gitcoinChains,
-  ...customChains,
-]
+export const supportedChains = [...gitcoinChains, ...customChains];
 
 console.log(supportedChains);
 
@@ -28,7 +25,7 @@ const defaultConfig = getDefaultConfig({
   appName: 'MUQA initiative',
   projectId: 'ffa6468a2accec2f1e59502fae10c166',
   chains,
-  ssr: true
+  ssr: true,
 });
 
 const queryClient = new QueryClient();
@@ -43,5 +40,5 @@ export function Web3Provider({
         <RainbowKitProvider>{children}</RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
-);
+  );
 }

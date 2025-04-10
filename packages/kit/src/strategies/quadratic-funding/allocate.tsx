@@ -6,12 +6,15 @@ import { parseUnits } from 'viem';
 // import type { SmartAccountClient } from '@cometh/connect-sdk-4337';
 
 import { Donation } from './qf.types.js';
-import { generateAllocateTransaction, generateApprovalTransaction } from './utils/payload.js';
+import {
+  generateAllocateTransaction,
+  generateApprovalTransaction,
+} from './utils/payload.js';
 import { Round } from '../../api/types.js';
 
 /**
  * Handles allocation of funds to recipients in a quadratic funding round
- * 
+ *
  * @param round - The round to allocate funds in
  * @param token - The token to use for allocation
  * @param donations - The donations to allocate
@@ -32,47 +35,49 @@ export const call = async (
     const approvalTxData = await generateApprovalTransaction(
       round.strategy,
       token.address,
-      amount
+      amount,
     );
     const allocateTxData = await generateAllocateTransaction(
       round,
       donation.recipientAddress,
-      amount
+      amount,
     );
 
     transactions.push(approvalTxData, allocateTxData);
-  };
+  }
 
   return sendBatchTransactions(client, transactions);
 };
 
 /**
  * Sends a batch of transactions using the Cometh smart account client
- * 
+ *
  * @param client - The Cometh smart account client
  * @param txData - The transaction data to send
  * @returns The transaction hash
  */
 async function sendBatchTransactions(client: any, txData: TransactionData[]) {
   const logNamespace = 'sendBatchTransactions';
-  
+
   try {
     // Convert the transactions to the format expected by the client
-    const transactions = txData.map(tx => ({
+    const transactions = txData.map((tx) => ({
       to: tx.to as `0x${string}`,
       data: tx.data as `0x${string}`,
-      value: BigInt(0)
+      value: BigInt(0),
     }));
 
     // Send the batch of transactions
-    console.log(`${logNamespace} sending batch of ${transactions.length} transactions`);
+    console.log(
+      `${logNamespace} sending batch of ${transactions.length} transactions`,
+    );
     const txHash = await client.sendTransactions({ transactions });
     console.log(`${logNamespace} txHash`, txHash);
-    
+
     // Wait for the transaction receipt
     const receipt = await client.waitForTransactionReceipt({ hash: txHash });
     console.log(`${logNamespace} receipt`, receipt);
-    
+
     return txHash;
   } catch (error) {
     console.error(`${logNamespace} error:`, error);

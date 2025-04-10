@@ -1,5 +1,6 @@
-import resolveConfig from 'tailwindcss/resolveConfig'
-import tailwindConfig from '@/../tailwind.config'
+import resolveConfig from 'tailwindcss/resolveConfig';
+
+import tailwindConfig from '@/../tailwind.config';
 
 const { theme } = resolveConfig(tailwindConfig);
 const colors = theme.colors as any;
@@ -36,9 +37,7 @@ const getBaseProgressColor = (progress: number): `#${string}` => {
  * - Returns `'bg-progressHigh'` for progress between 67% and 100%.
  * - Returns `'bg-green'` if progress is 0% or any other value outside the 1-100 range.
  */
-export const getProjectProgressBGColor = (
-	progress = 0,
-): string => {
+export const getProjectProgressBGColor = (progress = 0): string => {
 	let progressColor = 'bg-green';
 	if (progress > 0 && progress <= 33) {
 		progressColor = 'bg-progressLow';

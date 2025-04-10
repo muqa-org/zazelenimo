@@ -8,7 +8,7 @@ import { Application } from '../api/types';
 import { ApplicationApprovalItem } from '../applications/approval-item';
 import { useApplications } from '../hooks/useApplications';
 import { useRoundById } from '../hooks/useRounds';
-import { useStrategyAddon, useStrategyType } from '../strategies';
+import { useStrategyAddon } from '../strategies';
 import { EmptyState } from '../ui/empty-state';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 

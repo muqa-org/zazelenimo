@@ -19,7 +19,7 @@ export function ApplicationApprovalItem({
 }: Application & {
   checked: boolean;
   action?: ReactNode;
-  onCheckedChange: (bool: boolean) => void;
+  onCheckedChange: (checked: boolean) => void;
 }) {
   return (
     <div className="flex gap-4 rounded-lg px-2 py-4 hover:bg-moss-50/20">

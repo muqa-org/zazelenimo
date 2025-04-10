@@ -5,16 +5,18 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "start": "turbo start",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo lint -- --fix",
+    "format": "exec prettier --write \"**/*.{ts,tsx,md}\"",
     "nuke": "turbo nuke --force && pnpm dlx del-cli node_modules",
     "construct": "pnpm install && turbo build",
     "reconstruct": "pnpm nuke && pnpm construct",
     "db:generate": "turbo db:generate"
   },
   "devDependencies": {
-    "turbo": "2.0.6",
-    "@muqa/eslint-config": "workspace:*"
+    "@muqa/eslint-config": "workspace:*",
+    "prettier": "^3.3.0",
+    "prettier-plugin-tailwindcss": "^0.6.1",
+    "turbo": "2.0.6"
   },
   "engines": {
     "node": ">=18"

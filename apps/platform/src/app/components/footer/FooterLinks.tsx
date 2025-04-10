@@ -1,16 +1,17 @@
-'use client'
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import icons from '../common/Icons';
 import { DocumentationLink, ForumLink } from '@/app/config';
+
+import icons from '../common/Icons';
 
 export default function FooterLinks() {
 	const t = useTranslations('footer');
 
 	return (
-		<div className='flex flex-col md:flex-row items-center gap-2 md:gap-10'>
+		<div className='flex flex-col items-center gap-2 md:flex-row md:gap-10'>
 			<Link
 				href={DocumentationLink}
 				className='flex items-center gap-2 font-medium leading-6 text-primaryBlack hover:text-blue'

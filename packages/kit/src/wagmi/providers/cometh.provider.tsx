@@ -10,13 +10,11 @@ import { wagmiConfig } from '../../config/wagmi';
 const queryClient = new QueryClient();
 
 export function ComethProvider({
-  children
+  children,
 }: PropsWithChildren<{ config?: Config }>) {
   return (
     <WagmiProvider config={createConfig(wagmiConfig)}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );
 }

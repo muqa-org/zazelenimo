@@ -23,6 +23,7 @@ The current implementation is designed for the city of Split, allowing citizens 
 - Quadratic Funding Algorithm
 
 ## 🏗️ Installation
+
 ```bash
 # Install  dependencies
 pnpm i
@@ -47,6 +48,7 @@ For more detailed information, please visit our [Documentation](https://docs.zaz
 Join our [Forum](https://forum.zazelenimo.com/) to participate in discussions and stay updated.
 
 ## 🔗 Useful Links
+
 - [Live site](https://zazelenimo.com)
 - [MUQA Initiative](https://muqa.org)
 - [GitHub Repository](https://github.com/muqa-org/zazelenimo)

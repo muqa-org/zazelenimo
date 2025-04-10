@@ -19,7 +19,11 @@ export default function HomepageBanner() {
 					<p>
 						{t.rich('secondParagraph', {
 							link: chunks => (
-								<a href={MUQALink} target='_blank' className='text-green hover:opacity-85'>
+								<a
+									href={MUQALink}
+									target='_blank'
+									className='text-green hover:opacity-85'
+								>
 									{chunks}
 								</a>
 							),

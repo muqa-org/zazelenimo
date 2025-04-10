@@ -1,18 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
-
-import icons from '@/app/components/common/Icons';
-
-import Navigation from '@/app/components/Navigation';
-import LanguageSwitcher from '@/app/components/LanguageSwitcher';
-
-import { CodaFormProjectLink } from '@/app/config';
-import MuqaConnectButton from '@/app/components/MuqaConnectButton';
 import { useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+
+import LanguageSwitcher from '@/app/components/LanguageSwitcher';
+import MuqaConnectButton from '@/app/components/MuqaConnectButton';
+import Navigation from '@/app/components/Navigation';
+import icons from '@/app/components/common/Icons';
+import { CodaFormProjectLink } from '@/app/config';
 import { useCart } from '@/lib/util/context/cart.context';
 
 export default function Header() {
@@ -51,14 +49,14 @@ export default function Header() {
 					</div>
 					<Link
 						href={CodaFormProjectLink}
-						className='rounded-md bg-green px-10 py-[0.55em] mx-2 text-base font-normal text-white hover:opacity-85'
+						className='mx-2 rounded-md bg-green px-10 py-[0.55em] text-base font-normal text-white hover:opacity-85'
 					>
 						{t('propose')}
 					</Link>
 					{process.env.NEXT_PUBLIC_SHOW_CART_LINK === 'true' && (
 						<Link
 							href={'/cart'}
-							className={`flex items-center justify-center rounded-md bg-green px-2 py-[0.55em] text-base font-normal text-white hover:opacity-85 w-[70px] ${
+							className={`flex w-[70px] items-center justify-center rounded-md bg-green px-2 py-[0.55em] text-base font-normal text-white hover:opacity-85 ${
 								items.length > 0 ? 'animate-pop' : ''
 							}`}
 							key={items.length}

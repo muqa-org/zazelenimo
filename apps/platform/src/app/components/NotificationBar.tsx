@@ -2,11 +2,10 @@
 
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import Container from '@/app/components/Container';
 import icons from '@/app/components/common/Icons';
-import { useState } from 'react';
-
 import { CodaFormProjectLink } from '@/app/config';
 
 const NotificationBar = ({ message }: { message: string }) => {

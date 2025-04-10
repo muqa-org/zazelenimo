@@ -5,7 +5,7 @@ import { BackgroundImage } from '../ui/background-image';
 import { Card, CardContent } from '../ui/card';
 import { Separator } from '../ui/separator';
 
-export type ApplicationCard = Application & {
+export type ApplicationCardProps = Application & {
   components?: ApplicationComponent[];
   isLoading?: boolean;
 };
@@ -18,7 +18,7 @@ export function ApplicationCard({
   contributors,
   components = [],
   isLoading,
-}: ApplicationCard) {
+}: ApplicationCardProps) {
   return (
     <Card
       className={cn('relative overflow-hidden rounded-3xl shadow-xl', {

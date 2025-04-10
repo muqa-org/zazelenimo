@@ -42,7 +42,7 @@ export default function ProjectListSeachFilter() {
 			<div className='relative'>
 				<button
 					onClick={toggleDropdown}
-					className='rounded-md border border-borderGray bg-white text-gray px-4 py-3 text-sm uppercase hover:bg-gray-100 focus:outline-none'
+					className='rounded-md border border-borderGray bg-white px-4 py-3 text-sm uppercase text-gray hover:bg-gray-100 focus:outline-none'
 					style={{
 						backgroundImage: `url(${icons.arrowDownIcon})`,
 						backgroundRepeat: 'no-repeat',
@@ -53,7 +53,7 @@ export default function ProjectListSeachFilter() {
 					Fitriraj
 				</button>
 				{isDropdownOpen && (
-					<div className='border-borderGray absolute right-0 z-10 mt-2 w-48 overflow-hidden rounded-md border bg-white shadow-lg'>
+					<div className='absolute right-0 z-10 mt-2 w-48 overflow-hidden rounded-md border border-borderGray bg-white shadow-lg'>
 						<ul>
 							<li
 								onClick={() => handleFilterClick('Option 1')}

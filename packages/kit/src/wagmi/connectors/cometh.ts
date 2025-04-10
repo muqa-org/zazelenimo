@@ -1,9 +1,9 @@
 'use client';
 
-import { 
-  createSafeSmartAccount, 
+import {
+  createSafeSmartAccount,
   createSmartAccountClient,
-  createComethPaymasterClient
+  createComethPaymasterClient,
 } from '@cometh/connect-sdk-4337';
 import { getConnectViemAccount } from '@cometh/connect-sdk-viem';
 import { http } from 'viem';
@@ -24,17 +24,21 @@ let globalViemAccount: ComethAccount | undefined;
 
 // Function to initialize the smart account if not already done
 async function initializeSmartAccount() {
-  if (globalSmartAccountClient) return { smartAccountClient: globalSmartAccountClient, viemAccount: globalViemAccount };
-  
+  if (globalSmartAccountClient)
+    return {
+      smartAccountClient: globalSmartAccountClient,
+      viemAccount: globalViemAccount,
+    };
+
   try {
     console.log('Initializing Cometh smart account...');
-    
+
     // Create safe smart account - make sure to await this!
     const smartAccount = await createSafeSmartAccount({
       apiKey,
       chain,
     });
-    
+
     console.log('Smart account created successfully');
 
     // Create paymaster client for gasless transactions
@@ -48,24 +52,27 @@ async function initializeSmartAccount() {
       account: smartAccount,
       chain,
       bundlerTransport: http(bundlerUrl),
-      paymaster: paymasterClient
+      paymaster: paymasterClient,
     });
 
     // We need to handle the type conversion carefully due to SDK compatibility issues
     // The SDK expects a ComethWallet type but we have a SafeSmartAccount
     // We'll extract the address directly from the smart account
     const accountAddress = smartAccount.address;
-    
+
     if (!accountAddress || typeof accountAddress !== 'string') {
       throw new Error('Failed to get account address from smart account');
     }
-    
+
     // Create a simple account object with just the address
     globalViemAccount = { address: accountAddress as `0x${string}` };
-    
+
     console.log('Account initialized with address:', accountAddress);
-    
-    return { smartAccountClient: globalSmartAccountClient, viemAccount: globalViemAccount };
+
+    return {
+      smartAccountClient: globalSmartAccountClient,
+      viemAccount: globalViemAccount,
+    };
   } catch (error) {
     console.error('Error initializing Cometh smart account:', error);
     throw error;
@@ -81,16 +88,17 @@ export const comethConnector = createConnector((config) => {
     id: 'cometh',
     name: 'Cometh Connect',
     type: 'cometh',
-    
+
     async connect({ chainId } = {}) {
       try {
         console.log('Connecting to Cometh...');
-        const { smartAccountClient, viemAccount } = await initializeSmartAccount();
-        
+        const { smartAccountClient, viemAccount } =
+          await initializeSmartAccount();
+
         if (!viemAccount) {
           throw new Error('Failed to initialize Cometh account');
         }
-        
+
         const address = viemAccount.address;
         console.log('Connected to Cometh with address:', address);
 
@@ -99,8 +107,8 @@ export const comethConnector = createConnector((config) => {
           chainId: chain.id,
           chain: {
             id: chain.id,
-            unsupported: false
-          }
+            unsupported: false,
+          },
         };
       } catch (error) {
         console.error('Error connecting Cometh:', error);
@@ -118,7 +126,9 @@ export const comethConnector = createConnector((config) => {
       // Return the smart account address if connected
       if (!globalViemAccount) {
         // Try to initialize if not already done
-        const { viemAccount } = await initializeSmartAccount().catch(() => ({ viemAccount: undefined }));
+        const { viemAccount } = await initializeSmartAccount().catch(() => ({
+          viemAccount: undefined,
+        }));
         if (!viemAccount) {
           throw new Error('No account connected');
         }
@@ -151,7 +161,9 @@ export const comethConnector = createConnector((config) => {
       try {
         if (!globalViemAccount) {
           // Try to initialize if not already done
-          const { viemAccount } = await initializeSmartAccount().catch(() => ({ viemAccount: undefined }));
+          const { viemAccount } = await initializeSmartAccount().catch(() => ({
+            viemAccount: undefined,
+          }));
           return !!viemAccount;
         }
         return true;
@@ -172,4 +184,4 @@ export const comethConnector = createConnector((config) => {
       this.disconnect();
     },
   };
-}); 
+});

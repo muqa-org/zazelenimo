@@ -1,9 +1,9 @@
+import { FundedApplication } from '@allo/kit';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import AddToCart from '@/app/components/cart/AddToCart';
 import { getProjectProgressBGColor } from '@/app/helpers/projectHelper';
-import { FundedApplication } from '@allo/kit';
 
 interface ProjectCardProps {
 	application: FundedApplication;
@@ -14,7 +14,7 @@ export default function ProjectCard({
 	application,
 	className,
 }: ProjectCardProps) {
-	let progressColor = getProjectProgressBGColor(application.fundedPercentage);
+	const progressColor = getProjectProgressBGColor(application.fundedPercentage);
 
 	return (
 		<div className={`${className} flex h-full flex-col gap-1 overflow-hidden`}>

@@ -1,5 +1,4 @@
 import { RoundPhase as RoundPhaseType } from '@muqa/db';
-
 import { useTranslations } from 'next-intl';
 
 import RoundPhase from '@/app/components/RoundPhase';

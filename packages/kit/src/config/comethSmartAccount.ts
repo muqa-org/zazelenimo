@@ -1,9 +1,9 @@
 'use client';
 
-import { 
-  createSafeSmartAccount, 
+import {
+  createSafeSmartAccount,
   createSmartAccountClient,
-  createComethPaymasterClient
+  createComethPaymasterClient,
 } from '@cometh/connect-sdk-4337';
 import { http } from 'viem';
 
@@ -13,7 +13,7 @@ const { apiKey, chain, bundlerUrl, paymasterUrl } = comethConfig;
 
 /**
  * Initializes a Cometh Smart Account client using the 4337 SDK.
- * 
+ *
  * @param walletAddress - Optional wallet address to connect to an existing account
  * @returns A smart account client that can be used to send transactions
  */
@@ -22,13 +22,13 @@ export async function initializeComethSmartAccount(walletAddress?: string) {
   const smartAccount = await createSafeSmartAccount({
     apiKey,
     chain,
-    smartAccountAddress: walletAddress
+    smartAccountAddress: walletAddress,
   });
 
   // Create the paymaster client for gasless transactions
   const paymasterClient = await createComethPaymasterClient({
     transport: http(paymasterUrl),
-    chain
+    chain,
   });
 
   // Create the smart account client
@@ -36,7 +36,7 @@ export async function initializeComethSmartAccount(walletAddress?: string) {
     account: smartAccount,
     chain,
     bundlerTransport: http(bundlerUrl),
-    paymaster: paymasterClient
+    paymaster: paymasterClient,
   });
 
   return smartAccountClient;

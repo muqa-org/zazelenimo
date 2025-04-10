@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
+import { useLocale, useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import icons from '@/app/components/common/Icons';
 

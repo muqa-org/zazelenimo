@@ -37,7 +37,8 @@ export type StrategyExtensions = Record<StrategyType, StrategyExtension>;
 
 const strategyMap = {
   'allov2.DirectGrantsLiteStrategy': 'directGrants',
-  'allov2.DonationVotingMerkleDistributionDirectTransferStrategy': 'quadraticFunding',
+  'allov2.DonationVotingMerkleDistributionDirectTransferStrategy':
+    'quadraticFunding',
 } as const;
 
 function getStrategyTypeFromName(strategyName: string, chainId: number) {
@@ -76,7 +77,7 @@ export function useStrategyAddon(
   const api = useAPI();
   const strategies = useStrategies();
   const { data: signer } = useWalletClient();
-  const { wallet } = useCometh();
+  const { client, walletAddress } = useCometh();
 
   const type = useStrategyType(round);
   const addon = type && (strategies as any)?.[type]?.components?.[component];
@@ -84,10 +85,10 @@ export function useStrategyAddon(
     ...addon,
     call: useMutation({
       mutationFn: (args: unknown[]) => {
-        if (!wallet) {
-          throw new Error('Wallet not initialized');
+        if (!walletAddress || !client) {
+          throw new Error('Wallet address or client not initialized');
         }
-        return addon?.call?.(...args, wallet, api, signer);
+        return addon?.call?.(...args, walletAddress, client, api, signer);
       },
       onSuccess: (data) => {
         console.log('call mutation data', data);

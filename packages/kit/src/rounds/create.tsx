@@ -9,7 +9,6 @@ import { z } from 'zod';
 
 import { supportedChains, useStrategies } from '..';
 import { RoundCreated } from '../api/types';
-import { useNetwork } from '../hooks/useNetwork';
 import { useCreateRound } from '../hooks/useRounds';
 import { useUpload } from '../hooks/useUpload';
 import { EthAddressSchema } from '../schemas';
@@ -75,10 +74,9 @@ function CreateButton({
 export function CreateRound({
   onCreated,
 }: {
-  onCreated?: (round: RoundCreated) => void;
+  onCreated?: (_round: RoundCreated) => void;
 }) {
   const strategies = useStrategies();
-  console.log('str', strategies);
   const [strategy, setStrategy] = useState<StrategyType>(
     Object.values(strategies)[0]?.type!,
   );
@@ -92,6 +90,7 @@ export function CreateRound({
     />
   );
 }
+
 function CreateRoundForm({
   selected,
   strategies,
@@ -100,8 +99,8 @@ function CreateRoundForm({
 }: {
   strategies: StrategyExtensions;
   selected: StrategyType;
-  onCreated?: (round: RoundCreated) => void;
-  onChangeStrategy: (type: StrategyType) => void;
+  onCreated?: (_round: RoundCreated) => void;
+  onChangeStrategy: (_type: StrategyType) => void;
 }) {
   const addon = strategies[selected]?.components.createRound;
 
@@ -125,8 +124,6 @@ function CreateRoundForm({
 
   const create = useCreateRound();
   const upload = useUpload();
-
-  const network = useNetwork();
 
   return (
     <Form {...form}>
@@ -290,7 +287,7 @@ function CreateRoundForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {(network?.tokens ?? []).map((token) => (
+                    {(supportedChains?.find(n => n.id === Number(form.watch('chainId')))?.tokens ?? []).map((token) => (
                       <SelectItem key={token.address} value={token.address}>
                         {token.code}
                       </SelectItem>

@@ -1,34 +1,38 @@
 import { deleteUserNonce, getUserWithNonce } from '@muqa/db';
-import { RequestInternal } from 'next-auth';;
+import { RequestInternal } from 'next-auth';
+
 import { verifySignature } from '@/lib/cometh/api';
 
 export default async function authorize(
-  credentials: Record<'address' | 'signedNonce', string> | undefined,
-  req: Pick<RequestInternal, 'body' | 'headers' | 'method' | 'query'>
+	credentials: Record<'address' | 'signedNonce', string> | undefined,
+	req: Pick<RequestInternal, 'body' | 'headers' | 'method' | 'query'>,
 ) {
-  if (!credentials) return null;
+	if (!credentials) return null;
 
-  const { address, signedNonce } = credentials;
+	const { address, signedNonce } = credentials;
 
-  // Get user from database with their generated nonce
-  const user = await getUserWithNonce(address);
+	// Get user from database with their generated nonce
+	const user = await getUserWithNonce(address);
 
-  if (!user?.authNonce) return null;
+	if (!user?.authNonce) return null;
 
-  // Check nonce signature against Cometh's api
-  const verification = await verifySignature(
-    address, user.authNonce.nonce, signedNonce);
+	// Check nonce signature against Cometh's api
+	const verification = await verifySignature(
+		address,
+		user.authNonce.nonce,
+		signedNonce,
+	);
 
-  if (!verification.result) return null;
+	if (!verification.result) return null;
 
-  // Check that the nonce is not expired
-  if (user.authNonce.expiresAt < new Date()) return null;
+	// Check that the nonce is not expired
+	if (user.authNonce.expiresAt < new Date()) return null;
 
-  // Everything is fine, clear the nonce and return the user
-  await deleteUserNonce(user);
+	// Everything is fine, clear the nonce and return the user
+	await deleteUserNonce(user);
 
-  return {
-    id: user.id,
-    address: user.address,
-  };
+	return {
+		id: user.id,
+		address: user.address,
+	};
 }

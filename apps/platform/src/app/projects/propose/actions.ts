@@ -1,5 +1,7 @@
 'use server';
 
+import { getTranslations } from 'next-intl/server';
+
 import { ForumLink, ForumLinkDiscussion } from '@/app/config';
 import {
 	createDiscourseTopic,
@@ -7,7 +9,6 @@ import {
 	uploadFileToDiscourse,
 } from '@/app/helpers/discourseHelpers';
 import { sendMail } from '@/app/helpers/mailHelpers';
-import { getTranslations } from 'next-intl/server';
 
 type MessageType = {
 	key: string;
@@ -77,7 +78,7 @@ export async function createProjectAction(
 
 	// Upload file(s) to Discourse if it exist
 	const files = formData.getAll('photo') as File[];
-	let fileUrls = [];
+	const fileUrls = [];
 	if (files.length > 0) {
 		for (const file of files) {
 			if (file) {

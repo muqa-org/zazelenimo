@@ -59,6 +59,12 @@
     },
     "db:generate": {
       "outputs": []
+    },
+    "lint": {
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
     }
   }
 }

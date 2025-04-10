@@ -1,9 +1,6 @@
 import { NATIVE } from '@allo-team/allo-v2-sdk';
-import { useMutation } from '@tanstack/react-query';
 import { Address, erc20Abi, zeroAddress } from 'viem';
-import { useAccount, useBalance, useReadContracts } from 'wagmi';
-
-import { useToast } from '../ui/use-toast';
+import { useAccount, useReadContracts } from 'wagmi';
 
 export const nativeToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 
@@ -11,7 +8,6 @@ const isNativeToken = (token?: Address) =>
   [zeroAddress, NATIVE].includes(token?.toLowerCase()!);
 
 export function useToken(opts: { token?: Address }) {
-  const { address } = useAccount();
   const token = isNativeToken(opts.token) ? undefined : opts.token;
 
   console.log('token', opts, token);

@@ -39,6 +39,7 @@ export * from './hooks/useApplications.js';
 export * from './hooks/useRounds.js';
 export * from './hooks/useProjects.js';
 export * from './hooks/useDebounce.js';
+export * from './hooks/useCometh.js';
 export * from './checkout/add-to-checkout.js';
 export * from './strategies/index.js';
 export * from './strategies/direct-grants/index.js';

@@ -4,7 +4,6 @@ import Container from '@/app/components/Container';
 import ProjectDetails from '@/app/components/project/ProjectDetails';
 import { RoundData } from '@/app/types/round';
 
-
 export default async function ProjectPage({
 	params: { chainId = 0, projectId = '' },
 }) {
@@ -18,7 +17,7 @@ export default async function ProjectPage({
 
 	return (
 		<section className='py-4'>
-			<Container className='mx-auto flex gap-10 justify-between px-5 py-5 mb-6'>
+			<Container className='mx-auto mb-6 flex justify-between gap-10 px-5 py-5'>
 				<ProjectDetails />
 			</Container>
 		</section>

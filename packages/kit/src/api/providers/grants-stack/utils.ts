@@ -1,6 +1,7 @@
 import { RoundsQuery } from '../../types';
 
-const IPFS_GATEWAY_URL = process.env.NEXT_PUBLIC_IPFS_GATEWAY_URL ?? 'https://ipfs.io';
+const IPFS_GATEWAY_URL =
+  process.env.NEXT_PUBLIC_IPFS_GATEWAY_URL ?? 'https://ipfs.io';
 
 export const ipfsGateway = (cid: string, type?: 'string' | undefined) => {
   if (!cid) return '';
@@ -43,7 +44,8 @@ export function queryToFilter(query: RoundsQuery) {
   const nestedKeys = ['applications', 'roles', 'projects'];
   const nestedFilters = nestedKeys.reduce((acc, key) => {
     if (!filter?.[key as keyof typeof filter]) return acc;
-    const { where, orderBy } = pick(filter, [key])?.[key];
+    const picked = pick(filter, [key]);
+    const { where, orderBy } = picked?.[key] ?? {};
     return {
       ...acc,
       [`${key}_filter`]: where,

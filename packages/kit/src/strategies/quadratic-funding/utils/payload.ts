@@ -1,6 +1,13 @@
-import { DonationVotingMerkleDistributionStrategy, TransactionData } from '@allo-team/allo-v2-sdk';
+import {
+  DonationVotingMerkleDistributionStrategy,
+  TransactionData,
+} from '@allo-team/allo-v2-sdk';
 import { getAddress } from '@allo-team/allo-v2-sdk/dist/Allo/allo.config.js';
-import { Allocation, Permit2Data, PermitType } from '@allo-team/allo-v2-sdk/dist/strategies/DonationVotingMerkleDistributionStrategy/types.js';
+import {
+  Allocation,
+  Permit2Data,
+  PermitType,
+} from '@allo-team/allo-v2-sdk/dist/strategies/DonationVotingMerkleDistributionStrategy/types.js';
 import { Chain, encodeFunctionData, WalletClient } from 'viem';
 
 import { signPermit2612 } from './signPermit2612.js';
@@ -22,9 +29,8 @@ import { TokenMetadata } from '../qf.types.js';
 export async function generateApprovalTransaction(
   spender: `0x${string}`,
   tokenAddress: `0x${string}`,
-  amount: bigint
+  amount: bigint,
 ): Promise<TransactionData> {
-
   return {
     to: tokenAddress,
     data: encodeFunctionData({
@@ -32,19 +38,19 @@ export async function generateApprovalTransaction(
         {
           inputs: [
             { name: 'spender', type: 'address' },
-            { name: 'amount', type: 'uint256' }
+            { name: 'amount', type: 'uint256' },
           ],
           name: 'approve',
           outputs: [{ name: '', type: 'bool' }],
           stateMutability: 'nonpayable',
-          type: 'function'
-        }
+          type: 'function',
+        },
       ],
-      args: [spender, amount]
+      args: [spender, amount],
     }),
-    value: '0'
+    value: '0',
   };
-};
+}
 
 export async function generateAllocateTransaction(
   round: Round,
@@ -63,10 +69,10 @@ export async function generateAllocateTransaction(
     recipientId,
     permitType: PermitType.Permit,
     permit2Data: generatePermitlessPayload(round.matching.token, amount),
-  }
+  };
 
   return strategy.getAllocateData(allocation);
-};
+}
 
 /**
  * Generates a Permit2 Allo strategy payload when no permit is required.
@@ -83,8 +89,7 @@ export async function generateAllocateTransaction(
 export function generatePermitlessPayload(
   tokenAddress: `0x${string}`,
   amount: bigint,
-): Permit2Data
-{
+): Permit2Data {
   return {
     permit: {
       deadline: BigInt(0),
@@ -95,7 +100,7 @@ export function generatePermitlessPayload(
       },
     },
     signature: '0x',
-  }
+  };
 }
 
 /**
@@ -116,8 +121,7 @@ export async function generatePermitPayload(
   round: Round,
   tokenMetadata: TokenMetadata,
   amount: bigint,
-): Promise<Permit2Data>
-{
+): Promise<Permit2Data> {
   const deadline = round.phases.roundEnd
     ? new Date(round.phases.roundEnd).getTime()
     : Date.now() + 30 * 60 * 1000; // 30 minutes
@@ -130,8 +134,8 @@ export async function generatePermitPayload(
     spenderAddress,
     value: amount,
     deadline: BigInt(deadline),
-    chainId: round.chainId
-  })
+    chainId: round.chainId,
+  });
 
   return { signature, permit };
 }

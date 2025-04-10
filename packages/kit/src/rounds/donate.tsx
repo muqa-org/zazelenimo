@@ -27,9 +27,12 @@ const getTokenByChainIdAndAddress = (chainId: number, address: string) => {
       },
       permitVersion: '2',
       redstoneTokenId: 'USDC Fixed',
-    })
+    });
   }
-  return chainData?.tokens.find((token) => token.address.toLocaleLowerCase() === address.toLocaleLowerCase());
+  return chainData?.tokens.find(
+    (token) =>
+      token.address.toLocaleLowerCase() === address.toLocaleLowerCase(),
+  );
 };
 
 type AllocateProps = {
@@ -37,12 +40,17 @@ type AllocateProps = {
   children?: React.ReactNode;
 };
 
-export function Donate({ donations, children }: PropsWithChildren<AllocateProps>): JSX.Element {
-	const { data: round } = useRoundById(roundId, { chainId: chain.id });
+export function Donate({
+  donations,
+  children,
+}: PropsWithChildren<AllocateProps>): JSX.Element {
+  const { data: round } = useRoundById(roundId, { chainId: chain.id });
   const strategyAddon = useStrategyAddon('allocate', round);
 
   const isEnabled = useMemo(() => {
-    return donations.length && donations.every((donation) => donation.amount > 0);
+    return (
+      donations.length && donations.every((donation) => donation.amount > 0)
+    );
   }, [donations]);
 
   return (
@@ -52,12 +60,15 @@ export function Donate({ donations, children }: PropsWithChildren<AllocateProps>
           className={`flex flex-row items-center justify-between rounded-md px-5 py-3 text-base ${
             isEnabled
               ? 'bg-green text-white hover:opacity-85'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'cursor-not-allowed bg-gray-300 text-gray-500'
           }`}
           isLoading={strategyAddon?.call?.isPending}
           disabled={!isEnabled}
           onClick={() => {
-            const token = getTokenByChainIdAndAddress(chain.id, round?.matching?.token!);
+            const token = getTokenByChainIdAndAddress(
+              chain.id,
+              round?.matching?.token!,
+            );
             const callArgs = [round, token, donations];
             console.log(callArgs);
             strategyAddon?.call?.mutate(callArgs);

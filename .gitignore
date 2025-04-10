@@ -42,3 +42,9 @@ yarn-error.log*
 .idea
 
 storybook-static
+
+# Repomix
+repomix.config.json
+repomix.config.ts
+.repomixignore
+repomix-output.txt
