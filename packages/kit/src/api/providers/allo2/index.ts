@@ -1,5 +1,4 @@
-import { Allo, Registry } from '@allo-team/allo-v2-sdk/';
-import { getConnectViemAccount } from '@cometh/connect-sdk-viem';
+import { Allo, Registry } from "@allo-team/allo-v2-sdk/";
 import {
   PublicClient,
   encodePacked,
@@ -10,65 +9,65 @@ import {
   WalletClient,
   encodeAbiParameters,
   parseAbiParameters,
-} from 'viem';
-import { decodeEventLog, type Address, type Chain } from 'viem';
+} from "viem";
+import { decodeEventLog, type Address, type Chain } from "viem";
 
-import { initializeComethSmartAccount } from '../../../config/comethSmartAccount.js';
-import { API } from '../../types.js';
+import { initializeComethSmartAccount } from "../../../config/comethSmartAccount.js";
+import { API } from "../../types.js";
 
 // Define a minimal ABI for the events we need
 const AlloABI = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, name: 'poolId', type: 'uint256' },
-      { indexed: true, name: 'profileId', type: 'bytes32' },
-      { indexed: false, name: 'strategy', type: 'address' },
-      { indexed: false, name: 'token', type: 'address' },
-      { indexed: false, name: 'amount', type: 'uint256' },
+      { indexed: true, name: "poolId", type: "uint256" },
+      { indexed: true, name: "profileId", type: "bytes32" },
+      { indexed: false, name: "strategy", type: "address" },
+      { indexed: false, name: "token", type: "address" },
+      { indexed: false, name: "amount", type: "uint256" },
       {
         indexed: false,
-        name: 'metadata',
-        type: 'tuple',
+        name: "metadata",
+        type: "tuple",
         components: [
-          { name: 'protocol', type: 'uint256' },
-          { name: 'pointer', type: 'string' },
+          { name: "protocol", type: "uint256" },
+          { name: "pointer", type: "string" },
         ],
       },
     ],
-    name: 'PoolCreated',
-    type: 'event',
+    name: "PoolCreated",
+    type: "event",
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: true, name: 'profileId', type: 'bytes32' },
-      { indexed: false, name: 'nonce', type: 'uint256' },
-      { indexed: false, name: 'name', type: 'string' },
+      { indexed: true, name: "profileId", type: "bytes32" },
+      { indexed: false, name: "nonce", type: "uint256" },
+      { indexed: false, name: "name", type: "string" },
       {
         indexed: false,
-        name: 'metadata',
-        type: 'tuple',
+        name: "metadata",
+        type: "tuple",
         components: [
-          { name: 'protocol', type: 'uint256' },
-          { name: 'pointer', type: 'string' },
+          { name: "protocol", type: "uint256" },
+          { name: "pointer", type: "string" },
         ],
       },
-      { indexed: false, name: 'owner', type: 'address' },
-      { indexed: false, name: 'anchor', type: 'address' },
+      { indexed: false, name: "owner", type: "address" },
+      { indexed: false, name: "anchor", type: "address" },
     ],
-    name: 'ProfileCreated',
-    type: 'event',
+    name: "ProfileCreated",
+    type: "event",
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: true, name: 'recipientId', type: 'address' },
-      { indexed: true, name: 'poolId', type: 'uint256' },
-      { indexed: true, name: 'status', type: 'uint8' },
+      { indexed: true, name: "recipientId", type: "address" },
+      { indexed: true, name: "poolId", type: "uint256" },
+      { indexed: true, name: "status", type: "uint8" },
     ],
-    name: 'UpdatedRegistration',
-    type: 'event',
+    name: "UpdatedRegistration",
+    type: "event",
   },
 ];
 
@@ -77,11 +76,11 @@ const createAlloOpts = (chain: Chain) => ({
   rpc: chain.rpcUrls.default.http[0],
 });
 function getProfileId(address: Address): Address {
-  return keccak256(encodePacked(['uint256', 'address'], [BigInt(0), address]));
+  return keccak256(encodePacked(["uint256", "address"], [BigInt(0), address]));
 }
 
 export const alloNativeToken: Address =
-  '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 export const allo2API: Partial<API> = {
   createRound: async function (data, signer: WalletClient, account) {
@@ -93,11 +92,9 @@ export const allo2API: Partial<API> = {
           account.address,
         );
         smartAccount = smartAccountClient.account;
-        const connectViemAccount = getConnectViemAccount(smartAccount);
-        signer.account = connectViemAccount;
       }
 
-      if (!signer?.account) throw new Error('Signer missing');
+      if (!signer?.account) throw new Error("Signer missing");
 
       const allo = new Allo(createAlloOpts(signer.chain!));
 
@@ -111,10 +108,10 @@ export const allo2API: Partial<API> = {
         strategy,
         token,
         managers = [],
-        initStrategyData = '0x',
+        initStrategyData = "0x",
       } = data;
-      if (typeof initStrategyData !== 'string')
-        throw new Error('initStrategyData must be a bytes string.');
+      if (typeof initStrategyData !== "string")
+        throw new Error("initStrategyData must be a bytes string.");
 
       const txData = allo.createPool({
         profileId,
@@ -126,7 +123,7 @@ export const allo2API: Partial<API> = {
         metadata,
         initStrategyData,
       });
-      console.log('txData', txData);
+      console.log("txData", txData);
 
       // Send the transaction using the smart account client
       const txHash = await smartAccountClient.sendTransaction({
@@ -134,16 +131,16 @@ export const allo2API: Partial<API> = {
         data: txData.data as `0x${string}`,
         value: BigInt(0),
       });
-      console.log('txHash', txHash);
+      console.log("txHash", txHash);
 
       // Wait for the transaction receipt
       const receipt = await smartAccountClient.waitForTransactionReceipt({
         hash: txHash,
       });
-      console.log('receipt', receipt);
+      console.log("receipt", receipt);
 
       // Wait for PoolCreated event and return poolId
-      return createLogDecoder(AlloABI, client)(txHash, ['PoolCreated']).then(
+      return createLogDecoder(AlloABI, client)(txHash, ["PoolCreated"]).then(
         (logs) => {
           const id = String((logs?.[0]?.args as { poolId: bigint }).poolId);
           return { id, chainId: signer.chain?.id as number };
@@ -156,12 +153,12 @@ export const allo2API: Partial<API> = {
   },
   createApplication: async function (data, signer) {
     try {
-      if (!signer?.account) throw new Error('Signer missing');
+      if (!signer?.account) throw new Error("Signer missing");
       const allo = new Allo(createAlloOpts(signer.chain!));
 
       const client = signer.extend(publicActions);
 
-      const { roundId, strategyData = '0x' } = data;
+      const { roundId, strategyData = "0x" } = data;
 
       const tx = allo.registerRecipient(roundId, strategyData);
 
@@ -169,7 +166,7 @@ export const allo2API: Partial<API> = {
 
       // Wait for PoolCreated event and return poolId
       return createLogDecoder(AlloABI, client)(hash!, [
-        'UpdatedRegistration',
+        "UpdatedRegistration",
       ]).then((logs) => {
         const id = String(
           (logs?.[0]?.args as { recipientId: Address }).recipientId,
@@ -183,9 +180,9 @@ export const allo2API: Partial<API> = {
   },
   createProject: async function (data, signer) {
     try {
-      if (!signer?.account) throw new Error('Signer missing');
+      if (!signer?.account) throw new Error("Signer missing");
 
-      throw new Error('Create Project not implemented yet');
+      throw new Error("Create Project not implemented yet");
       // This code is unreachable, but we'll keep it for future implementation
       // return { id: 'id', chainId };
     } catch (error) {
@@ -221,10 +218,10 @@ async function getOrCreateProfile(
         nonce: BigInt(0),
         members: [address],
         owner: address,
-        metadata: { protocol: BigInt(1), pointer: '' },
-        name: '',
+        metadata: { protocol: BigInt(1), pointer: "" },
+        name: "",
       });
-      console.log('txData', txData);
+      console.log("txData", txData);
 
       // Send the transaction using the smart account client
       const txHash = await smartAccountClient.sendTransaction({
@@ -232,19 +229,19 @@ async function getOrCreateProfile(
         data: txData.data as `0x${string}`,
         value: BigInt(0),
       });
-      console.log('txHash', txHash);
+      console.log("txHash", txHash);
 
       // Wait for the transaction receipt
       const receipt = await smartAccountClient.waitForTransactionReceipt({
         hash: txHash,
       });
-      console.log('receipt', receipt);
+      console.log("receipt", receipt);
 
       // This will not work with built in Cometh getTransaction because it
       // only checks for ExecutionSuccess event, and we need a specific event to
       // get things like profile id from the ProfileCreated event
       return createLogDecoder(AlloABI, signer.extend(publicActions))(txHash, [
-        'ProfileCreated',
+        "ProfileCreated",
       ]).then((logs) => (logs?.[0]?.args as { profileId: Address })?.profileId);
     });
 }
@@ -252,7 +249,7 @@ async function getOrCreateProfile(
 function createLogDecoder(
   abi: readonly unknown[],
   client?: {
-    waitForTransactionReceipt: PublicClient['waitForTransactionReceipt'];
+    waitForTransactionReceipt: PublicClient["waitForTransactionReceipt"];
   },
 ) {
   return async (hash: Address, events: string[]) =>
@@ -280,8 +277,8 @@ function encodeDirectGrantsLiteData(data: {
 }) {
   return encodeAbiParameters(
     parseAbiParameters([
-      'InitializeData data',
-      'struct InitializeData { bool useRegistryAnchor; bool metadataRequired; uint64 registrationStartTime; uint64 registrationEndTime; }',
+      "InitializeData data",
+      "struct InitializeData { bool useRegistryAnchor; bool metadataRequired; uint64 registrationStartTime; uint64 registrationEndTime; }",
     ]),
     [
       {
