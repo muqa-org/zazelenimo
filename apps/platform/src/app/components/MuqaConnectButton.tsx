@@ -1,37 +1,74 @@
+// File: apps/platform/src/app/components/MuqaConnectButton.tsx
 'use client';
 
-import { comethConnector, useCometh } from '@allo/kit'; // Import useCometh
-import { signIn, signOut, useSession } from 'next-auth/react'; // Import useSession
+// *** Allo Kit Imports ***
+import { comethConfig } from '@allo/kit'; // Ensure this path is correct
+// *** Direct Cometh SDK Imports ***
+import {
+	createSafeSmartAccount,
+	createSmartAccountClient,
+	retrieveAccountAddressFromPasskeys,
+	createComethPaymasterClient // Import if using paymaster
+} from "@cometh/connect-sdk-4337";
+import { http, type Address } from "viem"; // Import Address type
+
+// *** NextAuth Imports ***
+import { signIn, signOut, useSession } from 'next-auth/react';
+
+// *** React/Next Imports ***
 import { useTranslations } from 'next-intl';
 import { PropsWithChildren, useState } from 'react';
-import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi';
 
-import { Button, ButtonProps } from './Button';
-import { WalletNonceResponse } from '../api/auth/web3/nonce/route';
+// *** Wagmi Imports (Keep for status/disconnect) ***
+import { useAccount, useDisconnect } from 'wagmi';
 
-const TRUNCATE_LENGTH = 20;
-const TRUNCATE_OFFSET = 3;
+// *** Local Imports ***
+import { Button, ButtonProps } from './Button'; // Ensure Button component path is correct
+import { WalletNonceResponse } from '../api/auth/web3/nonce/route'; // Ensure API route path is correct
 
-const truncate = (str?: `0x${string}`) =>
-	str && str.length > TRUNCATE_LENGTH
+// --- Helper Functions ---
+
+const TRUNCATE_LENGTH = 10; // Adjusted for better readability
+const TRUNCATE_OFFSET = 4;
+
+const truncate = (str?: `0x${string}`): string =>
+	str && str.length > TRUNCATE_LENGTH + TRUNCATE_OFFSET + 2 // Adjust length check
 		? `${str.slice(0, TRUNCATE_OFFSET + 2)}...${str.slice(-TRUNCATE_OFFSET)}`
-		: `${str}`;
+		: str ?? ''; // Return empty string if undefined
 
-function getLabel() {
-	const t = useTranslations('auth');
-	const { isConnected, isConnecting, isReconnecting } = useAccount();
-	const account = useAccount();
+// Fetches the nonce from the backend API
+async function getNonce(address: `0x${string}`): Promise<string> {
+	const body = JSON.stringify({ address });
+	const headers = {
+		'Content-Type': 'application/json',
+	};
 
-	let label = t('connect');
-	const address = truncate(account.address);
+	const res = await fetch('/api/auth/web3/nonce', { // Make sure this API path is correct
+		method: 'POST',
+		headers,
+		body,
+	});
+	if (!res.ok) {
+		const errorBody = await res.text();
+		console.error("Nonce API Error Response:", errorBody);
+		throw new Error(`Failed to fetch nonce: ${res.statusText}`);
+	}
 
-	if (isConnecting) label = t('connecting');
-	else if (isReconnecting) label = t('reconnect');
-	else if (isConnected) label = `${t('disconnect')} ${address}`;
-
-	return label;
+	const { nonce } = (await res.json()) as WalletNonceResponse;
+	if (!nonce) {
+		throw new Error('Nonce not received from API');
+	}
+	return nonce;
 }
 
+// Displays loading spinner
+function LoadingIcon() {
+	return (
+		<div className='mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-t-2 border-white'></div>
+	);
+}
+
+// Tooltip for displaying full address
 function AddressTooltip({
 	show,
 	label,
@@ -46,6 +83,7 @@ function AddressTooltip({
 	const copyToClipboard = () => {
 		if (label) {
 			navigator.clipboard.writeText(label);
+			// Optional: Add feedback like a toast message
 		}
 	};
 
@@ -53,14 +91,14 @@ function AddressTooltip({
 		<>
 			{show && !!label && (
 				<div
-					className='absolute right-0 top-8 mt-2 flex w-max items-center rounded bg-gray-700 p-2 font-mono text-sm text-white'
+					className='absolute right-0 top-full z-10 mt-2 flex w-max items-center rounded bg-gray-700 p-2 font-mono text-xs text-white shadow-lg' // Adjusted styling
 					onMouseEnter={onMouseEnter}
 					onMouseLeave={onMouseLeave}
 				>
 					<span>{label}</span>
 					<button
 						onClick={copyToClipboard}
-						className='ml-2 rounded bg-gray-600 p-1 transition-colors duration-150 ease-in-out hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 active:bg-gray-400'
+						className='ml-2 rounded bg-gray-600 p-1 transition-colors duration-150 ease-in-out hover:bg-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400 active:bg-gray-400' // Adjusted styling
 						title='Copy to clipboard'
 					>
 						<span className='inline-block transform transition-transform duration-150 ease-in-out active:scale-90'>
@@ -73,131 +111,188 @@ function AddressTooltip({
 	);
 }
 
-function LoadingIcon() {
-	const { isConnecting, isReconnecting } = useAccount();
-	const isLoading = isConnecting || isReconnecting;
 
-	return (
-		<>
-			{isLoading && (
-				<div className='border-primary mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-t-2'></div>
-			)}
-		</>
-	);
-}
-
-async function getNonce(address: `0x${string}`): Promise<string> {
-	const body = JSON.stringify({ address });
-	const headers = {
-		'Content-Type': 'application/json',
-	};
-
-	const res = await fetch('/api/auth/web3/nonce', {
-		method: 'POST',
-		headers,
-		body,
-	});
-	if (!res.ok) {
-		throw new Error('Failed to fetch nonce');
-	}
-
-	const { nonce } = (await res.json()) as WalletNonceResponse;
-	if (!nonce) {
-		throw new Error('Nonce not received from API');
-	}
-	return nonce;
-}
+// --- Main Component ---
 
 export default function MuqaConnectButton({
 	children,
 	...props
 }: PropsWithChildren<ButtonProps>): JSX.Element {
+	// Wagmi hook for general connection status and address display
 	const account = useAccount();
-	const { connectAsync } = useConnect();
+	// Wagmi hook for disconnecting
 	const { disconnect } = useDisconnect();
-	const { signMessageAsync } = useSignMessage();
-	const { data: session, status: sessionStatus } = useSession(); // Use session status
-	const { client: comethClient } = useCometh(); // Get the initialized Cometh client
+	// NextAuth hook for session management
+	const { status: sessionStatus } = useSession();
+	// Local state for tooltip visibility
 	const [showTooltip, setShowTooltip] = useState(false);
+	// Local state for loading during the auth process
+	const [isAuthLoading, setIsAuthLoading] = useState(false);
+	// Translation hook
+	const t = useTranslations('auth');
 
-	// Adjust label based on session status as well
+	// Determines the button label based on connection and session status
+	const getLabel = () => {
+		const address = truncate(account.address);
+		if (sessionStatus === 'loading' || isAuthLoading) return t('connecting'); // Show generic loading
+		if (sessionStatus === 'authenticated') return `${t('disconnect')} ${address}`;
+		if (account.isConnecting || account.isReconnecting) return t('connecting');
+		return t('connect');
+	};
+
 	const label = getLabel();
 
+	// Tooltip handlers
 	const onMouseEnter = () => setShowTooltip(!!account?.address && true);
 	const onMouseLeave = () => setShowTooltip(false);
 
+	// --- Sign-In Logic using Direct Cometh SDK Calls ---
 	async function signInWithWeb3() {
+		setIsAuthLoading(true);
+		let walletAddress: Address | null = null;
+		let smartAccountClient: any = null; // Use 'any' for flexibility or define a specific type
+
 		try {
-			// 1. Connect wallet if not already connected
-			let address = account.address;
-			if (!account.isConnected) {
-				console.log('Connecting wallet...');
-				const result = await connectAsync({ connector: comethConnector });
-				address = result.accounts[0];
-				if (!address) throw new Error('No address returned from connector');
-				console.log('Wallet connected:', address);
-			} else {
-				console.log('Wallet already connected:', address);
+			// --- Login Flow Attempt ---
+			// Tries to retrieve an existing wallet address using a passkey.
+			try {
+				console.log("Attempting login: retrieving address via passkey...");
+				const retrievedAddress = await retrieveAccountAddressFromPasskeys(
+					comethConfig.apiKey,
+					comethConfig.chain
+				);
+
+				if (retrievedAddress) {
+					walletAddress = retrievedAddress as Address;
+					console.log("Login: Retrieved Wallet Address:", walletAddress);
+
+					// If address found, initialize the client for the existing account (two-step process)
+					console.log("Login: Initializing SmartAccount client for existing address...");
+					const smartAccount = await createSafeSmartAccount({
+						apiKey: comethConfig.apiKey,
+						chain: comethConfig.chain,
+						smartAccountAddress: walletAddress, // Provide the retrieved address
+					});
+
+					// Optional: Setup Paymaster for gasless transactions
+					const paymasterClient = await createComethPaymasterClient({
+						transport: http(comethConfig.paymasterUrl),
+						chain: comethConfig.chain,
+					});
+
+					smartAccountClient = createSmartAccountClient({
+						account: smartAccount,
+						chain: comethConfig.chain,
+						bundlerTransport: http(comethConfig.bundlerUrl),
+						paymaster: paymasterClient, // Include paymaster if configured
+					});
+					console.log("Login: SmartAccountClient obtained for existing account.");
+
+				} else {
+					console.log("Login: No existing passkey selected or found. Proceeding to account creation.");
+					// If no address retrieved, fall through to the creation flow below.
+				}
+
+			} catch (loginError) {
+				// Log error and fall through to creation flow.
+				console.warn("Login attempt failed, proceeding to account creation:", loginError);
 			}
 
-			// Ensure address is available
-			if (!address) {
-				console.error('Address is still undefined after connection attempt.');
-				return; // Exit if address couldn't be obtained
+			// --- Account Creation Flow (if login didn't succeed) ---
+			// This block executes if the login attempt failed or was skipped.
+			if (!walletAddress || !smartAccountClient) {
+				console.log("Attempting account creation...");
+				// Create a new smart account and get its predicted address and client instance.
+				const smartAccount = await createSafeSmartAccount({
+					apiKey: comethConfig.apiKey,
+					chain: comethConfig.chain,
+					// No smartAccountAddress is provided for creation.
+				});
+				walletAddress = smartAccount.address as Address;
+				console.log("Creation: Smart Account instance created.");
+				console.log("Creation: Wallet Address:", walletAddress);
+
+				// Optional: Setup Paymaster
+				const paymasterClient = await createComethPaymasterClient({
+					transport: http(comethConfig.paymasterUrl),
+					chain: comethConfig.chain,
+				});
+
+				smartAccountClient = createSmartAccountClient({
+					account: smartAccount,
+					chain: comethConfig.chain,
+					bundlerTransport: http(comethConfig.bundlerUrl),
+					paymaster: paymasterClient, // Include paymaster if configured
+				});
+				console.log('Creation: SmartAccountClient initialized.');
 			}
-			// 2. Fetch Nonce from backend
-			console.log('Fetching nonce for address:', address);
-			const nonce = await getNonce(address);
+
+			// Ensure we have the address and client before proceeding
+			if (!walletAddress || !smartAccountClient) {
+				throw new Error(
+					'Failed to obtain wallet address or smart account client.',
+				);
+			}
+
+			// Step 4: Fetch Nonce from Backend
+			console.log('Fetching nonce for address:', walletAddress);
+			const nonce = await getNonce(walletAddress);
 			console.log('Nonce received:', nonce);
 
-			// 3. Sign Nonce
-			// IMPORTANT: Use the Cometh Client (SmartAccountClient) to sign
-			if (!comethClient) {
-				console.error('Cometh client not available for signing.');
-				// Optionally, you could try to re-initialize or wait for it
-				return;
-			}
+			// Step 5: Sign Nonce using the obtained SmartAccountClient
 			console.log('Signing nonce...');
-			// Use signMessage on the smart account client instance
-			const signedNonce = await comethClient.signMessage({ message: nonce });
+			const messageToSign = nonce; // Sign the raw nonce value
+			const signedNonce = await smartAccountClient.signMessage({
+				message: messageToSign,
+			});
 			console.log('Nonce signed:', signedNonce);
 
-			// 4. Sign in with NextAuth credentials provider
+			// Step 6: Call NextAuth signIn with Credentials
+			// Sends address, signed nonce, and original nonce (challenge) to the backend authorize function.
 			console.log('Calling NextAuth signIn...');
-			const signInResponse = await signIn('credentials', {
-				address,
+			const result = await signIn('credentials', {
+				address: walletAddress,
 				signedNonce,
-				redirect: false, // Important: prevent NextAuth from redirecting
+				challenge: nonce, // Pass the original nonce as 'challenge'
+				redirect: false, // Prevent NextAuth automatic redirection
 			});
 
-			console.log('NextAuth signIn response:', signInResponse);
+			console.log('NextAuth signIn response:', result);
 
-			if (signInResponse?.error) {
-				console.error('NextAuth Sign-In Error:', signInResponse.error);
-				// Handle sign-in error (e.g., show a toast notification)
-			} else if (signInResponse?.ok) {
+			// Handle NextAuth sign-in response
+			if (result?.error) {
+				throw new Error(`NextAuth sign-in failed: ${result.error}`);
+			} else if (result?.ok) {
 				console.log('NextAuth Sign-In Successful');
-				// Optional: Force a session refresh if needed, though useSession should update
-				// window.location.reload(); // Or use router.refresh() in Next.js 13+ App Router
+				// The useSession hook will automatically update the session state.
 			}
-		} catch (error) {
+
+		} catch (error: any) {
 			console.error('Error during sign-in process:', error);
-			// Handle errors (e.g., show a toast notification to the user)
+			// TODO: Implement user-friendly error handling (e.g., toast notification)
+			// Example: toast({ variant: 'destructive', title: 'Sign-in failed', description: error.message });
+		} finally {
+			setIsAuthLoading(false); // Stop loading indicator
 		}
 	}
 
+	// --- Sign-Out Logic ---
 	async function signOutWithWeb3() {
+		setIsAuthLoading(true);
 		try {
 			console.log('Signing out...');
-			await signOut({ redirect: false }); // Sign out from NextAuth
-			disconnect(); // Disconnect wagmi
+			await signOut({ redirect: false }); // Sign out from NextAuth session
+			disconnect(); // Disconnect from Wagmi (clears wallet connection state)
 			console.log('Signed out and disconnected.');
 		} catch (error) {
-			console.error('Error disconnecting wallet:', error);
+			console.error('Error during sign out:', error);
+			// TODO: Implement user-friendly error handling
+		} finally {
+			setIsAuthLoading(false);
 		}
 	}
 
-	// Decide onClick action based on NextAuth session status primarily
+	// Determine button action based on session status
 	const handleAction = () => {
 		if (sessionStatus === 'authenticated') {
 			signOutWithWeb3();
@@ -206,27 +301,34 @@ export default function MuqaConnectButton({
 		}
 	};
 
+	// --- Render Component ---
 	return (
 		<div className='relative'>
-			{/* Disable button while session is loading or wallet is connecting */}
 			<Button
 				onClick={handleAction}
 				onMouseEnter={onMouseEnter}
 				onMouseLeave={onMouseLeave}
+				// Disable button during authentication, session loading, or Wagmi connection processes
 				disabled={
 					sessionStatus === 'loading' ||
+					isAuthLoading ||
 					account.isConnecting ||
 					account.isReconnecting
 				}
-				{...props}
+				{...props} // Pass other button props like className, variant, etc.
 			>
-				<LoadingIcon />
-				{/* Show loading state if session is loading */}
-				{sessionStatus === 'loading' ? 'Loading...' : children || label}
+				{/* Show loading icon if authenticating or connecting */}
+				{(isAuthLoading ||
+					account.isConnecting ||
+					account.isReconnecting ||
+					sessionStatus === 'loading') && <LoadingIcon />}
+				{/* Display button text */}
+				{children || label}
 			</Button>
+			{/* Tooltip to show full address on hover */}
 			<AddressTooltip
 				show={showTooltip}
-				label={account.address}
+				label={account.address} // Display address from useAccount for UI
 				onMouseEnter={onMouseEnter}
 				onMouseLeave={onMouseLeave}
 			/>

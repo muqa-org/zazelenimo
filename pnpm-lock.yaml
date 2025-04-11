@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@cometh/connect-sdk-4337':
+        specifier: ^1.0.1
+        version: 1.0.1(typescript@5.7.3)(viem@2.22.14)(wagmi@2.9.0)(webauthn-p256@0.0.10)
+      viem:
+        specifier: ^2.10.9
+        version: 2.22.14(typescript@5.7.3)(zod@3.24.1)
     devDependencies:
       '@muqa/eslint-config':
         specifier: workspace:*
@@ -26,6 +33,9 @@ importers:
       '@allo/kit':
         specifier: workspace:*
         version: link:../../packages/kit
+      '@cometh/connect-sdk-4337':
+        specifier: ^1.0.1
+        version: 1.0.1(typescript@5.7.3)(viem@2.22.14)(wagmi@2.9.0)(webauthn-p256@0.0.10)
       '@muqa/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -59,6 +69,9 @@ importers:
       react-dom:
         specifier: '18'
         version: 18.3.1(react@18.3.1)
+      viem:
+        specifier: ^2.10.9
+        version: 2.22.14(typescript@5.7.3)(zod@3.24.1)
       wagmi:
         specifier: 2.9.0
         version: 2.9.0(@tanstack/react-query@5.64.2)(@types/react@18.3.18)(react-dom@18.3.1)(react-native@0.77.0)(react@18.3.1)(typescript@5.7.3)(viem@2.22.14)(zod@3.24.1)
