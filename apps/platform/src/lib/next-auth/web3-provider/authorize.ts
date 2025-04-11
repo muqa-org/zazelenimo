@@ -30,26 +30,31 @@ export default async function authorize(
 		// Step 2: Nonce Lookup & User Retrieval
 		const user = await getUserWithNonce(address);
 
-		if (!user?.authNonce) { // Check if user and authNonce exist
-			console.error(`[Authorize] User or nonce data not found for address: ${address}`);
-			throw new Error("User account or authentication challenge not found.");
+		if (!user?.authNonce) {
+			// Check if user and authNonce exist
+			console.error(
+				`[Authorize] User or nonce data not found for address: ${address}`,
+			);
+			throw new Error('User account or authentication challenge not found.');
 		}
 
 		// Step 3: Nonce Validity Checks
 		const storedNonce = user.authNonce.nonce;
 		const nonceExpiry = user.authNonce.expiresAt;
 
-		// *** ADD THIS CHECK: Compare stored nonce with the challenge from frontend ***
+		// CHECK: Compare stored nonce with the challenge from frontend
 		if (storedNonce !== challenge) {
-			console.error(`[Authorize] Nonce mismatch for user: ${user.id}. Stored: ${storedNonce}, Challenge: ${challenge}`);
-			throw new Error("Invalid authentication challenge.");
+			console.error(
+				`[Authorize] Nonce mismatch for user: ${user.id}. Stored: ${storedNonce}, Challenge: ${challenge}`,
+			);
+			throw new Error('Invalid authentication challenge.');
 		}
 
 		if (new Date() > nonceExpiry) {
 			console.error(`[Authorize] Nonce expired for user: ${user.id}`);
 			// Clear the expired nonce
 			await deleteUserNonce(user);
-			throw new Error("Authentication challenge expired. Please try again.");
+			throw new Error('Authentication challenge expired. Please try again.');
 		}
 		console.log(`[Authorize] Nonce validated for user: ${user.id}`);
 
@@ -63,13 +68,13 @@ export default async function authorize(
 		);
 		console.log('[Authorize] Cometh API verification response:', verification);
 
-
 		if (!verification.success || !verification.result) {
-			console.error(`[Authorize] Cometh API Signature invalid for user: ${user.id}`);
-			throw new Error("Invalid signature provided.");
+			console.error(
+				`[Authorize] Cometh API Signature invalid for user: ${user.id}`,
+			);
+			throw new Error('Invalid signature provided.');
 		}
 		console.log(`[Authorize] Cometh API Signature validated successfully.`);
-
 
 		// Step 5: Check User Status (Assuming 'isActive' field exists or logic is handled elsewhere)
 		// if (!user.isActive) {
@@ -88,10 +93,11 @@ export default async function authorize(
 			// name: user.name, // Add other fields if needed by jwt/session callbacks
 			// email: user.email,
 		};
-
 	} catch (error: any) {
 		console.error('[Authorize] Error during authorization process:', error);
 		// Re-throw the error message or a generic one
-		throw new Error(error.message || "An internal error occurred during authentication.");
+		throw new Error(
+			error.message || 'An internal error occurred during authentication.',
+		);
 	}
 }

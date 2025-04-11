@@ -7,6 +7,7 @@ const Web3CredentialsProvider = CredentialsProvider({
 	credentials: {
 		address: { label: 'Public Address', type: 'text' },
 		signedNonce: { label: 'Signed Nonce', type: 'text' },
+		challenge: { label: 'Challenge', type: 'text' },
 	},
 	authorize,
 });

@@ -1,7 +1,16 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { useAccount, useConnect } from 'wagmi';
+
+// --- Custom Hook for Hydration Safety ---
+const useHasMounted = () => {
+	const [hasMounted, setHasMounted] = useState(false);
+	useEffect(() => {
+		setHasMounted(true);
+	}, []);
+	return hasMounted;
+};
 
 function Datum({
 	title,
@@ -23,11 +32,13 @@ function Datum({
 const isHidden = process.env.NEXT_PUBLIC_SHOW_WALLET_STATUS !== 'true';
 
 export function WalletStatus() {
-	if (isHidden) return null;
-
+	const hasMounted = useHasMounted();
 	const { connectors, connect } = useConnect();
-
 	const account = useAccount();
+
+	if (isHidden || !hasMounted) {
+		return null;
+	}
 
 	return (
 		<div className='top-30 border-gray-200 fixed left-0 h-auto w-auto bg-white px-4 py-2 opacity-80'>
