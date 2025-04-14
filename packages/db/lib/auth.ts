@@ -1,11 +1,11 @@
-import { prisma, User } from "./client";
+import { prisma, User, AuthNonce } from "./client";
 
 type generatedNonceData = {
   nonce: string;
   expiresAt: Date;
 };
 
-export function getUserWithNonce(address: string) {
+export function getUserWithNonce(address: string): Promise<User | null> {
   return prisma.user.findFirst({
     where: {
       address,
@@ -17,7 +17,7 @@ export function getUserWithNonce(address: string) {
 export function createUserWithNonce(
   address: string,
   nonceData: generatedNonceData,
-) {
+): Promise<User> {
   return prisma.user.create({
     data: {
       address,
@@ -30,8 +30,9 @@ export function createUserWithNonce(
 
 export function upsertUserNonce(
   user: User,
-  { nonce, expiresAt }: generatedNonceData,
-) {
+  nonceData: generatedNonceData,
+): Promise<AuthNonce> {
+  const { nonce, expiresAt } = nonceData;
   const data = { userId: user.id, nonce, expiresAt };
   return prisma.authNonce.upsert({
     where: { userId: user.id },
@@ -40,7 +41,7 @@ export function upsertUserNonce(
   });
 }
 
-export function deleteUserNonce(user: User) {
+export function deleteUserNonce(user: User): Promise<AuthNonce> {
   return prisma.authNonce.delete({
     where: { userId: user.id },
   });

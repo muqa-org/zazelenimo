@@ -30,7 +30,7 @@ export default async function authorize(
 		// Step 2: Nonce Lookup & User Retrieval
 		const user = await getUserWithNonce(address);
 
-		if (!user?.authNonce) {
+		if (!user || !user.authNonce) {
 			// Check if user and authNonce exist
 			console.error(
 				`[Authorize] User or nonce data not found for address: ${address}`,

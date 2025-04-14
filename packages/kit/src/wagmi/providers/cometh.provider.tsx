@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import "@rainbow-me/rainbowkit/styles.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PropsWithChildren } from "react";
-import { Config, createConfig, WagmiProvider } from "wagmi";
+import '@rainbow-me/rainbowkit/styles.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { PropsWithChildren } from 'react';
+import { Config, createConfig, WagmiProvider } from 'wagmi';
 
-import { wagmiConfig } from "../../config/wagmi.js";
+import { wagmiConfig } from '../../config/wagmi.js';
 
 const queryClient = new QueryClient();
 

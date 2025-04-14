@@ -9,7 +9,7 @@ import type { Chain } from 'viem/chains';
 import * as wagmiChains from 'viem/chains';
 import { Config, WagmiProvider } from 'wagmi';
 
-import { customChains } from '../../config';
+import { customChains } from '../../config/index.js';
 
 const gitcoinChains = getChains();
 
@@ -17,9 +17,13 @@ export const supportedChains = [...gitcoinChains, ...customChains];
 
 console.log(supportedChains);
 
-export const chains = Object.values(wagmiChains).filter((chain) =>
-  supportedChains.map((c) => c.id).includes(chain.id),
-) as unknown as [Chain, ...Chain[]];
+export const chains = Object.values(wagmiChains)
+  .filter((chain) => {
+    if (typeof chain === 'object' && 'id' in chain) {
+      return supportedChains.map((c) => c.id).includes(chain.id);
+    }
+    return false;
+  }) as unknown as [Chain, ...Chain[]];
 
 const defaultConfig = getDefaultConfig({
   appName: 'MUQA initiative',
