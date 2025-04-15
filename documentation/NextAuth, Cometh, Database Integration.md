@@ -1,4 +1,4 @@
-﻿# Integrating Cometh SDK Direct Calls with NextAuth CredentialsProvider for Passkey Authentication
+# Integrating Cometh SDK Direct Calls with NextAuth CredentialsProvider for Passkey Authentication
 
 ## 1. Introduction
 

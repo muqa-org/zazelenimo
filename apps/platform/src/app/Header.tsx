@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
-import MuqaConnectButton from '@/app/components/MuqaConnectButton';
+import PasskeyAuthButton from '@/app/components/PasskeyAuthButton';
 import Navigation from '@/app/components/Navigation';
 import icons from '@/app/components/common/Icons';
 import { CodaFormProjectLink } from '@/app/config';
@@ -42,7 +42,7 @@ export default function Header() {
 
 				<div className='ml-auto flex items-center justify-end'>
 					{process.env.NEXT_PUBLIC_SHOW_CONNECT_BUTTON === 'true' && (
-						<MuqaConnectButton className='mx-2 rounded-md bg-blue px-10 py-[0.55em]' />
+						<PasskeyAuthButton className='mx-2 rounded-md bg-blue px-10 py-[0.55em]' />
 					)}
 					<div className='mx-1 hidden md:block'>
 						<LanguageSwitcher screen='desktop' />

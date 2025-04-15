@@ -1,0 +1,179 @@
+{
+  "main": {
+    "id": "fa521f593e9bf484",
+    "type": "split",
+    "children": [
+      {
+        "id": "802597bdf30a4d52",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "329e53b961c798a0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "cometh-passkey-auth-guide.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "cometh-passkey-auth-guide"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "8263f4638a683cbe",
+    "type": "split",
+    "children": [
+      {
+        "id": "b4d1f7b826af8a10",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1b4507e17887255e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "d4631490d05898bf",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "e8aa70fb50e9fce3",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "right": {
+    "id": "ddce001488318ab9",
+    "type": "split",
+    "children": [
+      {
+        "id": "7d1b9b3d69c54eaa",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6d7c9f6f2668ab27",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "cometh-passkey-auth-guide.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for cometh-passkey-auth-guide"
+            }
+          },
+          {
+            "id": "4517d4219972b2f6",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "cometh-passkey-auth-guide.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from cometh-passkey-auth-guide"
+            }
+          },
+          {
+            "id": "3e12f1f44fbfb58b",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "8689f8f47332c51f",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "cometh-passkey-auth-guide.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of cometh-passkey-auth-guide"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "329e53b961c798a0",
+  "lastOpenFiles": [
+    "Cometh Connect Passkey Authentication Guide (Updated).txt",
+    "NextAuth, Cometh, Database Integration.md",
+    "DOCKER_BEST_PRACTICES.md",
+    "cometh-passkey-auth-guide.md"
+  ]
+}

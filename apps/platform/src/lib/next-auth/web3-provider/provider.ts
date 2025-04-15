@@ -5,7 +5,7 @@ import authorize from './authorize';
 const Web3CredentialsProvider = CredentialsProvider({
 	name: 'Web3 Credentials Auth',
 	credentials: {
-		address: { label: 'Public Address', type: 'text' },
+		walletAddress: { label: 'Wallet Address', type: 'text' },
 		signedNonce: { label: 'Signed Nonce', type: 'text' },
 		challenge: { label: 'Challenge', type: 'text' },
 	},
