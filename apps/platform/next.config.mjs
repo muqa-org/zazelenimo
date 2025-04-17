@@ -19,6 +19,13 @@ const nextConfig = {
     }
     config.resolve.fallback = { fs: false, net: false, tls: false };
     config.resolve.symlinks = true;
+    
+    // Add support for importing .js files with ESM
+    config.resolve.extensionAlias = {
+      '.js': ['.js', '.ts', '.tsx'],
+      '.jsx': ['.jsx', '.tsx'],
+    };
+    
     // Uncomment and adjust these lines if you need to resolve specific modules
     // config.resolve.modules = [
     //   path.resolve('./src'),

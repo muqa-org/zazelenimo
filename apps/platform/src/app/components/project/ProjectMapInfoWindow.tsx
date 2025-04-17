@@ -1,14 +1,17 @@
+import { FundedApplication } from '@allo/kit';
 import React from 'react';
+
 import AddToCart from '@/app/components/cart/AddToCart';
 import { getProjectProgressBGColor } from '@/app/helpers/projectHelper';
-import { FundedApplication } from '@allo/kit';
 
 type ProjectMapInfoWindowProps = {
 	application: FundedApplication;
-}
+};
 
-export default function ProjectMapInfoWindow({ application }: ProjectMapInfoWindowProps) {
-	let progressColor = getProjectProgressBGColor(application.fundedPercentage);
+export default function ProjectMapInfoWindow({
+	application,
+}: ProjectMapInfoWindowProps) {
+	const progressColor = getProjectProgressBGColor(application.fundedPercentage);
 
 	return (
 		<div className='rounded-lg bg-white p-0 shadow-lg'>
@@ -19,7 +22,9 @@ export default function ProjectMapInfoWindow({ application }: ProjectMapInfoWind
 				></div>
 			</div>
 			<div className='flex items-center justify-between'>
-				<h3 className='text-xl font-medium text-primaryBlack'>{application.name}</h3>
+				<h3 className='text-xl font-medium text-primaryBlack'>
+					{application.name}
+				</h3>
 				<div className='ml-4'>
 					<AddToCart variant='icon' application={application} />
 				</div>

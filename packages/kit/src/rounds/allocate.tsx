@@ -23,7 +23,7 @@ function useAllocateState() {
 }
 export function Allocate({ roundId, chainId }: AllocateProps) {
   const { data: round } = useRoundById(roundId, { chainId });
-  const { data: applications, isPending } = useApplications({
+  const { data: applications } = useApplications({
     where: {
       roundId: { equals: roundId },
       status: { equals: 'APPROVED' },

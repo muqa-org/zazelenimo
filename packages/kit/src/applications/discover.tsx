@@ -1,14 +1,15 @@
 'use client';
 
-import { ApplicationCard } from './card';
-import { ApplicationsQuery } from '../api/types';
-import { useApplications } from '../hooks/useApplications';
-import { Grid, GridProps } from '../ui/grid';
+import { ApplicationCard } from './card.jsx';
+import type { ApplicationCardProps } from './card.jsx';
+import { ApplicationsQuery } from '../api/types.js';
+import { useApplications } from '../hooks/useApplications.js';
+import { Grid, GridProps } from '../ui/grid.jsx';
 
 export function DiscoverApplications({
   query,
   ...props
-}: GridProps<ApplicationCard> & { query?: ApplicationsQuery }) {
+}: GridProps<ApplicationCardProps> & { query?: ApplicationsQuery }) {
   const applications = useApplications(query!);
   return (
     <Grid

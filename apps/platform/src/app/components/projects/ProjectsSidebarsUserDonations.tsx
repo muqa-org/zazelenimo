@@ -16,7 +16,9 @@ export default function ProjectsSidebarsUserDonations() {
 				<h4 className='mb-2 w-full text-left text-base uppercase text-gray'>
 					Donirano
 				</h4>
-				<div className='text-2xl font-bold uppercase text-primaryBlack'>0 EUR</div>
+				<div className='text-2xl font-bold uppercase text-primaryBlack'>
+					0 EUR
+				</div>
 			</div>
 		</div>
 	);

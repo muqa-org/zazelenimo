@@ -1,10 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 import Container from '@/app/components/Container';
-
 import Images from '@/app/components/common/Images';
 
 export default function HomepageFundsAllocated() {

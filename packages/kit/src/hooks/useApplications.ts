@@ -13,7 +13,7 @@ const defaultQuery = {
 };
 export function useApplications<T extends Application>(
   query: Parameters<API['applications']>[number] = defaultQuery,
-  transformer: (applications: Application[]) => T[] = (it) => it as T[],
+  transformer: (_applications: Application[]) => T[] = (it) => it as T[],
 ) {
   const api = useAPI();
   return useQuery({
@@ -27,12 +27,17 @@ type ApplicationByID = Parameters<API['applicationById']>;
 export function useApplicationById<T extends Application>(
   id: ApplicationByID[0],
   opts?: ApplicationByID[1],
-  transformer: (application: Application) => T = (it) => it as T,
+  transformer: (_application: Application) => T = (it) => it as T,
 ) {
   const api = useAPI();
   return useQuery({
     queryKey: ['application', { id, opts }],
-    queryFn: async () => api.applicationById(id, opts).then(application => application ? transformer(application) : undefined),
+    queryFn: async () =>
+      api
+        .applicationById(id, opts)
+        .then((application) =>
+          application ? transformer(application) : undefined,
+        ),
     enabled: Boolean(id),
   });
 }

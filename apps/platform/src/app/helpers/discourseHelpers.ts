@@ -130,7 +130,7 @@ export const createDiscourseTopic = async ({
 /**
  * Function to generate a Markdown-formatted description for a project proposal.
  * The description includes project details, location information, the proposer's name,
- * and any associated images or notices. It also formats the proposal to include a 
+ * and any associated images or notices. It also formats the proposal to include a
  * "spoiler" section for additional content visibility control in the forum.
  *
  * @param {Object} params - The parameters for generating the proposal description.
@@ -141,8 +141,8 @@ export const createDiscourseTopic = async ({
  * @param {string[]} params.fileUrls - An array of URLs of the uploaded files, representing images.
  * @param {string} params.notice - The last notice related to the proposal topic.
  *
- * @returns {string} - A Markdown-formatted string representing the project proposal, 
- * including images (if available), project and location details, and an invitation 
+ * @returns {string} - A Markdown-formatted string representing the project proposal,
+ * including images (if available), project and location details, and an invitation
  * to join the discussion on the forum.
  */
 export const generateProposalTopicDescription = ({

@@ -5,7 +5,7 @@ export function RoundStrategyBadge({
 }: {
   strategyName?: string;
 }) {
-  const [_, strategy, color] =
+  const [__, strategy, color] =
     Object.entries(strategyMap)
       .map(([key, label], index) => [key, label, colors[index]])
       .find(([key]) => key === strategyName) ?? [];

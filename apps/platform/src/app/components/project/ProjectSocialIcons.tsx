@@ -11,7 +11,9 @@ export default function ProjectSocialIcons({
 	id: string;
 	title: string;
 }) {
-	const shareableUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_URL}/projects/${id}`);
+	const shareableUrl = encodeURIComponent(
+		`${process.env.NEXT_PUBLIC_URL}/projects/${id}`,
+	);
 	const shareableTitle = encodeURIComponent(title);
 	const shareOnFacebook = () => {
 		const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareableUrl}`;

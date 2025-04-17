@@ -6,10 +6,13 @@ Thank you for your interest in contributing to Zazelenimo! We're excited to have
 
 1. Fork the repository
 2. Clone your fork:
+
 ```bash
 git clone https://github.com/your-username/zazelenimo.git
 ```
+
 3. Create a new branch:
+
 ```bash
 git checkout -b feature/your-feature-name
 ```
@@ -17,11 +20,13 @@ git checkout -b feature/your-feature-name
 ## 💻 Development Setup
 
 1. Install dependencies:
+
 ```bash
 pnpm i
 ```
 
 2. Start the development server:
+
 ```bash
 pnpm dev
 ```
@@ -29,12 +34,14 @@ pnpm dev
 ## 🤝 Contribution Guidelines
 
 ### Code Style
+
 - Follow the existing code style
 - Use meaningful variable and function names
 - Add comments for complex logic
 - Write clean, maintainable code
 
 ### Commits
+
 - Use clear, descriptive commit messages
 - Follow conventional commits format:
   - `feat:` for new features
@@ -46,6 +53,7 @@ pnpm dev
   - `chore:` for maintenance tasks
 
 ### Pull Requests
+
 1. Update your fork to the latest main branch
 2. Test your changes thoroughly
 3. Update documentation if needed

@@ -1,8 +1,8 @@
 import { isAfter, formatDistanceToNow } from 'date-fns';
 import { useMemo } from 'react';
 
-import { RoundStrategyBadge } from './strategy-badge';
 import { cn, supportedChains } from '..';
+import { RoundStrategyBadge } from './strategy-badge';
 import { Round } from '../api/types';
 import { Avatar } from '../ui/avatar';
 import { BackgroundImage } from '../ui/background-image';
@@ -27,7 +27,7 @@ const getRoundTime = (phases: Round['phases'] = {}): string => {
 const getNetwork = (chainId: number) =>
   supportedChains?.find((chain) => chain.id === chainId);
 
-export type RoundCard = Round & {
+export type RoundCardProps = Round & {
   // components?: RoundComponent[];
   isLoading?: boolean;
 };
@@ -42,7 +42,7 @@ export function RoundCard({
   phases,
   strategyName,
   isLoading,
-}: RoundCard) {
+}: RoundCardProps) {
   const network = useMemo(() => getNetwork(chainId), [chainId]);
   return (
     <Card

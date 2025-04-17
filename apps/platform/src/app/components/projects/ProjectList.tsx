@@ -1,9 +1,10 @@
-import NeighborhoodSelector from '@/app/components/projects/NeighborhoodSelector';
-import ProjectCard from '@/app/components/project/ProjectCard';
-import Pagination from '@/app/components/Pagination';
 import { FundedApplication } from '@allo/kit';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+
+import Pagination from '@/app/components/Pagination';
+import ProjectCard from '@/app/components/project/ProjectCard';
+import NeighborhoodSelector from '@/app/components/projects/NeighborhoodSelector';
 
 type ProjectListProps = {
 	applications: FundedApplication[];
@@ -18,23 +19,24 @@ export default function ProjectListTable({ applications }: ProjectListProps) {
 		setNeighborhoods(neighborhoods);
 	}
 
-	const filteredApplications = neighborhoods.length > 0
-		? applications.filter(({ neighborhood }) => neighborhoods.includes(neighborhood))
-		: applications;
+	const filteredApplications =
+		neighborhoods.length > 0
+			? applications.filter(({ neighborhood }) =>
+					neighborhoods.includes(neighborhood),
+				)
+			: applications;
 
 	return (
 		<div className='mt-2 flex flex-row flex-wrap'>
 			<div className='order-2 w-full lg:order-1 lg:w-5/6'>
 				<div className='grid w-full grid-cols-1 gap-7 lg:grid-cols-2 lg:grid-cols-3'>
 					{filteredApplications.length === 0 && (
-						<div className='noApplicationsMessage'>{t('noApplicationsMessage')}</div>
+						<div className='noApplicationsMessage'>
+							{t('noApplicationsMessage')}
+						</div>
 					)}
-					{filteredApplications.map((item) => (
-						<ProjectCard
-							key={item.id}
-							application={item}
-							className='mb-5'
-						/>
+					{filteredApplications.map(item => (
+						<ProjectCard key={item.id} application={item} className='mb-5' />
 					))}
 				</div>
 				{/* <Pagination

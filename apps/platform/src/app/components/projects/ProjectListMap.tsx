@@ -1,17 +1,17 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { FundedApplication } from '@allo/kit';
 import {
 	GoogleMap,
 	InfoWindow,
 	Marker,
 	MarkerClustererF,
 } from '@react-google-maps/api';
+import { useCallback, useState } from 'react';
 
 import icons from '@/app/components/common/Icons';
 import ProjectMapInfoWindow from '@/app/components/project/ProjectMapInfoWindow';
 import { getCustomPercentageMarkerIcon } from '@/app/helpers/projectHelper';
-import { FundedApplication } from '@allo/kit';
 
 type ProjectListProps = {
 	applications: FundedApplication[];
@@ -33,7 +33,8 @@ export default function ProjectListMap({ applications }: ProjectListProps) {
 		lng: 16.4402,
 	});
 
-	const [selectedMarker, setSelectedMarker] = useState<ApplicationWithCoords | null>(null);
+	const [selectedMarker, setSelectedMarker] =
+		useState<ApplicationWithCoords | null>(null);
 
 	const onSelect = useCallback((marker: ApplicationWithCoords) => {
 		setSelectedMarker(marker);
@@ -66,11 +67,15 @@ export default function ProjectListMap({ applications }: ProjectListProps) {
 		{ coords: { lat: 43.52046275847196, lng: 16.44811046218916 } },
 	];
 
-	const markers: ApplicationWithCoords[] = applications.map((application, index) => ({
-		...application,
-		...coordinates[index]!,
-		icon: { url: getCustomPercentageMarkerIcon(application.fundedPercentage) },
-	}));
+	const markers: ApplicationWithCoords[] = applications.map(
+		(application, index) => ({
+			...application,
+			...coordinates[index]!,
+			icon: {
+				url: getCustomPercentageMarkerIcon(application.fundedPercentage),
+			},
+		}),
+	);
 
 	return (
 		<div className='mt-2 flex flex-row flex-wrap'>

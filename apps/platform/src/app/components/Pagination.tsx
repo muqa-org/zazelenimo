@@ -43,7 +43,12 @@ export default function Pagination({
 		<div className='my-12 flex items-center justify-center space-x-2'>
 			{currentPage > 1 && (
 				<Link href={`${baseLink}${currentPage - 1}`}>
-					<Image width='24' height='24' alt='Previous' src={icons.arrowLeftIcon} />
+					<Image
+						width='24'
+						height='24'
+						alt='Previous'
+						src={icons.arrowLeftIcon}
+					/>
 				</Link>
 			)}
 			{pages.map(page => (
@@ -55,17 +60,18 @@ export default function Pagination({
 					{page}
 				</Link>
 			))}
-			{pages[pages.length - 1] || 0 < totalPages && (
-				<>
-					<span className='px-2 py-1 text-sm font-normal text-gray'>...</span>
-					<Link
-						href={`${baseLink}${totalPages}`}
-						className='rounded px-2 py-1 text-sm font-normal text-gray hover:text-gray-600'
-					>
-						{totalPages}
-					</Link>
-				</>
-			)}
+			{pages[pages.length - 1] ||
+				(0 < totalPages && (
+					<>
+						<span className='px-2 py-1 text-sm font-normal text-gray'>...</span>
+						<Link
+							href={`${baseLink}${totalPages}`}
+							className='rounded px-2 py-1 text-sm font-normal text-gray hover:text-gray-600'
+						>
+							{totalPages}
+						</Link>
+					</>
+				))}
 			{currentPage < totalPages && (
 				<Link href={`${baseLink}${currentPage + 1}`}>
 					<Image width='24' height='24' alt='Next' src={icons.arrowRightIcon} />

@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import {
 	LoadScript,
 	Libraries,
 	GoogleMap,
 	Marker,
 } from '@react-google-maps/api';
+import { useState } from 'react';
 
 import icons from '@/app/components/common/Icons';
 import { getCustomPercentageMarkerIcon } from '@/app/helpers/projectHelper';
@@ -47,7 +47,7 @@ export default function ProjectMap() {
 	};
 
 	return (
-		<div className='mt-6 flex flex-row flex-wrap rounded-lg overflow-hidden'>
+		<div className='mt-6 flex flex-row flex-wrap overflow-hidden rounded-lg'>
 			<LoadScript
 				googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ''}
 				libraries={libraries}

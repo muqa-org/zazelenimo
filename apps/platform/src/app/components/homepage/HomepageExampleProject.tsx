@@ -18,8 +18,8 @@ export default function HomepageExampleProject() {
 				<h2 className='mb-5 text-center text-4xl font-normal text-primaryBlack'>
 					{t('exampleProjectTitle')}
 				</h2>
-				<div className='mx-0 mt-10 grid grid-cols-1 sm:gap-14 sm:p-6 sm:mx-4 lg:mx-20 lg:grid-cols-3'>
-					<div className='relative col-span-1 rounded lg:static mb-6 sm:mb-0'>
+				<div className='mx-0 mt-10 grid grid-cols-1 sm:mx-4 sm:gap-14 sm:p-6 lg:mx-20 lg:grid-cols-3'>
+					<div className='relative col-span-1 mb-6 rounded sm:mb-0 lg:static'>
 						<Image
 							width='325'
 							height='325'

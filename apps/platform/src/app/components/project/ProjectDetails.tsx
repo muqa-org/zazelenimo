@@ -1,16 +1,20 @@
 'use client';
+import {
+	Application,
+	comethConfig,
+	FundedApplication,
+	useApplicationById,
+} from '@allo/kit';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import ProjectSidebar from '@/app/components/project/ProjectSidebar';
 import ProjectMap from '@/app/components/project/ProjectMap';
+import ProjectSidebar from '@/app/components/project/ProjectSidebar';
 import ProjectSocialIcons from '@/app/components/project/ProjectSocialIcons';
-
-import { getProjectProgressBGColor } from '@/app/helpers/projectHelper';
-import { Application, comethConfig, FundedApplication, useApplicationById } from '@allo/kit';
-import { useParams } from 'next/navigation';
 import { neighborhoods } from '@/app/config';
 import { useRoundId } from '@/app/contexts/roundIdContext';
+import { getProjectProgressBGColor } from '@/app/helpers/projectHelper';
 import dummyApplications from '@/data/sample_content/applications.json';
 
 interface ProjectCardProps {
@@ -21,8 +25,10 @@ const USE_DUMMY_DATA = process.env.NEXT_PUBLIC_USE_DUMMY_DATA === 'true';
 
 function extendApplicationData(application: Application): FundedApplication {
 	const fundedPercentage = Math.round(Math.random() * 100);
-	const targetAmount = Math.round(fundedPercentage / 100 * application.contributors?.amount!);
-	const fundedAmount = Math.round(fundedPercentage / 100 * targetAmount);
+	const targetAmount = Math.round(
+		(fundedPercentage / 100) * application.contributors?.amount!,
+	);
+	const fundedAmount = Math.round((fundedPercentage / 100) * targetAmount);
 	return {
 		...application,
 		neighborhood: neighborhoods[0]!,
@@ -39,12 +45,10 @@ const useDummyApplication = (): FundedApplication => {
 		return extendApplicationData(dummyApplications[0] as Application);
 	}
 	return extendApplicationData(application as Application);
-}
+};
 
 function useResolvedApplication(): FundedApplication | undefined {
-	return USE_DUMMY_DATA
-		? useDummyApplication()
-		: useActualApplication();
+	return USE_DUMMY_DATA ? useDummyApplication() : useActualApplication();
 }
 
 function useActualApplication(): FundedApplication | undefined {
@@ -65,16 +69,20 @@ export default function ProjectDetails({ className }: ProjectCardProps) {
 
 	if (!application) {
 		return (
-			<div className="flex h-full w-full items-center justify-center">
-				<p className="text-xl text-grayDark">{t('applicationNotFound')}</p>
+			<div className='flex h-full w-full items-center justify-center'>
+				<p className='text-xl text-grayDark'>{t('applicationNotFound')}</p>
 			</div>
 		);
 	}
 
-	let progressColor = getProjectProgressBGColor(application?.fundedPercentage);
+	const progressColor = getProjectProgressBGColor(
+		application?.fundedPercentage,
+	);
 
 	return (
-		<div className={`${className} flex h-full w-full flex-col flex-wrap justify-between`}>
+		<div
+			className={`${className} flex h-full w-full flex-col flex-wrap justify-between`}
+		>
 			<h1 className='w-full border-b border-borderGrayLight pb-10 pt-10 text-[28px] font-normal leading-normal text-primaryBlack md:text-4xl'>
 				{application.name}
 			</h1>
@@ -106,10 +114,7 @@ export default function ProjectDetails({ className }: ProjectCardProps) {
 			</div>
 			<div className='mb-6 mt-14 w-full lg:w-4/6'>
 				<h3>{t('supportProject')}</h3>
-				<ProjectSocialIcons
-					id={application.id}
-					title={application.name}
-				/>
+				<ProjectSocialIcons id={application.id} title={application.name} />
 			</div>
 		</div>
 	);

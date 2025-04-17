@@ -4,12 +4,13 @@ import './globals.css';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 
-import { WalletStatus } from './WalletStatus';
-import { AlloKitProviders, MuqaSessionProvider } from './providers';
 import Header from '@/app/Header';
 import NotificationBar from '@/app/components/NotificationBar';
 import Footer from '@/app/components/footer/Footer';
 import { CartProvider } from '@/lib/util/context/cart.context';
+
+import { WalletStatus } from './WalletStatus';
+import { AlloKitProviders, MuqaSessionProvider } from './providers';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -32,7 +33,9 @@ export default async function RootLayout({
 
 	return (
 		<html lang={locale}>
-			<body className={`${dmSans.className} bg-[#FBFBFB] flex flex-col min-h-screen`}>
+			<body
+				className={`${dmSans.className} flex min-h-screen flex-col bg-[#FBFBFB]`}
+			>
 				<NextIntlClientProvider messages={messages}>
 					<MuqaSessionProvider session={session}>
 						<AlloKitProviders>
@@ -40,7 +43,7 @@ export default async function RootLayout({
 								<NotificationBar message='notification' />
 								<Header />
 								<WalletStatus />
-								<main className="flex-grow">{children}</main>
+								<main className='flex-grow'>{children}</main>
 								<Footer />
 							</CartProvider>
 						</AlloKitProviders>

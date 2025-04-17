@@ -1,28 +1,6 @@
 'use client';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { useAPI } from '..';
-
-// function useCheckout() {
-//   const api = useAPI();
-//   return useQuery({
-//     queryKey: ["checkout"],
-//     queryFn: async () => api.checkout(),
-//   });
-// }
-// function useAddToCheckout() {
-//   const api = useAPI();
-//   const client = useQueryClient();
-//   return useMutation({
-//     mutationFn: async (params: { id: string; amount?: number }) => {
-//       const checkout = await api.addToCheckout(params);
-//       client.invalidateQueries({ queryKey: ["checkout"] });
-//       return checkout;
-//     },
-//   });
-// }
-
-export function AddToCheckout({ id = '' }) {
+export function AddToCheckout() {
   // const { data: checkout } = useCheckout();
   // const { data, mutate, isPending } = useAddToCheckout();
   // console.log(data, checkout, isPending);

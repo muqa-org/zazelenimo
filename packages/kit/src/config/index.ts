@@ -1,3 +1,4 @@
-export * from './chains';
-export * from './cometh';
-export * from './connector';
+export * from './chains.js';
+export * from './comethConfig.js';
+export * from './comethSmartAccount.js';
+export { comethConnector } from '../wagmi/connectors/cometh.js';

@@ -33,14 +33,14 @@ const Context = createContext(
   {} as { api: API; strategies: StrategyExtensions },
 );
 const defaultApi: API = {
-  rounds: async (query: RoundsQuery) => [],
-  roundById: async (id: string, opts?: QueryOpts) => undefined,
-  createRound: async (data: RoundInput) =>
+  rounds: async (_query: RoundsQuery) => [],
+  roundById: async (_id: string, _opts?: QueryOpts) => undefined,
+  createRound: async (_data: RoundInput) =>
     Promise.reject(new Error('Not Implemented: Create Round')),
-  projects: async (query: ProjectsQuery) => [],
-  projectById: async (id: string, opts?: QueryOpts) => undefined,
-  applications: async (query: ApplicationsQuery) => [],
-  applicationById: async (id: string, opts?: QueryOpts) => undefined,
+  projects: async (_query: ProjectsQuery) => [],
+  projectById: async (_id: string, _opts?: QueryOpts) => undefined,
+  applications: async (_query: ApplicationsQuery) => [],
+  applicationById: async (_id: string, _opts?: QueryOpts) => undefined,
   allocate: async () => Promise.reject(new Error('Not Implemented: Allocate')),
   createProject: async () =>
     Promise.reject(new Error('Not Implemented: createProject')),

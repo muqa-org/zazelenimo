@@ -1,41 +1,81 @@
-import { prisma, User } from './client';
+import { prisma, User } from "./client";
+import { Prisma } from "@prisma/client"; // Import Prisma namespace
 
-type generatedNonceData = {
-  nonce: string,
-  expiresAt: Date
-}
+type NonceData = {
+  nonce: string;
+  expiresAt: Date;
+};
 
-export function getUserWithNonce(address: string) {
-  return prisma.user.findFirst({
+// Function to get user by wallet address, including nonce fields
+export function getUserWithNonce(walletAddress: string): Promise<User | null> {
+  // Ensure walletAddress is not null/undefined before querying
+  if (!walletAddress) {
+    return Promise.resolve(null);
+  }
+  return prisma.user.findUnique({
     where: {
-      address
+      walletAddress: walletAddress, // Use walletAddress field
     },
-    include: { authNonce: true },
-  })
-}
-
-export function createUserWithNonce(address: string, nonceData: generatedNonceData ) {
-  return prisma.user.create({
-    data: {
-      address,
-      authNonce: {
-        create: nonceData
-      }
-    }
-  })
-}
-
-export function upsertUserNonce(user: User, { nonce, expiresAt }: generatedNonceData) {
-  const data = { userId: user.id, nonce, expiresAt };
-  return prisma.authNonce.upsert({
-    where: { userId: user.id },
-    create: data,
-    update: data,
   });
 }
 
-export function deleteUserNonce(user: User) {
-  return prisma.authNonce.delete({
-    where: { userId: user.id }
+export function createUser(walletAddress: string): Promise<User> {
+  if (!walletAddress) {
+    throw new Error("Wallet address cannot be empty");
+  }
+  return prisma.user.create({
+    data: {
+      walletAddress: walletAddress,
+      // Add other default fields if necessary
+      isActive: true,
+    },
+  });
+}
+
+// Function to update a user's nonce and expiry
+export function updateUserNonce(
+  userId: string,
+  nonceData: NonceData
+): Promise<User> {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      nonce: nonceData.nonce,
+      nonceExpiry: nonceData.expiresAt,
+    },
+  });
+}
+
+// Upsert function similar to the guide's nonce endpoint logic
+export function upsertUserWithNonce(
+  walletAddress: string,
+  nonceData: NonceData
+): Promise<User> {
+  if (!walletAddress) {
+    throw new Error("Wallet address cannot be empty");
+  }
+  return prisma.user.upsert({
+    where: { walletAddress: walletAddress },
+    update: {
+      nonce: nonceData.nonce,
+      nonceExpiry: nonceData.expiresAt,
+    },
+    create: {
+      walletAddress: walletAddress,
+      nonce: nonceData.nonce,
+      nonceExpiry: nonceData.expiresAt,
+      isActive: true,
+    },
+  });
+}
+
+// Function to clear a user's nonce after successful authentication
+export function clearUserNonce(userId: string): Promise<User> {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      nonce: null,
+      nonceExpiry: null,
+    },
   });
 }

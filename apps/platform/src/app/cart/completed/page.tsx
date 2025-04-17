@@ -1,10 +1,9 @@
-import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { Noto_Sans } from 'next/font/google';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 import Container from '@/app/components/Container';
 import CartProjectCard from '@/app/components/cart/CartProjectCard';
-
 import icons from '@/app/components/common/Icons';
 import { useCart } from '@/lib/util/context/cart.context';
 
@@ -30,7 +29,7 @@ export default function CartCompleted() {
 						width={37}
 						height={37}
 						alt='Party Icon'
-						className='inline-block ml-2 mb-3'
+						className='mb-3 ml-2 inline-block'
 					/>
 					<span className='mt-3 block px-8 text-base text-gray lg:mt-0 lg:px-0'>
 						{t('resultAvailable')} Nov 15 2024
@@ -39,7 +38,11 @@ export default function CartCompleted() {
 				<div className='mt-4 flex w-full flex-row flex-wrap justify-between'>
 					<div className='mb-8 flex w-full flex-col gap-4 lg:mb-0 lg:w-4/6'>
 						{items.map(item => (
-							<CartProjectCard key={item.project.id} item={item} variant='completed' />
+							<CartProjectCard
+								key={item.project.id}
+								item={item}
+								variant='completed'
+							/>
 						))}
 					</div>
 

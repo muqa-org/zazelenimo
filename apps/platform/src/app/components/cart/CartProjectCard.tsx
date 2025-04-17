@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { CartAllocation } from '@allo/kit';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import icons from '@/app/components/common/Icons';
-
 import { getProjectProgressBGColor } from '@/app/helpers/projectHelper';
-import { CartAllocation } from '@allo/kit';
 import { useCart } from '@/lib/util/context/cart.context';
 
 export default function CartProjectCard({
@@ -21,10 +20,12 @@ export default function CartProjectCard({
 	const [donationAmount, setDonationAmount] = useState(item.amount || 0);
 	const { setAmount, removeItem } = useCart();
 
-	let progressColor = getProjectProgressBGColor(item.project.fundedPercentage);
+	const progressColor = getProjectProgressBGColor(
+		item.project.fundedPercentage,
+	);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let value = e.target.value.replace(/[^0-9]/g, '') || '0';
+		const value = e.target.value.replace(/[^0-9]/g, '') || '0';
 
 		const amount = parseInt(value, 10);
 		setAmount(item.project.id, amount);
@@ -63,7 +64,8 @@ export default function CartProjectCard({
 					</button>
 				</h3>
 				<p className='text-base text-gray'>
-					{item.project.fundedPercentage}% {t('funded')} ({item.project.fundedAmount} €)
+					{item.project.fundedPercentage}% {t('funded')} (
+					{item.project.fundedAmount} €)
 				</p>
 			</div>
 			<div className='mb-10 mt-7 flex items-center lg:mb-0 lg:mt-0'>
@@ -71,8 +73,10 @@ export default function CartProjectCard({
 					<span>{donationAmount} €</span>
 				) : (
 					<>
-						<div className="relative">
-							<span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-gray-500">€</span>
+						<div className='relative'>
+							<span className='absolute left-2 top-1/2 -translate-y-1/2 text-sm text-gray-500'>
+								€
+							</span>
 							<input
 								type='text'
 								value={donationAmount}
@@ -82,7 +86,8 @@ export default function CartProjectCard({
 						</div>
 						<button
 							className='lg:inline-block'
-							onClick={() => removeItem(item.project.id)}>
+							onClick={() => removeItem(item.project.id)}
+						>
 							<Image
 								src={icons.trashIcon}
 								alt='Trash icon'

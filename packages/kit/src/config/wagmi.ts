@@ -1,14 +1,20 @@
-'use client';
+"use client";
 
-import { CreateConfigParameters, http } from 'wagmi';
+import { CreateConfigParameters } from "wagmi";
 
-import { comethConfig } from './cometh';
+import { comethConfig } from "./comethConfig.js";
+//import { comethConnector } from '../wagmi/connectors/cometh.js';
 
-const { chain } = comethConfig;
+const { chain, transport } = comethConfig;
 
+/**
+ * Wagmi configuration for Cometh Connect
+ * Sets up the chains, connectors, and transports for Wagmi
+ */
 export const wagmiConfig: CreateConfigParameters = {
   chains: [chain],
+  connectors: [],
   transports: {
-    [chain.id]: http(comethConfig.transportUrl)
+    [chain.id]: transport,
   },
-}
+};

@@ -1,17 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 
-import { neighborhoods } from '@/app/config';
 import icons from '@/app/components/common/Icons';
+import { neighborhoods } from '@/app/config';
 
 type NeighborhoodSelectorProps = {
 	onChange: (neighborhoods: string[]) => void;
 };
 
-export default function NeighborhoodSelector({ onChange }: NeighborhoodSelectorProps) {
+export default function NeighborhoodSelector({
+	onChange,
+}: NeighborhoodSelectorProps) {
 	const t = useTranslations('projects');
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -27,7 +29,6 @@ export default function NeighborhoodSelector({ onChange }: NeighborhoodSelectorP
 		);
 	};
 
-
 	useEffect(() => {
 		onChange(selectedNeighborhoods);
 	}, [selectedNeighborhoods]);
@@ -40,7 +41,7 @@ export default function NeighborhoodSelector({ onChange }: NeighborhoodSelectorP
 			<h3 className='mb-5 block lg:hidden'>
 				<button
 					onClick={() => setIsOpen(!isOpen)}
-					className='flex w-full flex-row items-center justify-between rounded border border-borderGray bg-white px-4 py-2 text-[#999999] mb-6'
+					className='mb-6 flex w-full flex-row items-center justify-between rounded border border-borderGray bg-white px-4 py-2 text-[#999999]'
 				>
 					<span>{t('filterNeighborhood')}</span>
 					<Image
@@ -64,7 +65,7 @@ export default function NeighborhoodSelector({ onChange }: NeighborhoodSelectorP
 							checked={selectedNeighborhoods.includes(neighborhood)}
 							onChange={() => handleCheckboxChange(neighborhood)}
 						/>
-						<span className='border-borderGrayMedium peer-checked:border-borderGrayMedium flex h-5 w-5 items-center justify-center rounded-md border bg-[#EFEFEF] peer-checked:bg-green peer-focus:ring-2 peer-focus:ring-green'>
+						<span className='flex h-5 w-5 items-center justify-center rounded-md border border-borderGrayMedium bg-[#EFEFEF] peer-checked:border-borderGrayMedium peer-checked:bg-green peer-focus:ring-2 peer-focus:ring-green'>
 							{selectedNeighborhoods.includes(neighborhood) && (
 								<Image
 									src={icons.checkedIcon}

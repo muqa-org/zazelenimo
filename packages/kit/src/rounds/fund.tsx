@@ -3,7 +3,6 @@
 import { NATIVE } from '@allo-team/allo-v2-sdk';
 import { TToken } from '@b0rza/gitcoin-chain-data';
 import { useMutation } from '@tanstack/react-query';
-import { LoaderIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import {
   Address,
@@ -68,7 +67,7 @@ export function getNetworkToken(round?: Round) {
 
 function PoolAmount({ round }: { round?: Round }) {
   const token = getNetworkToken(round);
-  if (token) {
+  if (token && round) {
     const amount = round?.matching.amount ?? BigInt(0);
     return (
       <>
@@ -93,7 +92,7 @@ export function FundRound({ id, opts, autoFocus, onSuccess }: RoundFundProps) {
   const fund = useFundPool();
   if (isPending)
     return (
-      <Alert className='flex h-[172px] items-center justify-center'>
+      <Alert className="flex h-[172px] items-center justify-center">
         Loading...
       </Alert>
     );
@@ -105,7 +104,6 @@ export function FundRound({ id, opts, autoFocus, onSuccess }: RoundFundProps) {
         Pool amount: <PoolAmount round={data} />
       </div> */}
       <FundForm
-        funded={data?.matching.amount}
         token={data?.matching?.token!}
         isLoading={fund.isPending}
         autoFocus={autoFocus}
@@ -140,13 +138,11 @@ function TokenBalance({
 }
 
 function FundForm({
-  funded,
   token,
   autoFocus,
   isLoading,
   onSubmit,
 }: {
-  funded?: bigint;
   token?: Address;
   isLoading: boolean;
   autoFocus?: boolean;
@@ -168,26 +164,26 @@ function FundForm({
   return (
     <Form {...form}>
       <form
-        className='space-y-2'
+        className="space-y-2"
         onSubmit={form.handleSubmit((v) => onSubmit(v.amount))}
       >
         <FormField
           control={form.control}
-          name='amount'
+          name="amount"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <div className='relative flex items-center'>
+                <div className="relative flex items-center">
                   <Input
                     autoFocus={autoFocus}
-                    placeholder='0'
+                    placeholder="0"
                     step={0.0000000001}
-                    type='number'
+                    type="number"
                     min={0}
                     {...field}
                   />
-                  <div className='absolute right-2 p-2 text-muted-foreground'></div>
+                  <div className="absolute right-2 p-2 text-muted-foreground"></div>
                 </div>
               </FormControl>
               <FormDescription>
@@ -200,8 +196,8 @@ function FundForm({
         <Button
           isLoading={isLoading}
           disabled={!canSubmit || isLoading}
-          className='w-full'
-          type='submit'
+          className="w-full"
+          type="submit"
         >
           Fund
         </Button>

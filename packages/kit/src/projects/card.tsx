@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { BackgroundImage } from '../ui/background-image';
 import { Card, CardContent } from '../ui/card';
 
-export type ProjectCard = Project & {
+export type ProjectCardProps = Project & {
   // components?: ProjectComponent[];
   isLoading?: boolean;
 };
@@ -12,11 +12,10 @@ export type ProjectCard = Project & {
 export function ProjectCard({
   name,
   description,
-  chainId,
   avatarUrl,
   bannerUrl,
   isLoading,
-}: ProjectCard) {
+}: ProjectCardProps) {
   return (
     <Card
       className={cn('relative overflow-hidden rounded-3xl shadow-xl', {

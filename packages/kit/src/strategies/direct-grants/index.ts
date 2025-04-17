@@ -1,5 +1,6 @@
 import z from 'zod';
 
+import { StrategyExtension } from '..';
 import { call as allocateCall } from './allocate';
 import {
   schema as directGrantsRoundSchema,
@@ -10,7 +11,6 @@ import {
   RegisterRecipientForm as DirectGrantsRegisterRecipientForm,
 } from './register-recipient';
 import { call as reviewRecipientsCall } from './review-recipients';
-import { StrategyExtension } from '..';
 import { supportedChains } from '../..';
 
 export const directGrants: StrategyExtension = {

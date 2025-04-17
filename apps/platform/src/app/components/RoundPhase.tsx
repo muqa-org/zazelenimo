@@ -8,7 +8,11 @@ interface RoundBoxProps {
 	endDate: Date;
 }
 
-export default function RoundPhase({ title, startDate, endDate }: RoundBoxProps) {
+export default function RoundPhase({
+	title,
+	startDate,
+	endDate,
+}: RoundBoxProps) {
 	const now = new Date();
 	let type = 'future';
 
@@ -28,7 +32,7 @@ export default function RoundPhase({ title, startDate, endDate }: RoundBoxProps)
 
 	return (
 		<div
-			className={`flex w-full items-center justify-between rounded-lg border border-gray-300 ${bgColor} ${titleColor} mb-3.5 px-2.5 py-2`}
+			className={`border-gray-300 flex w-full items-center justify-between rounded-lg border ${bgColor} ${titleColor} mb-3.5 px-2.5 py-2`}
 		>
 			<div className='relative w-full'>
 				<h4 className='mb-2 text-base font-bold'>{title}</h4>
@@ -47,7 +51,7 @@ export default function RoundPhase({ title, startDate, endDate }: RoundBoxProps)
 					<span className='absolute right-1 top-1 block h-4 w-4 rounded-full bg-[#28F875]'></span>
 				)}
 				{type === 'future' && (
-					<span className='absolute right-1 top-1 block h-4 w-4 rounded-full border border-gray'></span>
+					<span className='border-gray absolute right-1 top-1 block h-4 w-4 rounded-full border'></span>
 				)}
 			</div>
 		</div>

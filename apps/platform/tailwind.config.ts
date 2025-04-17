@@ -50,7 +50,6 @@ const colors = {
 	},
 };
 
-
 const keyframes = {
 	pop: {
 		'0%, 100%': { transform: 'scale(1)' },

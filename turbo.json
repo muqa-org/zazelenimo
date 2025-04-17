@@ -4,6 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "env": [
+        "NEXTAUTH_SECRET",
         "NEXT_PUBLIC_URL",
 
         "NEXT_PUBLIC_CHAIN",
@@ -13,6 +14,7 @@
         "NEXT_PUBLIC_POLYGON_COMETH_API_KEY",
         "NEXT_PUBLIC_POLYGON_TENDERLY_RPC",
 
+        "ARBITRUM_SEPOLIA_COMETH_API_KEY",
         "NEXT_PUBLIC_ARBITRUM_SEPOLIA_COMETH_API_KEY",
         "NEXT_PUBLIC_ARBITRUM_SEPOLIA_TENDERLY_RPC",
 
@@ -58,6 +60,12 @@
       "cache": false
     },
     "db:generate": {
+      "outputs": []
+    },
+    "lint": {
+      "outputs": []
+    },
+    "format": {
       "outputs": []
     }
   }

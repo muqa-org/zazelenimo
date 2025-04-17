@@ -1,0 +1,563 @@
+﻿Implementing Passkey Authentication with Cometh Connect 4337 SDK and NextAuth.js
+1. Introduction
+Purpose
+This report provides an expert technical guide for implementing a secure and user-friendly authentication system leveraging passkeys via the Cometh Connect 4337 SDK, integrated within a Next.js application using the NextAuth.js framework. The goal is to detail a robust flow that combines the ease of passwordless login with the security and capabilities of non-custodial, smart contract-based wallets.
+Context
+The Web3 ecosystem is rapidly evolving, moving beyond traditional Externally Owned Accounts (EOAs) towards more sophisticated solutions like Account Abstraction (AA). This shift addresses the inherent limitations of EOAs, particularly concerning user experience (UX) and security. Users often struggle with seed phrases and gas fees, creating significant barriers to adoption. Simultaneously, Web2 applications have embraced passwordless authentication methods like passkeys (WebAuthn), offering enhanced security and convenience. The challenge lies in bridging these two worlds: implementing familiar, seamless Web2 login experiences while harnessing the power and security of Web3's non-custodial smart contract wallets.
+Solution Overview
+This report outlines a solution that integrates several key technologies:
+1. Cometh Connect 4337 SDK: A specialized Software Development Kit designed to create and manage ERC-4337 compliant smart contract wallets controlled by passkeys.1 It simplifies interaction with WebAuthn and account abstraction protocols.
+2. NextAuth.js: A comprehensive authentication library for Next.js applications, providing the framework for managing user sessions and integrating custom authentication logic.4
+3. Passkeys (WebAuthn): The W3C standard enabling passwordless, phishing-resistant authentication using public-key cryptography managed securely by the user's device.
+4. ERC-4337: The Ethereum standard defining account abstraction without requiring consensus-layer changes, enabling smart contract wallets with features like gas sponsorship and custom validation logic.
+5. viem: A modern, lightweight TypeScript interface for Ethereum, used both by the Cometh SDK and crucially for backend signature verification.3
+Value Proposition
+Implementing this integrated solution offers significant advantages:
+* Passwordless Login: Eliminates the need for users to manage passwords, enhancing convenience and security.
+* Enhanced Security: Leverages the phishing resistance of passkeys and the non-custodial nature of smart contract wallets, where private keys remain within the user's secure hardware enclave.3
+* Improved User Experience: Streamlines onboarding and login. Furthermore, the underlying ERC-4337 infrastructure opens possibilities for gasless transactions through integrated paymasters 9, further reducing friction.
+* Smart Contract Wallet Features: Users benefit from the inherent capabilities of smart contract wallets, such as potential social recovery mechanisms 10 and programmable security policies.
+2. Core Concepts Overview
+A thorough understanding of the underlying technologies is essential for successful implementation.
+Cometh Connect 4337 SDK
+The Cometh Connect 4337 SDK serves as the central component for interacting with passkey-controlled smart contract wallets within the application. It abstracts the complexities involved in both WebAuthn interactions and ERC-4337 operations. Developers interact with high-level functions provided by the SDK, which internally handle the necessary cryptographic operations and blockchain communications.1
+Key functions relevant to this authentication flow include:
+* createSafeSmartAccount: Used during new user registration. It triggers the browser's WebAuthn API for passkey creation and predicts the associated smart contract wallet address (typically a Gnosis Safe 11) without immediately deploying it.1
+* retrieveAccountAddressFromPasskey: Used during existing user login. It prompts the user to authenticate with an existing passkey and retrieves the corresponding wallet address.12
+* SmartAccountClient: An object initialized after successful wallet creation or connection. It provides methods like signMessage to perform signing operations using the user's passkey via the underlying smart wallet's mechanisms.1
+The SDK is built upon modern libraries like viem, leveraging its capabilities for blockchain interaction.3 The abstraction provided by the SDK is significant; developers do not need to manually construct WebAuthn API calls or format ERC-4337 UserOperations. Instead, they utilize functions like createSafeSmartAccount and signMessage, allowing focus to remain on the application's core logic rather than the intricacies of passkey cryptography or account abstraction protocols.
+NextAuth.js
+NextAuth.js acts as the authentication backbone for the Next.js application, managing session state and orchestrating the login/logout flows. For this specific implementation, several NextAuth.js components are critical:
+* CredentialsProvider: This provider is essential because the passkey/wallet signature verification process is a custom flow, unlike standard OAuth protocols.14 It allows developers to define custom authentication logic within its authorize function.4
+* authorize Function: This asynchronous function within the CredentialsProvider configuration is the heart of the backend authentication logic. It receives the credentials sent from the frontend (wallet address, signed nonce, original nonce) and performs all necessary validation steps, including nonce checks and signature verification [4-S_S34, S_R51, S_R56, S_R108, S_R118, S_R142, S_R150, S_R161, S_R172].
+* JWT Strategy: Configured via session: { strategy: 'jwt' }, this tells NextAuth.js to manage sessions using JSON Web Tokens. The JWT is stored in a secure, HttpOnly browser cookie, containing encrypted session information.
+* jwt and session Callbacks: These callback functions allow customization of the JWT payload and the session object exposed to the client-side, respectively. The jwt callback is used to encode necessary user details (like user ID and wallet address) into the token after successful authorization. The session callback then selectively exposes parts of this token data to the frontend useSession hook or getSession calls.
+* Database Adapter (e.g., @next-auth/prisma-adapter): While CredentialsProvider documentation often discourages database persistence with JWTs, this specific authentication flow requires linking the verified walletAddress to a persistent user record in the database. This association is fundamental to identifying the user across sessions. Therefore, database interaction (finding or creating a user based on walletAddress) is essential within the authorize function's logic, even when using the JWT session strategy. This represents a nuanced but necessary application of the CredentialsProvider.
+Passkeys (WebAuthn)
+Passkeys are based on the WebAuthn W3C standard, providing a secure and user-friendly method for passwordless authentication. They utilize public-key cryptography, where a unique key pair is generated for each website or application. The private key is stored securely within the user's device hardware (like a Secure Enclave or TPM) or a password manager, and never leaves it. Authentication involves the user proving possession of the private key by signing a challenge, typically confirmed via biometrics (fingerprint, face scan) or a device PIN.8
+The Cometh Connect SDK seamlessly integrates with the browser's native WebAuthn API. When functions like createSafeSmartAccount or signMessage are called, the SDK triggers the appropriate browser prompts for passkey creation or usage, abstracting the direct API calls from the developer.2 This approach offers strong phishing resistance, as passkeys are bound to specific domains, and enhances security by keeping the private key confined to the user's secure environment.3
+ERC-4337 Smart Accounts (e.g., Gnosis Safe)
+ERC-4337 introduces account abstraction to Ethereum, allowing smart contracts to act as primary user accounts. Unlike EOAs, which are controlled solely by a private key, smart accounts are controlled by their code. This enables features like multi-signature logic, social recovery, spending limits, and, crucially for this flow, custom signature validation schemes.
+Cometh Connect utilizes Gnosis Safe contracts (or compatible implementations) as the underlying smart wallet.11 A key feature employed is "lazy deployment".2 When a new user registers, createSafeSmartAccount predicts the deterministic address where the Safe contract will be deployed, but the actual deployment transaction only occurs when the user initiates their first on-chain action (e.g., sending a transaction). This saves upfront gas costs for user onboarding.
+EIP-1271 & EIP-6492
+These Ethereum Improvement Proposals are critical for verifying signatures originating from smart contract wallets:
+* EIP-1271 (Standard Signature Validation Method for Contracts): Defines a standard interface (isValidSignature) that smart contracts can implement to declare how signatures should be validated against them.17 When the backend needs to verify if a signature allegedly from a smart contract address is valid, it calls this function on the contract. This is essential because the smart contract itself (based on its internal logic, e.g., checking against authorized passkey signers) determines validity, not a simple cryptographic check like ecrecover used for EOAs.
+* EIP-6492 (Signature Validation for Predeploy Contracts): Addresses the challenge posed by lazy deployment. Since the Cometh wallet address exists before the contract is deployed, a direct EIP-1271 call would fail. EIP-6492 specifies a signature format wrapper that includes the necessary information (like the contract's creation code) to allow verification even before the contract exists on-chain.17
+The combination of Cometh's lazy deployment 2 and the need for the smart contract to validate passkey signatures makes robust EIP-1271/EIP-6492 verification on the backend indispensable. Standard EOA verification methods are insufficient. Libraries like viem simplify this by automatically handling both EIP-1271 and EIP-6492 when verifying messages against potential contract addresses.6
+viem
+viem is a modern, highly efficient TypeScript library for interacting with Ethereum. It is utilized internally by the Cometh Connect 4337 SDK.3 Its relevance in this authentication flow extends to the backend, specifically for signature verification. The publicClient.verifyMessage function provided by viem is the recommended tool for validating the signedNonce within the NextAuth authorize function.6 This function intelligently checks if the address belongs to an EOA or a contract and performs the appropriate verification, including handling EIP-1271 calls and EIP-6492 checks for undeployed contracts.
+3. System Architecture
+A clear understanding of how the different components interact is crucial for successful implementation.
+Sequence Diagram (Conceptual)
+(A visual sequence diagram would typically be included here, illustrating the calls between Frontend, Cometh SDK, Browser/WebAuthn, Backend API, NextAuth, Database, and RPC Node for both new user registration and existing user login flows, highlighting the key steps like passkey creation/auth, nonce request, signing, and verification.)
+Component Responsibilities
+The following table delineates the primary roles of each component in the authentication flow. This clarifies where specific logic resides and how information flows through the system. Understanding these boundaries is key: for instance, cryptographic signing is initiated client-side via the SDK leveraging the browser's WebAuthn API, while the critical signature verification must occur server-side within the NextAuth backend, utilizing viem and an RPC node.
+Component
+	Key Responsibilities
+	Technologies/Functions Used
+	Frontend (React/Next.js)
+	Handles user interface events (button clicks), invokes Cometh SDK functions, manages UI loading/error states, calls backend API endpoints (nonce, sign-in).
+	React components, @cometh/connect-sdk-4337 functions, fetch/axios, NextAuth.js signIn client function
+	Cometh Connect 4337 SDK
+	Acts as the bridge to WebAuthn APIs, handles passkey creation/authentication, predicts/retrieves wallet addresses, initializes SmartAccountClient, performs message signing via the smart account.
+	@cometh/connect-sdk-4337, createSafeSmartAccount, retrieveAccountAddressFromPasskey, SmartAccountClient.signMessage
+	Browser (WebAuthn API)
+	Presents native OS prompts for passkey creation/authentication, securely stores the private key component, performs the actual cryptographic signing operation when requested.
+	Native Browser APIs (invoked transparently by the Cometh SDK)
+	Backend (Next.js API)
+	Generates cryptographically secure nonces, stores/validates nonces and expiry times against user records, looks up or creates user records in the database, performs EIP-1271/6492 signature verification using viem.
+	Next.js API Routes (/api/auth/nonce, /api/auth/[...nextauth].ts), Database Client (e.g., Prisma), viem (publicClient.verifyMessage), crypto module
+	NextAuth.js
+	Orchestrates the overall authentication flow via CredentialsProvider, manages the authorize function execution, generates/validates JWTs, handles session state and cookie management.
+	next-auth library, CredentialsProvider, authorize function, jwt/session callbacks, Database Adapters (optional)
+	Database
+	Persists user profile information, crucially linking user IDs to their walletAddress. Stores and clears ephemeral nonce data (nonce, nonceExpiry) for security checks.
+	PostgreSQL/MongoDB/SQLite etc., Prisma (or other ORM/client)
+	RPC Node
+	Executes read calls (eth_call) to the blockchain, specifically to invoke the isValidSignature function on the smart contract wallet as part of the EIP-1271 verification process initiated by viem.
+	Ethereum JSON-RPC API (accessed via viem's publicClient)
+	4. Implementation Guide: Step-by-Step
+This section provides a detailed walkthrough of the implementation process.
+4.1 Prerequisites & Setup
+1. Install Dependencies:
+Bash
+npm install next react react-dom next-auth @cometh/connect-sdk-4337 viem @prisma/client
+# or
+yarn add next react react-dom next-auth @cometh/connect-sdk-4337 viem @prisma/client
+# or
+pnpm add next react react-dom next-auth @cometh/connect-sdk-4337 viem @prisma/client
+
+Optionally, install a NextAuth adapter like @next-auth/prisma-adapter if using Prisma for session/user management beyond the scope of this guide. Initialize Prisma: npx prisma init.
+2. Environment Variables: Create a .env.local file and define necessary variables:
+Code snippet
+# NextAuth Core
+NEXTAUTH_URL=http://localhost:3000 # Replace with your canonical URL in production
+NEXTAUTH_SECRET= # Generate a strong secret: openssl rand -base64 32
+
+# Database (Example: PostgreSQL with Prisma)
+DATABASE_URL="postgresql://user:password@host:port/database?schema=public"
+
+# Cometh Connect
+NEXT_PUBLIC_COMETH_API_KEY= # Your Cometh Connect Project API Key [2]
+# COMETH_API_SECRET= # Only needed for specific backend Cometh API calls (e.g., recovery [25], paymaster config [9]), likely NOT for this auth flow.
+
+# Blockchain RPC
+RPC_URL= # URL for your Ethereum RPC Node (e.g., Alchemy, Infura, QuickNode)
+
+Note: Prefix client-side accessible variables (like COMETH_API_KEY used in frontend SDK calls) with NEXT_PUBLIC_.
+3. Database Schema: Define your User model in prisma/schema.prisma. Ensure it includes fields to link the wallet and manage the nonce:
+Code snippet
+model User {
+ id            String    @id @default(cuid())
+ email         String?   @unique // Optional: if you collect email elsewhere
+ name          String?
+ walletAddress String    @unique // Crucial link to the smart wallet
+ nonce         String?   // Stores the challenge nonce
+ nonceExpiry   DateTime? // Stores the nonce expiry time
+ createdAt     DateTime  @default(now())
+ updatedAt     DateTime  @updatedAt
+
+ // Optional: Add other fields as needed
+ // Optional: Link to NextAuth Adapter tables if used
+ // accounts      Account
+ // sessions      Session
+}
+
+// Add other models (Account, Session, VerificationToken) if using PrismaAdapter
+
+Run npx prisma migrate dev --name init to create the database table.
+4. Cometh Connect API Key: Obtain your API key from the Cometh Connect dashboard (https://app.cometh.io) by creating a project.26
+5. viem Public Client (Backend): In your backend code (e.g., within the NextAuth configuration file or a shared utility file), instantiate a viem public client:
+TypeScript
+// Example: utils/viemClient.ts
+import { createPublicClient, http } from 'viem';
+import { mainnet } // Or your target chain, e.g., arbitrumSepolia
+from 'viem/chains';
+
+export const publicClient = createPublicClient({
+ chain: mainnet, // Replace with your target chain
+ transport: http(process.env.RPC_URL),
+});
+
+4.2 Frontend: New User Registration Flow
+This flow handles users creating an account and their first passkey for your application.
+   1. (Step 1a) Trigger Account Creation: In your registration component, when the user initiates registration (e.g., clicks a "Register with Passkey" button), call createSafeSmartAccount:
+TypeScript
+// Example in a React component
+import { createSafeSmartAccount, createSmartAccountClient } from '@cometh/connect-sdk-4337';
+import { useState } from 'react';
+import { arbitrumSepolia } from 'viem/chains'; // Example chain
+
+const RegisterComponent = () => {
+ const [isLoading, setIsLoading] = useState(false);
+ const [error, setError] = useState<string | null>(null);
+ //... other state variables for walletAddress, smartAccountClient, etc.
+
+ const handleRegister = async () => {
+   setIsLoading(true);
+   setError(null);
+   try {
+     const apiKey = process.env.NEXT_PUBLIC_COMETH_API_KEY;
+     if (!apiKey) throw new Error("API Key not configured");
+
+     // This triggers the browser's passkey creation prompt
+     const smartAccount = await createSafeSmartAccount({
+       apiKey: apiKey,
+       chain: arbitrumSepolia, // Use your target chain
+       // publicClient can be passed if needed for specific SDK features, often optional here
+       // Optional configurations:
+       // passKeyName: 'MyApp Passkey',
+       // webAuthnOptions: { authenticatorSelection: { userVerification: 'required' } } [2]
+     });
+
+     const predictedAddress = smartAccount.address;
+     console.log('Predicted Wallet Address:', predictedAddress);
+     // Store predictedAddress temporarily, will link to user after auth
+
+     // Initialize the client for signing
+     // This client instance is now bound to the newly created passkey/wallet context
+     const client = createSmartAccountClient({
+        account: smartAccount,
+        chain: arbitrumSepolia, // Use your target chain
+        // Bundler/Paymaster URLs needed for transactions, not strictly for signing messages
+        // bundlerTransport: http(process.env.NEXT_PUBLIC_BUNDLER_URL),
+        // paymaster: paymasterClient,
+     });
+     // Store the client instance for the next step (signing nonce)
+     // setSmartAccountClient(client);
+     // setWalletAddress(predictedAddress);
+
+     // Proceed to nonce fetching and signing... (Steps 4a-4d)
+
+   } catch (err: any) {
+     setError(err.message |
+
+| 'Registration failed');
+console.error(err);
+} finally {
+setIsLoading(false);
+}
+};
+
+
+
+
+
+
+  //... rest of the component JSX
+};
+```
+This call interacts with the browser's WebAuthn API, prompting the user to create a passkey using their device's biometrics or PIN.[2]
+
+      2. (Step 1b) Capture Wallet Address: The smartAccount.address property holds the deterministically calculated address for the user's smart wallet.2 It's crucial to understand this wallet is not yet deployed on-chain; it's "counterfactual".2 This address needs to be associated with the user after they successfully authenticate by signing the nonce. Temporarily store it in component state.
+      3. (Step 1c) Initialize SmartAccountClient: As shown in the code above, use createSmartAccountClient with the smartAccount object returned by createSafeSmartAccount.1 This client instance is now capable of initiating signing operations that will use the newly created passkey. Store this client instance in component state.
+      4. (Step 4a - Part 1) Get Nonce: Make a request to your backend nonce endpoint (e.g., /api/auth/nonce) providing the walletAddress obtained in Step 1b.
+TypeScript
+// Continuing within handleRegister or a subsequent function
+const nonceResponse = await fetch(`/api/auth/nonce?walletAddress=${predictedAddress}`);
+if (!nonceResponse.ok) {
+ throw new Error('Failed to fetch nonce');
+}
+const { nonce } = await nonceResponse.json();
+// Store nonce for the signIn call
+
+      5. (Step 4b & 4c) Sign Nonce: Use the stored smartAccountClient to sign the received nonce.
+TypeScript
+// Requires the smartAccountClient instance from Step 1c
+if (!smartAccountClient) throw new Error("Smart account client not initialized");
+
+// This triggers the browser's passkey signing prompt
+const signedNonce = await smartAccountClient.signMessage({ message: nonce });
+console.log('Signed Nonce (Signature):', signedNonce);
+// Store signedNonce for the signIn call
+
+This step again invokes the WebAuthn API, asking the user to confirm the signing action with their passkey.13
+      6. (Step 4d) Capture Signature: The signedNonce variable now holds the cryptographic signature.
+      7. (Step 5) Trigger NextAuth Sign-In: Call the signIn function provided by NextAuth.js, passing the necessary credentials.
+TypeScript
+import { signIn } from 'next-auth/react';
+
+//... inside an async function after obtaining walletAddress, nonce, signedNonce
+
+const signInResponse = await signIn('cometh-credentials', {
+ walletAddress: predictedAddress, // The address from Step 1b
+ signedNonce: signedNonce,       // The signature from Step 4d
+ challenge: nonce,               // The original nonce from Step 4a
+ redirect: false,                // Handle response manually
+});
+
+if (signInResponse?.ok) {
+ console.log('Sign-in successful!');
+ // Redirect user or update UI state
+ // router.push('/dashboard');
+} else {
+ setError(signInResponse?.error |
+
+| 'Authentication failed');
+console.error('Sign-in failed:', signInResponse?.error);
+}
+```
+The redirect: false option prevents NextAuth.js from automatically redirecting and allows the frontend to handle the success or error response from the backend authorize function.
+4.3 Frontend: Existing User Login Flow
+This flow handles users who have previously registered and possess a passkey associated with your application's domain.
+         1. (Step 2a) Trigger Login: On user login initiation, call retrieveAccountAddressFromPasskey:
+TypeScript
+// Example in a Login component
+import { retrieveAccountAddressFromPasskey } from '@cometh/connect-sdk-4337';
+import { useState } from 'react';
+
+const LoginComponent = () => {
+ const [isLoading, setIsLoading] = useState(false);
+ const [error, setError] = useState<string | null>(null);
+ //... other state
+
+ const handleLogin = async () => {
+   setIsLoading(true);
+   setError(null);
+   try {
+     const apiKey = process.env.NEXT_PUBLIC_COMETH_API_KEY;
+     if (!apiKey) throw new Error("API Key not configured");
+
+     // Triggers browser prompt to select and use an existing passkey
+     const retrievedAddress = await retrieveAccountAddressFromPasskey(apiKey);
+     console.log('Retrieved Wallet Address:', retrievedAddress);
+     // Store retrievedAddress
+
+     // Proceed to initialize SmartAccountClient (Step 2c) and then nonce/signing...
+
+   } catch (err: any) {
+      setError(err.message |
+
+| 'Login failed');
+console.error(err);
+} finally {
+setIsLoading(false);
+}
+};
+//... rest of component
+};
+```
+This function interacts with the WebAuthn API, prompting the user to select and authenticate with an existing passkey registered for your domain.8
+            2. (Step 2b) Capture Wallet Address: The retrievedAddress variable holds the smart wallet address associated with the successfully authenticated passkey.12
+            3. (Step 2c - Correction & Elaboration) Initialize SmartAccountClient: This step is crucial and differs from the new user flow. Since the passkey already exists and the user has just authenticated with it via retrieveAccountAddressFromPasskey, we need to initialize a SmartAccountClient capable of signing using this existing context. The recommended approach involves calling createSafeSmartAccount again, but specifying the smartAccountAddress option.2 This signals to the SDK that we are connecting to a known wallet, likely leveraging the established WebAuthn session or re-prompting efficiently.
+TypeScript
+// Continuing within handleLogin after retrieving the address
+import { createSafeSmartAccount, createSmartAccountClient } from '@cometh/connect-sdk-4337';
+import { arbitrumSepolia } from 'viem/chains'; // Example chain
+
+//... inside handleLogin, after getting retrievedAddress
+
+const apiKey = process.env.NEXT_PUBLIC_COMETH_API_KEY;
+if (!apiKey) throw new Error("API Key not configured");
+
+// Call createSafeSmartAccount AGAIN, but provide the retrieved address
+// This connects to the existing wallet context authenticated via passkey
+const smartAccount = await createSafeSmartAccount({
+   apiKey: apiKey,
+   chain: arbitrumSepolia, // Use your target chain
+   smartAccountAddress: retrievedAddress, // CRUCIAL: Specify the existing address [2]
+});
+
+// Initialize the client for signing using the existing context
+const client = createSmartAccountClient({
+   account: smartAccount,
+   chain: arbitrumSepolia, // Use your target chain
+   // Bundler/Paymaster URLs likely needed if subsequent actions involve transactions
+});
+
+// Store the client and address for nonce signing
+// setSmartAccountClient(client);
+// setWalletAddress(retrievedAddress);
+
+// Proceed to nonce fetching and signing... (Steps 4a-4d)
+
+Providing smartAccountAddress instructs the SDK to associate with the existing wallet, leveraging the passkey authentication already performed or re-establishing the signing context with the known passkey.2
+            4. (Step 4a - Part 1) Get Nonce: Call the backend API (/api/auth/nonce) with the retrievedAddress.
+TypeScript
+const nonceResponse = await fetch(`/api/auth/nonce?walletAddress=${retrievedAddress}`);
+//... handle response and get nonce...
+
+            5. (Step 4b & 4c) Sign Nonce: Use the smartAccountClient (initialized in Step 2c) to sign the nonce.
+TypeScript
+// Requires the smartAccountClient instance from Step 2c
+const signedNonce = await smartAccountClient.signMessage({ message: nonce });
+// Store signedNonce
+
+This triggers the WebAuthn prompt for the existing passkey.
+            6. (Step 4d) Capture Signature: Capture the returned signedNonce.
+            7. (Step 5) Trigger NextAuth Sign-In: Call signIn with the retrieved data.
+TypeScript
+import { signIn } from 'next-auth/react';
+
+const signInResponse = await signIn('cometh-credentials', {
+ walletAddress: retrievedAddress, // Address from Step 2b
+ signedNonce: signedNonce,        // Signature from Step 4d
+ challenge: nonce,                // Nonce from Step 4a
+ redirect: false,
+});
+
+//... handle signInResponse (success/error)...
+
+4.4 Backend: API & NextAuth Configuration
+This section details the backend logic required for nonce management and authentication verification.
+               1. (Step 3) Nonce Generation API Endpoint (/api/auth/nonce): Create a Next.js API route (e.g., pages/api/auth/nonce.ts) to handle nonce generation and storage.
+TypeScript
+// pages/api/auth/nonce.ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
+import crypto from 'crypto';
+
+const prisma = new PrismaClient();
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+ if (req.method!== 'GET') {
+   res.setHeader('Allow',);
+   return res.status(405).end(`Method ${req.method} Not Allowed`);
+ }
+
+ const { walletAddress } = req.query;
+
+ if (!walletAddress |
+
+| typeof walletAddress!== 'string' ||!/^0x[a-fA-F0-9]{40}$/.test(walletAddress)) {
+return res.status(400).json({ message: 'Valid walletAddress query parameter is required' });
+}
+
+
+
+
+
+
+  try {
+   // Optional: Check if user exists before generating nonce for login attempts
+   // const existingUser = await prisma.user.findUnique({ where: { walletAddress } });
+   // if (!existingUser) {
+   //   // For login, maybe return 404? For registration, maybe proceed? Depends on flow.
+   //   // return res.status(404).json({ message: 'User not found for nonce generation' });
+   // }
+
+   const nonce = crypto.randomBytes(32).toString('hex');
+   const expires = new Date(Date.now() + 5 * 60 * 1000); // 5 minute expiry
+
+   // Use upsert: find user by walletAddress, update nonce/expiry if found,
+   // OR create user if not found (adjust based on whether registration is implicit here)
+   // IMPORTANT: For security, consider only *updating* existing users here,
+   // and handle user creation *only* within the authorize callback after successful verification.
+   // This example uses upsert for simplicity but might need refinement.
+   await prisma.user.upsert({
+     where: { walletAddress: walletAddress },
+     update: {
+       nonce: nonce,
+       nonceExpiry: expires,
+     },
+     create: {
+       walletAddress: walletAddress,
+       nonce: nonce,
+       nonceExpiry: expires,
+       // Add other default fields if creating here (e.g., email if available)
+     },
+   });
+
+   return res.status(200).json({ nonce });
+ } catch (error) {
+   console.error('Nonce generation error:', error);
+   return res.status(500).json({ message: 'Internal server error' });
+ } finally {
+   await prisma.$disconnect();
+ }
+}
+```
+This endpoint generates a secure nonce, sets an expiry, and stores it in the database record associated with the provided `walletAddress`. Storing the nonce server-side linked to the specific user and with a short expiry is crucial to prevent replay attacks. An attacker cannot simply reuse a captured signature because the corresponding nonce on the server will either be different, expired, or already cleared after a successful login.
+
+                  2. (Step 6 & 7) NextAuth Configuration (pages/api/auth/[...nextauth].ts): Configure NextAuth.js to use the CredentialsProvider and implement the authorize logic.
+TypeScript
+// pages/api/auth/[...nextauth].ts
+import NextAuth, { type NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { PrismaClient } from '@prisma/client';
+import { publicClient } from '@/utils/viemClient'; // Assuming viem client is exported from utils
+
+const prisma = new PrismaClient();
+
+export const authOptions: NextAuthOptions = {
+ providers:,
+ session: {
+   strategy: 'jwt', // Use JWT strategy
+   // maxAge: 30 * 24 * 60 * 60, // Optional: customize session expiry
+ },
+ callbacks: {
+   async jwt({ token, user }) {
+     // Persist necessary user data from 'authorize' into the token
+     if (user) {
+       token.id = user.id; // Standard way to pass user ID
+       token.walletAddress = (user as any).walletAddress; // Add custom properties
+       // Add other user properties if needed (e.g., role, email)
+       // token.email = user.email;
+       // token.name = user.name;
+     }
+     return token; // Return the token
+   },
+   async session({ session, token }) {
+     // Expose data from the token to the client-side session object
+     if (token && session.user) {
+       session.user.id = token.id as string; // Add ID to session user
+       (session.user as any).walletAddress = token.walletAddress; // Add custom properties
+       // Add other properties from token if needed
+       // session.user.email = token.email as string;
+       // session.user.name = token.name as string;
+     }
+     return session; // Return the session
+   },
+ },
+ pages: {
+   signIn: '/login', // Optional: specify custom login page [28]
+   error: '/auth/error', // Optional: specify custom error page
+ },
+ secret: process.env.NEXTAUTH_SECRET,
+ debug: process.env.NODE_ENV === 'development', // Optional: enable debug logs in dev
+};
+
+export default NextAuth(authOptions);
+The authorize function serves as the critical security checkpoint. It meticulously validates the incoming credentials against server-side state (user record, nonce, expiry) and performs the essential EIP-1271/6492 signature verification via viem. Only if all checks pass is a user object returned, signaling NextAuth.js to proceed with session creation. The jwt and session callbacks then ensure that necessary identifiers like userId and walletAddress are securely embedded in the session token and made accessible to the application.
+4.5 NextAuth Session Management (Automatic)
+Once the authorize function successfully returns a user object, NextAuth.js handles the subsequent session management automatically based on the configuration:
+                     1. JWT Generation: A JSON Web Token (JWT) is created. The jwt callback allows for the inclusion of specific user data (like id, walletAddress) within this token's payload.
+                     2. Cookie Storage: This JWT is encrypted (using NEXTAUTH_SECRET) and stored in a secure, HttpOnly browser cookie.29 This cookie cannot be accessed directly by client-side JavaScript, enhancing security.
+                     3. Session Verification: On subsequent requests to the server (API routes or server-rendered pages), the browser automatically sends the session cookie. NextAuth.js middleware or helper functions (getServerSession, auth) can decrypt and validate the JWT from the cookie to determine the user's session status and retrieve the stored payload.
+                     4. Client-Side Access: The session callback filters and shapes the data from the token that is made available to the client-side useSession hook or getSession function. This ensures sensitive parts of the token (if any) are not unnecessarily exposed to the browser.
+5. Security Considerations
+Implementing authentication, especially involving cryptographic keys and blockchain interactions, requires careful attention to security:
+                     * Nonce Security: Nonces are fundamental to preventing replay attacks. They must be generated server-side using a cryptographically secure random number generator. They must be stored securely (e.g., in the database associated with the user's walletAddress), have a short expiry time (e.g., 5 minutes), and be invalidated (cleared from the database) immediately after successful use.
+                     * Backend Signature Verification: This is the most critical security step. Never trust signature verification performed on the client-side. The backend authorize function must independently verify the signedNonce against the challenge (nonce) and walletAddress using viem's publicClient.verifyMessage. This function correctly handles EIP-1271 and EIP-6492, ensuring the signature is valid according to the smart contract's logic, whether deployed or not.
+                     * API Key Security: The COMETH_API_KEY is used client-side to initialize the SDK.2 While necessary, be aware of its exposure. If Cometh provides an API_SECRET for backend operations (like paymaster configuration 9 or recovery 25), ensure it is never exposed client-side and is stored securely as an environment variable on the server.
+                     * CSRF Protection: NextAuth.js provides built-in CSRF protection using the double submit cookie method. Ensure this is enabled and correctly configured, especially if using custom sign-in pages.28 The signIn client function typically handles CSRF tokens automatically.30
+                     * Input Validation: Rigorously validate and sanitize all inputs received by the backend API endpoints (/api/auth/nonce, /api/auth/[...nextauth].ts), including walletAddress, challenge, and signedNonce, to prevent injection attacks or unexpected behavior.
+                     * Passkey Security: The security of the user's private key relies on the underlying WebAuthn protocol and the security of the user's device (secure enclave, OS security) or password manager. The application itself does not handle the private key directly.8
+                     * Rate Limiting: Implement rate limiting on the /api/auth/nonce and /api/auth/callback/cometh-credentials (handled by NextAuth) endpoints to mitigate brute-force attacks or denial-of-service attempts.
+6. Troubleshooting & Common Pitfalls
+                     * SmartAccountClient Initialization for Login: The most common error for existing users is incorrectly initializing the SmartAccountClient. Remember to call createSafeSmartAccount with the smartAccountAddress option after retrieving the address via retrieveAccountAddressFromPasskey.2 Calling it without the address attempts to create a new passkey.
+                     * EIP-1271/6492 Verification Errors: If publicClient.verifyMessage fails:
+                     * Ensure the backend publicClient is connected to the correct RPC endpoint for the target chain.
+                     * Verify the smart contract wallet (if deployed) correctly implements the EIP-1271 isValidSignature function according to the Cometh Safe specifications.
+                     * Confirm the viem version being used supports EIP-6492 for verifying signatures against undeployed contracts.6
+                     * Check for correct parameter types (Address, Hex) being passed to verifyMessage.
+                     * Nonce Issues:
+                     * Mismatch: Ensure the challenge sent to signIn exactly matches the nonce fetched from the backend and stored in the database.
+                     * Expiry: Verify the nonceExpiry logic is correct and the server/client clocks are reasonably synchronized. Increase expiry slightly if network latency is an issue, but keep it short.
+                     * Replay: Ensure the nonce is reliably cleared from the database immediately after successful validation in the authorize function.
+                     * WebAuthn Errors: These can originate from the browser or OS.
+                     * Check browser compatibility with WebAuthn.
+                     * Users might cancel the prompt.
+                     * Device security policies might interfere (e.g., no biometric sensor available).
+                     * The Cometh SDK might provide specific error codes or fallbacks (e.g., local wallet fallback, though potentially disabled 2). Check SDK documentation for error handling specifics.
+                     * NextAuth Configuration Errors:
+                     * Ensure the CredentialsProvider id ('cometh-credentials') matches the first argument in the signIn call.
+                     * Check jwt and session callback logic if expected user data (ID, walletAddress) isn't available client-side. Ensure data is correctly added to token and then forwarded to session.user.
+                     * Be mindful of JWT size limits; avoid storing excessive data in the token.
+                     * CORS Issues: If your frontend and backend API routes are served from different origins (domains/ports), configure CORS headers appropriately on your Next.js backend API routes.
+7. Conclusion
+Summary
+This report has detailed a comprehensive process for integrating Cometh Connect's passkey-based smart contract wallets with NextAuth.js for secure and user-friendly authentication. The flow leverages createSafeSmartAccount for new user registration and passkey creation, retrieveAccountAddressFromPasskey for existing user login, and SmartAccountClient.signMessage for challenge signing via WebAuthn. The backend, powered by NextAuth.js's CredentialsProvider, uses a secure nonce mechanism and viem's publicClient.verifyMessage to perform robust EIP-1271/EIP-6492 signature verification against the user's smart wallet address. Session management is handled via JWTs stored in secure cookies.
+Benefits Revisited
+The outlined implementation successfully bridges Web2 convenience with Web3 capabilities. Users benefit from a passwordless, phishing-resistant login experience using familiar device biometrics or PINs. Security is enhanced through non-custodial key management within secure enclaves and robust server-side verification. The use of ERC-4337 smart accounts provides a foundation for advanced features like gas abstraction and social recovery, ultimately improving the overall user onboarding and interaction experience for decentralized applications.
+Next Steps
+With this core authentication flow established, developers can explore further enhancements offered by the Cometh Connect ecosystem and account abstraction:
+                     * Gas Sponsorship: Integrate the Cometh Paymaster API 9 or other paymaster services to sponsor transaction fees for users, creating a truly gasless experience.32
+                     * Social Recovery: Implement social recovery mechanisms using the features provided by the Cometh SDK 10, allowing users to regain access to their accounts if they lose their devices.
+                     * Session Keys: Explore the use of session keys 34 for enabling periods of transaction signing without requiring repeated passkey prompts, further improving UX for specific application actions.
+                     * Multi-Device Support: Investigate Cometh's mechanisms for adding and managing passkeys across multiple user devices.2
+Works cited
+                     1. @cometh/connect-sdk-4337 - npm, accessed on April 14, 2025, https://www.npmjs.com/package/@cometh/connect-sdk-4337
+                     2. Create a Wallet | Connect 4337, accessed on April 14, 2025, https://docs.cometh.io/connect-4337/core-features/create-a-wallet
+                     3. cometh-hq/connect-sdk-4337 - GitHub, accessed on April 14, 2025, https://github.com/cometh-hq/connect-sdk-4337
+                     4. Credentials Provider - Auth.js, accessed on April 14, 2025, https://authjs.dev/getting-started/providers/credentials
+                     5. Next Auth Credentials Provider - Ultimate Guide - YouTube, accessed on April 14, 2025, https://m.youtube.com/watch?v=b3pbgBmEGcU
+                     6. verifyMessage - Viem, accessed on April 14, 2025, https://viem.sh/docs/utilities/verifyMessage.html
+                     7. verifyMessage - Viem, accessed on April 14, 2025, https://viem.sh/docs/actions/public/verifyMessage.html
+                     8. Simple implementation of an ERC-4337 contract wallet controlled by Passkeys - GitHub, accessed on April 14, 2025, https://github.com/passkeys-4337/smart-wallet
+                     9. Paymaster API | Connect 4337 - Cometh.io, accessed on April 14, 2025, https://docs.cometh.io/connect-4337/paymaster/paymaster-api
+                     10. Social recovery | Connect 4337, accessed on April 14, 2025, https://docs.cometh.io/connect-4337/advanced/social-recovery
+                     11. What is Connect 4337 | Connect 4337, accessed on April 14, 2025, https://docs.cometh.io/connect-4337
+                     12. Retrieve a wallet address | Connect 4337, accessed on April 14, 2025, https://docs.cometh.io/connect-4337/core-features/retrieve-a-wallet-address
+                     13. Sign/Verify a message | Connect 4337, accessed on April 14, 2025, https://docs.cometh.io/connect-4337/core-features/sign-verify-a-message
+                     14. Providers - NextAuth.js, accessed on April 14, 2025, https://next-auth.js.org/v3/configuration/providers
+                     15. Credentials | NextAuth.js, accessed on April 14, 2025, https://next-auth.js.org/providers/credentials
+                     16. Credentials - NextAuth.js, accessed on April 14, 2025, https://next-auth.js.org/v3/providers/credentials
+                     17. EIP-1271: Signature Verification for Smart Contract Wallets - Dynamic.xyz, accessed on April 14, 2025, https://www.dynamic.xyz/blog/eip-1271
+                     18. Signature Verification - Why Smart Wallet?, accessed on April 14, 2025, https://www.smartwallet.dev/guides/signature-verification
+                     19. One-Click Auth / SIWE - Reown Docs, accessed on April 14, 2025, https://docs.reown.com/appkit/react/core/siwe
+                     20. Sign In With Ethereum - Reown Docs, accessed on April 14, 2025, https://docs.reown.com/appkit/next/core/siwe
+                     21. ambire/signature-validator - NPM, accessed on April 14, 2025, https://www.npmjs.com/package/@ambire/signature-validator
+                     22. Viem React Js Example: Transfer, Mint, and View Blockchain State - RareSkills, accessed on April 10, 2025, https://www.rareskills.io/post/viem-ethereum
+                     23. getProof - Viem, accessed on April 10, 2025, https://viem.sh/docs/actions/public/getProof
+                     24. Signature Verification - Base Docs, accessed on April 10, 2025, https://docs.base.org/identity/smart-wallet/guides/signature-verification
+                     25. Recover users wallets | Connect - Cometh.io, accessed on April 14, 2025, https://docs.cometh.io/connect/resources/advanced-features/recover-users-wallets
+                     26. Getting started | Marketplace - Cometh Products, accessed on April 14, 2025, https://docs.cometh.io/marketplace
+                     27. Getting started | Connect - Cometh Products, accessed on April 14, 2025, https://docs.cometh.io/connect/quickstart/getting-started
+                     28. Pages | NextAuth.js, accessed on April 14, 2025, https://next-auth.js.org/configuration/pages
+                     29. Options | NextAuth.js, accessed on April 14, 2025, https://next-auth.js.org/configuration/options
+                     30. Client API - NextAuth.js, accessed on April 14, 2025, https://next-auth-docs.vercel.app/getting-started/client
+                     31. Client API - NextAuth.js, accessed on April 14, 2025, https://next-auth.js.org/v3/getting-started/client
+                     32. The Ultimate Guide to Top ERC-4337 Account Abstraction SDKs - GoldRush, accessed on April 14, 2025, https://goldrush.dev/guides/the-ultimate-guide-to-top-erc-4337-account-abstraction-sdks/
+                     33. Paymaster API - Stackup, accessed on April 14, 2025, https://docs.stackup.sh/docs/paymaster-api
+                     34. Session Keys | Connect 4337, accessed on April 14, 2025, https://docs.cometh.io/connect-4337/sdk-features/session-keys-alpha-release

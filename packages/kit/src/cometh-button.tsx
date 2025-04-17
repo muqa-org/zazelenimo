@@ -7,15 +7,14 @@ import { Button } from './ui/button';
 
 const TRUNCATE_LENGTH = 20;
 
-const truncate = (str: string) => str.length > TRUNCATE_LENGTH
-  ? `${str.slice(0, TRUNCATE_LENGTH)}...`
-  : str;
+const truncate = (str: string) =>
+  str.length > TRUNCATE_LENGTH ? `${str.slice(0, TRUNCATE_LENGTH)}...` : str;
 
 export function ComethButton(): JSX.Element {
   const { isConnected, isConnecting, isReconnecting } = useAccount();
-  const account = useAccount()
-  const { connect } = useConnect()
-  const { disconnect } = useDisconnect()
+  const account = useAccount();
+  const { connect } = useConnect();
+  const { disconnect } = useDisconnect();
 
   let label = 'Connect';
 
@@ -24,15 +23,16 @@ export function ComethButton(): JSX.Element {
   else if (isConnected) label = `Disconnect ${account.address}`;
   else label = 'Connect';
 
-  const onClick = account.status === 'disconnected'
-    ? () => connect({ connector: comethConnector })
-    : () => disconnect();
+  const onClick =
+    account.status === 'disconnected'
+      ? () => connect({ connector: comethConnector })
+      : () => disconnect();
 
   return (
-     <>
+    <>
       <Button isLoading={account.isConnecting} onClick={onClick}>
         {truncate(label)}
       </Button>
-     </>
-  )
+    </>
+  );
 }

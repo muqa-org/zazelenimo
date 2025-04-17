@@ -3,7 +3,10 @@ import { getContract, parseAbi, WalletClient } from 'viem';
 
 import { TokenMetadata } from '../qf.types';
 
-export const getTokenMetadata = async (token: TToken, walletClient: WalletClient): Promise<TokenMetadata> => {
+export const getTokenMetadata = async (
+  token: TToken,
+  walletClient: WalletClient,
+): Promise<TokenMetadata> => {
   const erc20Contract = getContract({
     address: token.address,
     abi: parseAbi([
@@ -21,5 +24,5 @@ export const getTokenMetadata = async (token: TToken, walletClient: WalletClient
     name,
     address: token.address,
     nonce,
-  }
+  };
 };

@@ -2,8 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 
-import Container from '@/app/components/Container';
 import Banner from '@/app/components//Banner';
+import Container from '@/app/components/Container';
 
 export default function HomepageBanner() {
 	const t = useTranslations('home');

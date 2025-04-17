@@ -6,7 +6,7 @@ type SignPermitProps = {
   walletClient: WalletClient;
 
   // Token to be spent
-  tokenMetadata: TokenMetadata
+  tokenMetadata: TokenMetadata;
 
   // Address of the spender
   spenderAddress: Hex;
@@ -87,5 +87,5 @@ export const signPermit2612 = async ({
     },
   };
 
-  return { signature, permit }
+  return { signature, permit };
 };

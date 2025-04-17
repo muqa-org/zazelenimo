@@ -1,3 +1,5 @@
+# Components
+
 ### ApiProvider
 
 React Provider component that handles the internals of fetching data from indexers.

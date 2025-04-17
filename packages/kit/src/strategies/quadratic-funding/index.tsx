@@ -1,5 +1,5 @@
-import { call as allocateCall } from './allocate';
 import { StrategyExtension } from '..';
+import { call as allocateCall } from './allocate';
 import { supportedChains } from '../..';
 
 export const quadraticFunding: StrategyExtension = {

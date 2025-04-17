@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -17,14 +12,16 @@ datasource db {
 
 model User {
   id                String    @id @default(uuid())
-  address           String?   @unique @map("address")
+  walletAddress     String?   @unique @map("address")
   email             String?   @unique
   password          String?
   firstName         String?   @map("first_name")
   lastName          String?   @map("last_name")
   accounts          Account[]
   sessions          Session[]
-  authNonce         AuthNonce?
+  nonce             String?
+  nonceExpiry       DateTime? @map("nonce_expiry")
+  isActive          Boolean   @default(true)
   createdAt         DateTime  @default(now()) @map(name: "created_at")
   updatedAt         DateTime  @default(now()) @map(name: "updated_at")
 
@@ -51,15 +48,6 @@ model Account {
 
   @@id([provider, providerAccountId])
   @@map("account")
-}
-
-model AuthNonce {
-  userId    String   @unique @map("user_id")
-  nonce     String
-  expiresAt DateTime @map(name: "expires_at")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("auth_nonce")
 }
 
 model VerificationToken {
