@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@cometh/connect-sdk-4337':
         specifier: ^1.0.1
-        version: 1.0.1(typescript@5.7.3)(viem@2.22.14)(wagmi@2.9.0)(webauthn-p256@0.0.10)
+        version: 1.0.8(viem@2.22.14)(wagmi@2.9.0)
       viem:
         specifier: ^2.10.9
         version: 2.22.14(typescript@5.7.3)(zod@3.24.1)
@@ -35,7 +35,7 @@ importers:
         version: link:../../packages/kit
       '@cometh/connect-sdk-4337':
         specifier: ^1.0.1
-        version: 1.0.1(typescript@5.7.3)(viem@2.22.14)(wagmi@2.9.0)(webauthn-p256@0.0.10)
+        version: 1.0.8(viem@2.22.14)(wagmi@2.9.0)
       '@muqa/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -184,7 +184,7 @@ importers:
         version: 1.1.2(typescript@5.7.3)(zod@3.24.1)
       '@cometh/connect-sdk-4337':
         specifier: ^1.0.1
-        version: 1.0.1(typescript@5.7.3)(viem@2.22.14)(wagmi@2.9.0)(webauthn-p256@0.0.10)
+        version: 1.0.8(viem@2.22.14)(wagmi@2.9.0)
       '@cometh/connect-sdk-viem':
         specifier: ^2.0.5
         version: 2.0.8(@tanstack/react-query@5.64.2)(@types/react@18.3.18)(react-dom@18.3.1)(react-native@0.77.0)(react@18.3.1)(typescript@5.7.3)(zod@3.24.1)
@@ -1781,18 +1781,6 @@ packages:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  /@biconomy/sdk@0.0.24(@rhinestone/module-sdk@0.2.4)(typescript@5.7.3)(viem@2.22.14):
-    resolution: {integrity: sha512-svCQe/xrGqwBgjjlQGOaIzmZvjMqrL6WIyM9xnceMRGAoH2Dm8PpOYOu3vF53ySXvFG6hCD6zquDzA7TzQPS8A==}
-    peerDependencies:
-      '@rhinestone/module-sdk': 0.1.28
-      typescript: ^5
-      viem: ^2.20.0
-    dependencies:
-      '@rhinestone/module-sdk': 0.2.4(viem@2.22.14)
-      typescript: 5.7.3
-      viem: 2.22.14(typescript@5.7.3)(zod@3.24.1)
-    dev: false
-
   /@cbor-extract/cbor-extract-darwin-arm64@2.2.0:
     resolution: {integrity: sha512-P7swiOAdF7aSi0H+tHtHtr6zrpF3aAq/W9FXx5HektRvLTM2O89xCyXF3pk7pLc7QpaY7AoaE8UowVf9QBdh3w==}
     cpu: [arm64]
@@ -1857,15 +1845,14 @@ packages:
       - supports-color
     dev: false
 
-  /@cometh/connect-sdk-4337@1.0.1(typescript@5.7.3)(viem@2.22.14)(wagmi@2.9.0)(webauthn-p256@0.0.10):
-    resolution: {integrity: sha512-wASH2Ynct+aQKEdPS1VyxQCTc/puguFI9jnCnutiCzldk5q5nwJKPNzGXLMwJFpjgFfO1nC+qOasOxwWFnedUw==}
+  /@cometh/connect-sdk-4337@1.0.8(viem@2.22.14)(wagmi@2.9.0):
+    resolution: {integrity: sha512-nPMNZ8+Z6DzH8Jr4X+ZqMdMvl4ju2Qygxvb9rBaftAnfvhfd3Lup8KP05Tt8gCWzH7KnRX+c3c9bVTRX75i2gQ==}
     peerDependencies:
       viem: ^2.22.2
       wagmi: ^2
     dependencies:
-      '@biconomy/sdk': 0.0.24(@rhinestone/module-sdk@0.2.4)(typescript@5.7.3)(viem@2.22.14)
       '@noble/curves': 1.8.1
-      '@rhinestone/module-sdk': 0.2.4(viem@2.22.14)
+      '@rhinestone/module-sdk': 0.2.8(viem@2.22.14)
       '@simplewebauthn/server': 7.4.0
       '@types/cbor-js': 0.1.1
       '@types/elliptic': 6.4.18
@@ -1875,7 +1862,7 @@ packages:
       bowser: 2.11.0
       cbor-js: 0.1.0
       elliptic: 6.6.1
-      permissionless: 0.2.30(viem@2.22.14)(webauthn-p256@0.0.10)
+      permissionless: 0.2.42(viem@2.22.14)
       psl: 1.15.0
       qrcode: 1.5.4
       viem: 2.22.14(typescript@5.7.3)(zod@3.24.1)
@@ -1883,9 +1870,8 @@ packages:
     transitivePeerDependencies:
       - debug
       - encoding
+      - ox
       - supports-color
-      - typescript
-      - webauthn-p256
     dev: false
 
   /@cometh/connect-sdk-viem@2.0.8(@tanstack/react-query@5.64.2)(@types/react@18.3.18)(react-dom@18.3.1)(react-native@0.77.0)(react@18.3.1)(typescript@5.7.3)(zod@3.24.1):
@@ -5227,8 +5213,8 @@ packages:
       react-native: 0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7)(@types/react@18.3.18)(react@18.3.1)
     dev: false
 
-  /@rhinestone/module-sdk@0.2.4(viem@2.22.14):
-    resolution: {integrity: sha512-LPJWHt03JvPrWe6w4jnU/eLG26jHOY6UxoXl5T2WDnLWS1K9nZUSYzDItgGyd/2WefY8+2VdLMbxgysv5pz9Dw==}
+  /@rhinestone/module-sdk@0.2.8(viem@2.22.14):
+    resolution: {integrity: sha512-azCJrJqTEJJgheidxv6vT6tKURXvbQecsRWF4AESjA4UIUlJj3ds3BJMHWCdPjJooDKFgdMQBRveFpzmmveorA==}
     peerDependencies:
       viem: ^2.0.0
     dependencies:
@@ -13419,14 +13405,16 @@ packages:
       sha.js: 2.4.11
     dev: false
 
-  /permissionless@0.2.30(viem@2.22.14)(webauthn-p256@0.0.10):
-    resolution: {integrity: sha512-9Uzd8vAK6CXuhKrkDPG2aUyXtYXxAdOVnnvaCCCh4jFA1JTwrJcs4vJ930Plva0J74f9LVGfuZxYJrObCM1f3A==}
+  /permissionless@0.2.42(viem@2.22.14):
+    resolution: {integrity: sha512-B2UgDhTD+CKpQdhqLu1KOMmgxL4ot/C0yrioTlz20wGbVRsFQuru+LDBT0edf7XkTc9W7cbQ7jeY3+46sDgFpw==}
     peerDependencies:
-      viem: ^2.21.54
-      webauthn-p256: 0.0.10
+      ox: 0.6.7
+      viem: ^2.23.2
+    peerDependenciesMeta:
+      ox:
+        optional: true
     dependencies:
       viem: 2.22.14(typescript@5.7.3)(zod@3.24.1)
-      webauthn-p256: 0.0.10
     dev: false
 
   /picocolors@1.1.1:
@@ -16685,13 +16673,6 @@ packages:
 
   /web-vitals@4.2.4:
     resolution: {integrity: sha512-r4DIlprAGwJ7YM11VZp4R884m0Vmgr6EAKe3P+kO0PPj3Unqyvv59rczf6UiGcb9Z8QxZVcqKNwv/g0WNdWwsw==}
-    dev: false
-
-  /webauthn-p256@0.0.10:
-    resolution: {integrity: sha512-EeYD+gmIT80YkSIDb2iWq0lq2zbHo1CxHlQTeJ+KkCILWpVy3zASH3ByD4bopzfk0uCwXxLqKGLqp2W4O28VFA==}
-    dependencies:
-      '@noble/curves': 1.8.1
-      '@noble/hashes': 1.7.1
     dev: false
 
   /webextension-polyfill-ts@0.25.0:
